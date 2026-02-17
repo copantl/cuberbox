@@ -16,7 +16,7 @@ import { useToast } from '../ToastContext';
 const CRM_PARTNERS = [
   { id: 'odoo', name: 'Odoo Enterprise', url: 'https://odoo-instance.cuberbox.pro', color: 'from-purple-600 to-indigo-700', icon: '💎', status: 'ACTIVE' },
   { id: 'idempiere', name: 'iDempiere OSGi', url: 'https://idempiere.corp.net', color: 'from-blue-600 to-cyan-700', icon: '🏛️', status: 'ACTIVE' },
-  { id: 'workforce', name: 'Workforce Hub', url: 'https://workforce.cuberbox-infra.net', color: 'from-emerald-600 to-teal-700', icon: '👥', status: 'STANDBY' },
+  { id: 'salesforce_hub', name: 'Salesforce Cloud Hub', url: 'https://salesforce.cuberbox-infra.net', color: 'from-blue-500 to-sky-700', icon: '☁️', status: 'STANDBY' },
 ];
 
 const ExternalCRMHub: React.FC = () => {

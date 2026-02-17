@@ -43,10 +43,10 @@ const Header: React.FC<HeaderProps> = ({ user, currentTheme, onThemeToggle, onLo
 
         <div className="hidden xl:flex items-center space-x-3 px-4 py-2 bg-slate-900/50 border border-slate-800 rounded-xl shadow-inner">
            <div className="relative">
-              <ShieldCheck size={18} className="text-orange-500" />
-              <div className="absolute -top-1 -right-1 w-2 h-2 bg-orange-500 rounded-full animate-ping"></div>
+              <ShieldCheck size={18} className="text-blue-500" />
+              <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-500 rounded-full animate-ping"></div>
            </div>
-           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">Asterisk 21 (TITAN CORE v6.0.0)</span>
+           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">FreeSwitch 1.10 (TITAN CORE v4.7.9)</span>
         </div>
       </div>
 
@@ -59,7 +59,7 @@ const Header: React.FC<HeaderProps> = ({ user, currentTheme, onThemeToggle, onLo
               title={t.label}
               className={`p-2 rounded-xl transition-all duration-300 ${
                 currentTheme === t.id 
-                  ? 'bg-orange-600 text-white shadow-lg shadow-orange-600/20 scale-105' 
+                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20 scale-105' 
                   : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800'
               }`}
             >

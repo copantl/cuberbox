@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Lock, 
@@ -71,7 +70,6 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       <div className="relative w-full max-w-md">
         <div className="text-center mb-8">
           <div className="flex flex-col items-center">
-            {/* Logo reducido para elegancia */}
             <Logo className="w-12 h-12" />
             <h1 className="text-3xl font-black tracking-tighter text-white mt-4 uppercase">cuberbox</h1>
             <p className="text-slate-500 font-black uppercase tracking-[0.4em] text-[8px] mt-1 opacity-50">Enterprise Auth Gateway</p>
@@ -162,7 +160,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         </div>
 
         <div className="mt-8 text-center space-y-4">
-           <p className="text-[10px] text-slate-600 font-black uppercase tracking-[0.3em]">CUBERBOX Secure Infrastructure v3.1</p>
+           <p className="text-[10px] text-slate-600 font-black uppercase tracking-[0.3em]">CUBERBOX Secure Infrastructure v4.7.9</p>
            <div className="p-4 rounded-2xl bg-black/20 border border-slate-800/50">
              <p className="text-[8px] text-slate-500 font-bold uppercase tracking-wider leading-relaxed">
                Este software y su interfaz están protegidos por leyes internacionales de propiedad intelectual. <br/>

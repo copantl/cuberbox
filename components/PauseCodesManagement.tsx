@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { 
   Coffee, Clock, Plus, Trash2, Edit2, Save, X, CheckCircle, 
   AlertCircle, DollarSign, Palette, Power,
-  // Fix: Add Info icon to imports
+  // Added missing Info import
   Info
 } from 'lucide-react';
 import { PauseCode } from '../types';

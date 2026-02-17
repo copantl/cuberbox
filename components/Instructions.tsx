@@ -1,28 +1,29 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Copy, Terminal, Server, Database, Phone, Code, ShieldCheck, 
   Zap, Github, TerminalSquare, AlertCircle, Play, ChevronRight,
-  Layers, Monitor, Globe, ChevronLeft,
-  // Added missing CheckCircle2 import
-  CheckCircle2
+  Layers, Monitor, Globe, ChevronLeft, CheckCircle2
 } from 'lucide-react';
+import { useToast } from '../ToastContext';
 
 const Instructions: React.FC = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<'ONE_LINER' | 'MANUAL' | 'POST_INSTALL'>('ONE_LINER');
 
   const CodeBlock = ({ title, code, icon: Icon }: any) => {
     const copyToClipboard = () => {
       navigator.clipboard.writeText(code);
-      alert("Snippet copiado al portapapeles.");
+      toast("Comando copiado al portapapeles.", "success", "Portapapeles");
     };
 
     return (
       <div className="bg-slate-950/90 border border-slate-800 rounded-[32px] overflow-hidden mb-8 shadow-2xl group">
         <div className="px-8 py-5 bg-slate-900/50 border-b border-slate-800 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="p-2.5 bg-blue-600/10 rounded-xl text-blue-400">
+            <div className="p-2.5 bg-blue-600/10 rounded-xl text-blue-500">
               <Icon size={18} />
             </div>
             <span className="text-[11px] font-black text-slate-300 uppercase tracking-[0.2em]">{title}</span>
@@ -32,10 +33,10 @@ const Instructions: React.FC = () => {
             className="flex items-center space-x-2 text-[10px] font-black text-slate-500 hover:text-white transition-all uppercase px-4 py-1.5 bg-slate-800 rounded-xl border border-slate-700 hover:border-blue-500"
           >
             <Copy size={12} />
-            <span>Copiar Comando</span>
+            <span>Copiar Snippet</span>
           </button>
         </div>
-        <pre className="p-8 text-[13px] text-emerald-400/90 overflow-x-auto font-mono leading-relaxed bg-black/20 scrollbar-hide">
+        <pre className="p-8 text-[13px] text-blue-400/90 overflow-x-auto font-mono leading-relaxed bg-black/20 scrollbar-hide">
           <code>{code}</code>
         </pre>
       </div>
@@ -46,20 +47,20 @@ const Instructions: React.FC = () => {
     <div className="max-w-6xl mx-auto py-12 px-6 pb-40 animate-in fade-in duration-700">
       <div className="text-center mb-20 space-y-4">
         <div className="inline-flex items-center space-x-3 bg-blue-500/10 border border-blue-500/20 px-6 py-2.5 rounded-full mb-6">
-          <Zap size={18} className="text-blue-400 animate-pulse" />
-          <span className="text-[11px] font-black text-blue-400 uppercase tracking-[0.4em]">Phoenix Release v5.0.0</span>
+          <Zap size={18} className="text-blue-500 animate-pulse" />
+          <span className="text-[11px] font-black text-blue-400 uppercase tracking-[0.4em]">Nexus Release v4.7.9</span>
         </div>
-        <h1 className="text-6xl font-black text-white tracking-tighter uppercase leading-none">CUBERBOX Deployment</h1>
-        <p className="text-slate-400 text-lg max-w-3xl mx-auto font-medium mt-4">
-          La nueva arquitectura Phoenix elimina errores de autenticación externa e inyecta seguridad directamente en el kernel de Debian 12.
+        <h1 className="text-6xl font-black text-white tracking-tighter uppercase leading-none">Despliegue FreeSwitch</h1>
+        <p className="text-slate-400 text-lg max-w-3xl mx-auto font-medium mt-4 uppercase tracking-widest opacity-60">
+          Script unificado para Debian 12: FreeSwitch 1.10 + Postgres 16.
         </p>
       </div>
 
       <div className="flex bg-slate-900 border-2 border-slate-800 p-1.5 rounded-[32px] mb-16 shadow-2xl max-w-2xl mx-auto">
         {[
-          { id: 'ONE_LINER', label: 'Fast Setup', icon: Zap },
-          { id: 'MANUAL', label: 'Manual Steps', icon: Terminal },
-          { id: 'POST_INSTALL', label: 'Finalize', icon: ShieldCheck },
+          { id: 'ONE_LINER', label: 'Instalación Unificada', icon: Zap },
+          { id: 'MANUAL', label: 'Pasos Manuales', icon: Terminal },
+          { id: 'POST_INSTALL', label: 'Verificación', icon: ShieldCheck }
         ].map(tab => (
           <button
             key={tab.id}
@@ -76,22 +77,22 @@ const Instructions: React.FC = () => {
         {activeTab === 'ONE_LINER' && (
           <div className="glass p-12 rounded-[64px] border border-blue-500/20 bg-blue-600/5 mb-16 relative overflow-hidden">
              <h2 className="text-3xl font-black text-white uppercase tracking-tight flex items-center mb-8">
-                <ShieldCheck size={32} className="mr-4 text-emerald-400" /> Protocolo de Inyección Phoenix
+                <ShieldCheck size={32} className="mr-4 text-emerald-400" /> Inyección Nexus-ESL
              </h2>
              <p className="text-slate-400 text-lg mb-10 leading-relaxed max-w-2xl font-medium">
-                El nuevo instalador 5.0.0 utiliza <strong>GPG Binary Streams</strong>. No requiere descargar llaves de repositorios externos, eliminando errores 401 de SignalWire para siempre.
+                Este script configura los repositorios de SignalWire, instala el motor FreeSwitch 1.10 y aprovisiona el puerto 8021 para el conector CUBERBOX Pro.
              </p>
              <CodeBlock 
-                title="Master Phoenix One-Liner"
+                title="Super-Script Nexus (Recomendado)"
                 icon={TerminalSquare}
                 code={`wget -O install.sh https://raw.githubusercontent.com/copantl/cuberbox-pro/main/setup/install.sh && chmod +x install.sh && sudo ./install.sh`}
              />
-             <div className="p-8 bg-slate-900 border border-slate-800 rounded-[36px] flex items-start space-x-6">
-                <AlertCircle size={24} className="text-emerald-500 mt-1 shrink-0" />
+             <div className="p-8 bg-slate-900 border border-slate-800 rounded-[36px] flex items-start space-x-6 shadow-inner">
+                <AlertCircle size={24} className="text-blue-500 mt-1 shrink-0" />
                 <div>
-                  <h4 className="text-sm font-black text-white uppercase tracking-widest mb-1">Entorno Garantizado</h4>
-                  <p className="text-xs text-slate-500 leading-relaxed uppercase tracking-wider font-bold">
-                     Diseñado para Debian 12 (Bookworm). Realiza una limpieza total de instalaciones previas y re-escribe los keyrings del sistema para un arranque limpio.
+                  <h4 className="text-sm font-black text-white uppercase tracking-widest mb-1">Nota de Seguridad</h4>
+                  <p className="text-xs text-slate-500 leading-relaxed font-bold uppercase tracking-wider">
+                     El script generará una contraseña aleatoria para el Event Socket (ESL). Asegúrese de sincronizarla en la pestaña de Configuración > Core.
                   </p>
                 </div>
              </div>
@@ -101,20 +102,19 @@ const Instructions: React.FC = () => {
         {activeTab === 'MANUAL' && (
           <div className="space-y-8">
              <div className="p-10 glass rounded-[48px] border border-slate-800">
-                <h3 className="text-2xl font-black text-white uppercase mb-6 flex items-center"><Terminal className="mr-4 text-blue-500" /> Sincronización Manual</h3>
-                <p className="text-slate-400 mb-8 font-medium">Si prefieres el control total, sigue estos pasos secuenciales en tu terminal SSH.</p>
-                <div className="space-y-4">
-                   <div className="p-6 bg-slate-950 rounded-3xl border border-slate-800">
-                      <p className="text-[10px] font-black text-blue-500 uppercase mb-2">Paso 1: Clonar Estructura</p>
-                      <code className="text-emerald-400 text-xs">git clone https://github.com/copantl/cuberbox-pro.git /opt/cuberbox</code>
+                <h3 className="text-2xl font-black text-white uppercase mb-8 flex items-center"><Terminal className="mr-4 text-blue-500" /> Secuencia SSH Manual</h3>
+                <div className="space-y-6">
+                   <div className="p-8 bg-slate-950 rounded-3xl border border-slate-800">
+                      <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 1: Clonar Nexus Framework</p>
+                      <code className="text-emerald-400 text-sm font-mono">git clone https://github.com/copantl/cuberbox-pro.git /opt/cuberbox</code>
                    </div>
-                   <div className="p-6 bg-slate-950 rounded-3xl border border-slate-800">
-                      <p className="text-[10px] font-black text-blue-500 uppercase mb-2">Paso 2: Inyectar Permisos</p>
-                      <code className="text-emerald-400 text-xs">chmod +x /opt/cuberbox/setup/install.sh</code>
+                   <div className="p-8 bg-slate-950 rounded-3xl border border-slate-800">
+                      <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 2: Inyectar DB SQL</p>
+                      <code className="text-emerald-400 text-sm font-mono">{'sudo -u postgres psql < /opt/cuberbox/setup/schema.sql'}</code>
                    </div>
-                   <div className="p-6 bg-slate-950 rounded-3xl border border-slate-800">
-                      <p className="text-[10px] font-black text-blue-500 uppercase mb-2">Paso 3: Desplegar Clúster</p>
-                      <code className="text-emerald-400 text-xs">sudo /opt/cuberbox/setup/install.sh</code>
+                   <div className="p-8 bg-slate-950 rounded-3xl border border-slate-800">
+                      <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 3: Lanzar FreeSwitch CLI</p>
+                      <code className="text-emerald-400 text-sm font-mono">fs_cli -H 127.0.0.1 -P 8021</code>
                    </div>
                 </div>
              </div>
@@ -123,20 +123,20 @@ const Instructions: React.FC = () => {
 
         {activeTab === 'POST_INSTALL' && (
            <div className="max-w-4xl mx-auto text-center space-y-12">
-              <div className="w-24 h-24 bg-blue-600 rounded-[32px] flex items-center justify-center text-white mx-auto shadow-2xl animate-pulse">
-                <CheckCircle2 size={48} />
+              <div className="w-32 h-32 bg-blue-600 rounded-[40px] flex items-center justify-center text-white mx-auto shadow-[0_0_60px_rgba(59,130,246,0.4)]">
+                <CheckCircle2 size={64} />
               </div>
-              <div>
-                <h2 className="text-5xl font-black text-white uppercase tracking-tighter">Nodo Inicializado</h2>
-                <p className="text-slate-400 text-lg mt-4 font-medium">
-                  CUBERBOX Phoenix v5.0.0 está ahora gobernando los hilos de tu servidor.
+              <div className="space-y-4">
+                <h2 className="text-5xl font-black text-white uppercase tracking-tighter leading-none">Nexus Clúster Activo</h2>
+                <p className="text-slate-400 text-lg font-medium uppercase tracking-widest opacity-60">
+                  FreeSwitch 1.10 LTS está ahora gobernando el Media Plane de tu red v4.7.9.
                 </p>
               </div>
               <button 
                 onClick={() => navigate('/')}
-                className="bg-white text-slate-900 px-16 py-6 rounded-[32px] font-black text-xs uppercase tracking-[0.2em] shadow-xl hover:bg-slate-100 transition-all active:scale-95 flex items-center justify-center mx-auto space-x-4"
+                className="bg-white text-slate-900 px-16 py-6 rounded-[32px] font-black text-xs uppercase tracking-[0.2em] shadow-2xl hover:bg-slate-100 transition-all flex items-center justify-center mx-auto space-x-4"
               >
-                <span>Acceder a la Consola</span>
+                <span>Finalizar y Entrar</span>
                 <Play size={20} fill="currentColor" />
               </button>
            </div>

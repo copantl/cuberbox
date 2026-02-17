@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo, useEffect } from 'react';
 import { 
   Shield, Lock, FileText, Search, Filter, AlertTriangle, CheckCircle, 
@@ -16,7 +15,6 @@ const MOCK_AUDIT_LOGS: AuditLog[] = [
   {
     id: 'L001',
     timestamp: '2024-11-21 14:05:22',
-    // Fix: Satisfaction of AuditLog interface with userId
     userId: 'usr_1',
     userName: 'Admin Cuberbox',
     action: 'Cambio de Configuración SIP Trunk',
@@ -30,7 +28,6 @@ const MOCK_AUDIT_LOGS: AuditLog[] = [
   {
     id: 'L002',
     timestamp: '2024-11-21 14:10:05',
-    // Fix: Satisfaction of AuditLog interface with userId
     userId: 'usr_1',
     userName: 'Admin Cuberbox',
     action: 'Intento Fallido de Login (MFA)',
@@ -44,7 +41,6 @@ const MOCK_AUDIT_LOGS: AuditLog[] = [
   {
     id: 'L003',
     timestamp: '2024-11-21 14:15:30',
-    // Fix: Satisfaction of AuditLog interface with userId
     userId: 'usr_4',
     userName: 'Carla Mendez',
     action: 'Exportación de Listas de Leads',
@@ -58,16 +54,15 @@ const MOCK_AUDIT_LOGS: AuditLog[] = [
   {
     id: 'L004',
     timestamp: '2024-11-21 14:22:12',
-    // Fix: Satisfaction of AuditLog interface with userId
     userId: 'SYSTEM',
-    userName: 'FreeSwitch Engine',
-    action: 'Reinicio de Proceso sofia.c',
+    userName: 'Asterisk Engine',
+    action: 'Reinicio de Proceso pjsip',
     module: 'SYSTEM_CORE',
     ip: '127.0.0.1',
     level: 'CRITICAL',
     status: 'SUCCESS',
     integrityHash: 'd4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35',
-    details: 'Memory leak detectado en socket layer. Auto-reinicio completado en 1.2s.'
+    details: 'Memory leak detectado en socket layer v4.7.9. Auto-reinicio completado en 1.2s.'
   }
 ];
 
@@ -113,14 +108,13 @@ const SystemAudit: React.FC = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700 pb-20">
-      {/* Header Forense */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h2 className="text-3xl font-black text-white tracking-tighter uppercase flex items-center">
             <Shield className="mr-4 text-blue-400" size={36} />
             Auditoría & Blindaje
           </h2>
-          <p className="text-slate-400 text-sm font-medium mt-1">Trazabilidad total de eventos del sistema con verificación SHA-256.</p>
+          <p className="text-slate-400 text-sm font-medium mt-1">Trazabilidad total v4.7.9 de eventos con verificación SHA-256.</p>
         </div>
         <div className="flex items-center space-x-4">
            <button 
@@ -138,7 +132,6 @@ const SystemAudit: React.FC = () => {
         </div>
       </div>
 
-      {/* KPI Dashboard Auditoría */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
          <div className="glass p-8 rounded-[40px] border border-slate-700/50 shadow-2xl flex flex-col justify-between">
             <div className="flex items-center justify-between mb-4">
@@ -166,7 +159,7 @@ const SystemAudit: React.FC = () => {
          </div>
          <div className="glass p-8 rounded-[40px] border border-slate-700/50 shadow-2xl flex flex-col justify-between">
             <div className="flex items-center justify-between mb-4">
-               <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-500">
+               <div className="p-3 rounded-2xl bg-emerald-500/10 text-emerald-400">
                   <Lock size={24} />
                </div>
                <span className="text-[10px] font-black text-emerald-400">ENCRYPTED</span>
@@ -191,7 +184,6 @@ const SystemAudit: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-12 gap-8">
-        {/* Tabla de Logs Blindados */}
         <div className="col-span-12 lg:col-span-8 flex flex-col space-y-6">
            <div className="glass p-8 rounded-[48px] border border-slate-700/50 shadow-2xl flex flex-col overflow-hidden">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
@@ -269,24 +261,14 @@ const SystemAudit: React.FC = () => {
                     </tbody>
                  </table>
               </div>
-              <div className="p-8 bg-slate-900/40 border-t border-slate-800 flex items-center justify-between">
-                 <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
-                   Mostrando {filteredLogs.length} registros de auditoría de un total de {logs.length}.
-                 </p>
-                 <div className="flex space-x-2">
-                    <button className="p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-500 hover:text-white transition-all"><ChevronRight size={18} className="rotate-180" /></button>
-                    <button className="p-2.5 rounded-xl bg-slate-800 border border-slate-700 text-slate-500 hover:text-white transition-all"><ChevronRight size={18} /></button>
-                 </div>
-              </div>
            </div>
         </div>
 
-        {/* Sidebar: Salud e Integridad */}
         <div className="col-span-12 lg:col-span-4 space-y-8">
            <div className="glass p-10 rounded-[64px] border border-slate-700/50 shadow-2xl flex flex-col overflow-hidden">
               <h3 className="text-xl font-black mb-8 flex items-center tracking-tight text-white uppercase">
                  <RefreshCw className="mr-4 text-emerald-500" size={24} />
-                 Estado de Integridad
+                 Integridad v4.7.9
               </h3>
 
               <div className="space-y-6">
@@ -295,7 +277,7 @@ const SystemAudit: React.FC = () => {
                        <ShieldCheck size={28} />
                     </div>
                     <div>
-                       <h4 className="text-xs font-black text-white uppercase tracking-widest">Log Block-Shield</h4>
+                       <h4 className="text-xs font-black text-white uppercase tracking-widest">Protocol Shield v4.7.9</h4>
                        <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-widest mt-1">Activo y Verificado</p>
                     </div>
                  </div>
@@ -319,24 +301,11 @@ const SystemAudit: React.FC = () => {
                        </ResponsiveContainer>
                     </div>
                  </div>
-
-                 <div className="p-8 bg-slate-900/60 rounded-[40px] border border-slate-800 space-y-4 shadow-inner">
-                    <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-4">Consumo Storage Auditoría</h4>
-                    <div className="flex justify-between items-center text-xs font-black text-white uppercase tracking-tighter mb-2">
-                       <span>Database Usage</span>
-                       <span className="text-blue-400">65%</span>
-                    </div>
-                    <div className="h-2 w-full bg-slate-800 rounded-full overflow-hidden shadow-inner">
-                       <div className="h-full bg-blue-600 shadow-[0_0_10px_#3b82f6]" style={{ width: '65%' }}></div>
-                    </div>
-                    <p className="text-[9px] text-slate-600 font-bold uppercase tracking-widest mt-4">Próxima rotación automática: <span className="text-slate-400">24 de Noviembre</span></p>
-                 </div>
               </div>
            </div>
         </div>
       </div>
 
-      {/* Modal de Detalle Forense */}
       {selectedLog && (
         <div className="fixed inset-0 z-[120] flex items-center justify-center p-6">
           <div className="absolute inset-0 bg-slate-950/95 backdrop-blur-xl animate-in fade-in duration-300" onClick={() => setSelectedLog(null)}></div>
@@ -347,7 +316,7 @@ const SystemAudit: React.FC = () => {
                       <FileText size={32} />
                    </div>
                    <div>
-                      <h3 className="text-3xl font-black text-white uppercase tracking-tighter">Análisis Forense de Evento</h3>
+                      <h3 className="text-3xl font-black text-white uppercase tracking-tighter">Análisis Forense v4.7.9</h3>
                       <p className="text-[11px] font-black text-slate-500 uppercase tracking-[0.3em] mt-2">Log ID: {selectedLog.id}</p>
                    </div>
                 </div>
@@ -383,16 +352,6 @@ const SystemAudit: React.FC = () => {
                             <span className="text-xs font-black text-slate-300 uppercase tracking-widest">{selectedLog.module}</span>
                          </div>
                       </div>
-                      <div className="space-y-4">
-                         <h4 className="text-[11px] font-black text-blue-400 uppercase tracking-[0.4em] border-b-2 border-slate-800 pb-3 flex items-center">
-                            {/* replaced LockIcon with standard Lock icon from lucide-react */}
-                            <Lock size={16} className="mr-2" /> Estado de Ejecución
-                         </h4>
-                         <div className={`px-4 py-2 rounded-xl w-fit flex items-center space-x-2 border ${selectedLog.status === 'SUCCESS' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-rose-500/10 border-rose-500/20 text-rose-500'}`}>
-                            {selectedLog.status === 'SUCCESS' ? <CheckCircle size={14} /> : <AlertCircle size={14} />}
-                            <span className="text-[10px] font-black uppercase tracking-widest">{selectedLog.status}</span>
-                         </div>
-                      </div>
                    </div>
                 </div>
 
@@ -409,10 +368,10 @@ const SystemAudit: React.FC = () => {
                    </div>
                    <div className="flex items-center space-x-3 mb-2">
                       <Fingerprint className="text-emerald-500" size={20} />
-                      <h4 className="text-xs font-black text-white uppercase tracking-widest">Sello de Integridad Forense</h4>
+                      <h4 className="text-xs font-black text-white uppercase tracking-widest">Sello de Integridad v4.7.9</h4>
                    </div>
                    <p className="text-[10px] text-slate-500 font-bold uppercase leading-relaxed tracking-wider max-w-2xl">
-                      Este registro ha sido sellado criptográficamente en el momento de su creación. Cualquier alteración manual en la base de datos romperá la cadena de confianza.
+                      Este registro ha sido sellado criptográficamente bajo el estándar v4.7.9. Cualquier alteración manual en la base de datos romperá la cadena de confianza.
                    </p>
                    <div className="p-5 bg-black/40 rounded-2xl border border-slate-800 flex items-center justify-between group/hash">
                       <code className="text-[11px] font-mono text-emerald-400 break-all">{selectedLog.integrityHash}</code>
@@ -427,7 +386,7 @@ const SystemAudit: React.FC = () => {
                   className="bg-blue-600 hover:bg-blue-500 text-white px-12 py-5 rounded-[24px] font-black text-xs uppercase tracking-[0.2em] shadow-xl transition-all active:scale-95 flex items-center space-x-3"
                 >
                    <ShieldCheck size={20} />
-                   <span>Validar & Cerrar</span>
+                   <span>Validar v4.7.9</span>
                 </button>
              </div>
           </div>

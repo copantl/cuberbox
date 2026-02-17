@@ -1,111 +1,104 @@
 #!/bin/bash
 
 # =============================================================================
-# CUBERBOX PRO - TITAN ASTERISK INSTALLER V6.0.0 (DEBIAN 12 + ASTERISK 21)
-# Infrastructure: Asterisk 21 LTS + PJSIP + AMI
+# CUBERBOX PRO - FREESWITCH NEXUS INSTALLER V4.7.9
+# Soporte: Debian 11 (Bullseye) / Debian 12 (Bookworm)
+# Reference: PieceByte Architecture Standard (blog.piecebyte.com)
 # =============================================================================
 
 set -e
 
-# Credenciales para el Bridge de Datos (Opcional si se usa SW para Trunks)
-SW_TOKEN="PT5b9edec3ca49c15002eae76b499aa87e112d376db148e9ed"
-
-# Paleta de Colores Asterisk Edition
-BOLD='\033[1m'
-ORANGE='\033[0;33m'
-GREEN='\033[0;32m'
+# Estética de Terminal
 BLUE='\033[0;34m'
+CYAN='\033[0;36m'
+GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'
-
-function log_info() { echo -e "${BLUE}[INFO]${NC} $1"; }
-function log_success() { echo -e "${GREEN}[OK]${NC} $1"; }
-function log_error() { echo -e "${RED}[ERROR]${NC} $1"; exit 1; }
+BOLD='\033[1m'
 
 clear
-echo -e "${BOLD}${ORANGE}"
-echo "      _      ____ _____ _____ ____  ___ ____  _  __ "
-echo "     / \    / ___|_   _| ____|  _ \|_ _/ ___|| |/ / "
-echo "    / _ \   \___ \ | | |  _| | |_) || |\___ \| ' /  "
-echo "   / ___ \   ___) || | | |___|  _ < | | ___) | . \  "
-echo "  /_/   \_\ |____/ |_| |_____|_| \_\___|____/|_|\_\ "
-echo -e "          TITAN ENGINE v6.0.0 - ASTERISK EDITION${NC}\n"
+echo -e "${BOLD}${BLUE}"
+echo "   ____________  __________  ____  ____ _  __"
+echo "  / ____/ / / / __ ) ____/ __ \/ __ )/ __ \ |/ /"
+echo " / /   / / / / __  / __/ / /_/ / __  / / / /   / "
+echo "/ /___/ /_/ / /_/ / /___/ _, _/ /_/ / /_/ /   |  "
+echo "\____/\____/_____/_____/_/ |_/_____/\____/_/|_|  "
+echo -e "          NEXUS CORE ENGINE v4.7.9 (FreeSwitch 1.10)${NC}\n"
 
-# 1. Validación de Entorno
+# 1. Validación de Root
 if [[ $EUID -ne 0 ]]; then
-   log_error "Este instalador requiere privilegios ROOT."
+   echo -e "${RED}[ERROR] Este script debe ejecutarse como ROOT.${NC}"
+   exit 1
 fi
 
-# 2. Sincronización de Repositorios Core
-log_info "Actualizando fuentes de Debian 12..."
-apt-get update && apt-get upgrade -y
-apt-get install -y wget curl gnupg2 software-properties-common lsb-release git build-essential golang-go ufw
+# 2. Captura de Token de SignalWire (Requerido para Repo Oficial)
+echo -e "${CYAN}[REQ] Por favor, ingresa tu Token Personal de SignalWire.${NC}"
+echo -e "Consíguelo en: https://dashboard.signalwire.com"
+read -p "Token (PAT): " SW_TOKEN
 
-# 3. Instalación de Asterisk 21 LTS
-log_info "Desplegando Asterisk 21 y componentes PJSIP..."
-apt-get install -y asterisk asterisk-config asterisk-voicemail asterisk-pjsip postgresql-16
-
-# 4. Configuración de Seguridad AMI (Asterisk Manager Interface)
-log_info "Configurando interfaz de gestión AMI (Port 5038)..."
-cat <<EOF > /etc/asterisk/manager.conf
-[general]
-enabled = yes
-port = 5038
-bindaddr = 127.0.0.1
-
-[cuberbox_admin]
-secret = $SW_TOKEN
-read = all
-write = all
-EOF
-
-# 5. Configuración de PJSIP Transport
-log_info "Inicializando PJSIP Transport (UDP/TCP/WS)..."
-cat <<EOF > /etc/asterisk/pjsip.conf
-[transport-udp]
-type=transport
-protocol=udp
-bind=0.0.0.0
-
-[transport-wss]
-type=transport
-protocol=wss
-bind=0.0.0.0:8089
-EOF
-
-# 6. Preparación de Entorno de Medios
-log_info "Configurando permisos de grabaciones..."
-mkdir -p /opt/cuberbox/recordings
-chown -R asterisk:asterisk /opt/cuberbox/recordings
-chmod -R 775 /opt/cuberbox/recordings
-
-# 7. Compilación del Motor Go (AMI Bridge)
-log_info "Compilando CUBERBOX Asterisk Connector (v6.0.0)..."
-if [ -d "/opt/cuberbox/backend" ]; then
-    cd /opt/cuberbox/backend
-    go build -v -o /usr/local/bin/cuberbox-core main.go
-else
-    log_info "Clonando repositorio maestro..."
-    git clone https://github.com/copantl/cuberbox-pro.git /opt/cuberbox || true
-    cd /opt/cuberbox/backend && go build -v -o /usr/local/bin/cuberbox-core main.go || true
+if [ -z "$SW_TOKEN" ]; then
+    echo -e "${RED}[FATAL] El Token es obligatorio para descargar los binarios oficiales.${NC}"
+    exit 1
 fi
 
-# 8. Firewall Hardening
-log_info "Blindando puertos Asterisk..."
-ufw allow 5060/udp
-ufw allow 5061/tcp
-ufw allow 10000:20000/udp
-ufw allow 5038/tcp
-ufw allow 8089/tcp
-ufw --force enable
+# 3. Detección de Versión de Debian
+OS_VER=$(lsb_release -sc)
+echo -e "${GREEN}[SYSTEM] Detectado Debian: ${OS_VER}${NC}"
 
-# 9. Finalización
-systemctl enable asterisk
-systemctl restart asterisk
-systemctl enable postgresql
-systemctl restart postgresql
+# 4. Instalación de Dependencias Previas (Manual PieceByte)
+echo -e "${BLUE}[1/5] Instalando dependencias de sistema y librerías de medios...${NC}"
+apt-get update && apt-get install -y \
+    gnupg2 wget lsb-release curl software-properties-common \
+    build-essential cmake automake autoconf libtool libtool-bin \
+    pkg-config libssl-dev zlib1g-dev libdb-dev libncurses5-dev \
+    libsqlite3-dev libcurl4-openssl-dev libpcre3-dev libspeex-dev \
+    libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev \
+    libopus-dev libsndfile1-dev libshout3-dev libmpg123-dev \
+    libavformat-dev libswscale-dev libavresample-dev python3-dev \
+    libks-dev signalwire-client-c-dev
 
-log_success "DESPLIEGUE ASTERISK TITAN v6.0.0 COMPLETADO."
-echo -e "\n${BOLD}Motor:${NC} Asterisk 21 LTS"
-echo -e "${BOLD}Control:${NC} AMI Bridge Active"
-echo -e "${BOLD}Dashboard:${NC} http://$(hostname -I | awk '{print $1}')\n"
+# 5. Configuración de Repositorios SignalWire
+echo -e "${BLUE}[2/5] Configurando repositorio oficial de FreeSwitch 1.10...${NC}"
+echo "machine assignments.signalwire.com login signalwire password $SW_TOKEN" > /etc/apt/auth.conf.d/signalwire.conf
+wget --http-user=signalwire --http-password=$SW_TOKEN -O - https://assignments.signalwire.com/reference/gpg/signalwire_pub.gpg | apt-key add -
+echo "deb https://assignments.signalwire.com/reference/debian/$(lsb_release -sc) release main" > /etc/apt/sources.list.d/freeswitch.list
+
+# 6. Instalación de FreeSwitch Core y Módulos ESL/Verto
+echo -e "${BLUE}[3/5] Descargando e instalando FreeSwitch Engine...${NC}"
+apt-get update
+apt-get install -y freeswitch-all freeswitch-mod-esl freeswitch-mod-verto
+
+# 7. Aprovisionamiento ESL y Seguridad (Puerto 8021)
+echo -e "${BLUE}[4/5] Configurando Event Socket Layer (ESL)...${NC}"
+ESL_PASS=$(openssl rand -base64 12)
+cat <<EOF > /etc/freeswitch/autoload_configs/event_socket.conf.xml
+<configuration name="event_socket.conf" description="Socket Client">
+  <settings>
+    <param name="listen-ip" value="0.0.0.0"/>
+    <param name="listen-port" value="8021"/>
+    <param name="password" value="$ESL_PASS"/>
+  </settings>
+</configuration>
+EOF
+
+# 8. Instalación de PostgreSQL 16
+echo -e "${BLUE}[5/5] Instalando PostgreSQL 16 para Data Plane...${NC}"
+sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+apt-get update && apt-get install -y postgresql-16
+sudo -u postgres psql -c "CREATE USER cuberbox_admin WITH PASSWORD 'TitanPass2024!';" || true
+sudo -u postgres psql -c "CREATE DATABASE cuberbox_db OWNER cuberbox_admin;" || true
+
+# 9. Finalización y Resumen
+systemctl restart freeswitch
+systemctl enable freeswitch
+
+echo -e "\n${BOLD}${GREEN}===================================================="
+echo "   CUBERBOX PRO v4.7.9 INSTALADO CORRECTAMENTE"
+echo "===================================================="
+echo -e "${NC}"
+echo -e "ESL Port: ${BOLD}8021${NC}"
+echo -e "ESL Secret: ${BOLD}$ESL_PASS${NC}"
+echo -e "WebRTC WSS: ${BOLD}8089${NC}"
+echo -e "SIP Port: ${BOLD}5060${NC}"
+echo -e "\nConfiguración completada bajo estándares de PieceByte."

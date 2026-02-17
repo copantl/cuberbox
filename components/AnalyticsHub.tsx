@@ -2,15 +2,18 @@
 import React, { useState } from 'react';
 import { 
   BarChart3, Database, Globe, Key, ShieldCheck, ExternalLink, 
-  RefreshCw, Plus, Trash2, Settings, CheckCircle, AlertCircle, 
+  RefreshCw, Plus, Trash2, Settings, CheckCircle, CheckCircle2, AlertCircle, 
   Copy, Layers, Zap, Info, ChevronRight, Share2, Terminal,
   Lock, Globe2, Code2, Play, Table, Eye, FileJson, ShieldAlert
 } from 'lucide-react';
+import { useToast } from '../ToastContext';
 
 const AnalyticsHub: React.FC = () => {
+  const { toast } = useToast();
   const [isSyncing, setIsSyncing] = useState(false);
   const [activeTab, setActiveTab] = useState<'CONFIG' | 'EMBED' | 'LOGS'>('CONFIG');
   const [testStatus, setTestStatus] = useState<'IDLE' | 'TESTING' | 'SUCCESS' | 'ERROR'>('IDLE');
+  const [isValidatingSQL, setIsValidatingSQL] = useState(false);
   
   const [embedConfig, setEmbedConfig] = useState({
     dashboardId: '7482-af23-11ed',
@@ -26,13 +29,25 @@ const AnalyticsHub: React.FC = () => {
 
   const handleCopy = (text: string) => {
     navigator.clipboard.writeText(text);
-    // Notificación minimalista in-app podría ir aquí
+    toast('Copiado al portapapeles.', 'info');
   };
 
   const runConnectionTest = async () => {
     setTestStatus('TESTING');
     await new Promise(resolve => setTimeout(resolve, 2000));
     setTestStatus('SUCCESS');
+    toast('Conexión con PostgreSQL validada.', 'success');
+  };
+
+  const handleValidateSQL = async () => {
+    setIsValidatingSQL(true);
+    toast('Ejecutando validación de sintaxis SQL...', 'info', 'Query Engine');
+    
+    // Simulación de ejecución en el motor de datos
+    await new Promise(resolve => setTimeout(resolve, 1800));
+    
+    setIsValidatingSQL(false);
+    toast('Estructura de datos validada. Query nominal.', 'success', 'Validación Exitosa');
   };
 
   return (
@@ -159,7 +174,14 @@ const AnalyticsHub: React.FC = () => {
                         defaultValue={`SELECT campaign_id, count(*) as leads \nFROM leads_performance \nWHERE status = 'SALE' \nGROUP BY 1 LIMIT 5;`}
                        />
                     </div>
-                    <button className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all">Ejecutar Validación de Datos</button>
+                    <button 
+                      onClick={handleValidateSQL}
+                      disabled={isValidatingSQL}
+                      className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] shadow-lg active:scale-95 transition-all flex items-center justify-center space-x-3 disabled:opacity-50"
+                    >
+                      {isValidatingSQL ? <RefreshCw className="animate-spin" size={18} /> : <CheckCircle2 size={18} />}
+                      <span>{isValidatingSQL ? 'Procesando en Clúster...' : 'Ejecutar Validación de Datos'}</span>
+                    </button>
                  </div>
               </div>
             </div>
@@ -271,7 +293,7 @@ const AnalyticsHub: React.FC = () => {
               
               <div className="space-y-6">
                  {biTools.map(tool => (
-                    <div key={tool.id} className="p-6 rounded-[32px] bg-slate-900/60 border border-slate-800 space-y-4 group hover:border-blue-500/30 transition-all">
+                    <div key={tool.id} className={`p-5 rounded-3xl bg-slate-900/60 border border-slate-800 space-y-4 group hover:border-blue-500/30 transition-all`}>
                        <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
                              <div className={`w-2.5 h-2.5 rounded-full ${tool.status === 'CONNECTED' ? 'bg-emerald-500 shadow-[0_0_10px_#10b981]' : 'bg-slate-700'}`}></div>
@@ -289,7 +311,7 @@ const AnalyticsHub: React.FC = () => {
                  <div className="p-8 bg-slate-950/80 rounded-[40px] border border-slate-800 shadow-inner">
                     <div className="flex items-center justify-between mb-6">
                        <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Tráfico BI (24h)</h4>
-                       <Activity className="text-blue-500" size={14} />
+                       <Activity size={14} className="text-blue-500" />
                     </div>
                     <div className="space-y-5">
                        <div className="space-y-2">

@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { 
   Music, Search, Plus, Play, Pause, Trash2, Edit2, X, Save, 
@@ -6,8 +7,17 @@ import {
   Headphones, Info, CheckCircle2, AlertTriangle, Zap, Mic
 } from 'lucide-react';
 import { AudioAsset, User } from '../types';
-import { MOCK_AUDIO_ASSETS, MOCK_CAMPAIGNS, MOCK_USER } from '../constants';
+import { MOCK_CAMPAIGNS, MOCK_USER } from '../constants';
 import { useToast } from '../ToastContext';
+
+// Mock data extendido localmente para validar filtros
+const INITIAL_AUDIO_VAULT: AudioAsset[] = [
+  { id: 'aud_1', name: 'bienvenida_general.wav', campaignId: '1', url: '#', duration: '0:15', size: '1.2 MB', format: 'WAV', createdAt: '2024-11-20', minAccessLevel: 1, category: 'IVR_PROMPT' },
+  { id: 'aud_2', name: 'promo_black_friday.mp3', campaignId: '1', url: '#', duration: '0:30', size: '2.5 MB', format: 'MP3', createdAt: '2024-11-21', minAccessLevel: 4, category: 'CAMPAIGN_AD' },
+  { id: 'aud_3', name: 'grabacion_venta_9482.wav', campaignId: '1', url: '#', duration: '4:22', size: '12.1 MB', format: 'WAV', createdAt: '2024-11-22', minAccessLevel: 6, category: 'AGENT_RECORDING' },
+  { id: 'aud_4', name: 'buzon_fuera_horario.wav', campaignId: '1', url: '#', duration: '0:12', size: '0.8 MB', format: 'WAV', createdAt: '2024-11-22', minAccessLevel: 1, category: 'VOICEMAIL_DROP' },
+  { id: 'aud_5', name: 'aviso_privacidad_v4.mp3', campaignId: '1', url: '#', duration: '0:25', size: '1.8 MB', format: 'MP3', createdAt: '2024-11-23', minAccessLevel: 1, category: 'IVR_PROMPT' },
+];
 
 interface AudioLibraryProps {
   user?: User;
@@ -15,7 +25,7 @@ interface AudioLibraryProps {
 
 const AudioLibrary: React.FC<AudioLibraryProps> = ({ user = MOCK_USER }) => {
   const { toast } = useToast();
-  const [audios, setAudios] = useState<AudioAsset[]>(MOCK_AUDIO_ASSETS);
+  const [audios, setAudios] = useState<AudioAsset[]>(INITIAL_AUDIO_VAULT);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -175,7 +185,7 @@ const AudioLibrary: React.FC<AudioLibraryProps> = ({ user = MOCK_USER }) => {
                        <button onClick={() => handleOpenModal(audio)} className="p-2 bg-slate-900 border border-slate-800 hover:bg-blue-600 text-white rounded-lg transition-all"><Edit2 size={14} /></button>
                        <button onClick={() => handleDelete(audio.id)} className="p-2 bg-slate-900 border border-slate-800 hover:bg-rose-600 text-white rounded-lg transition-all"><Trash2 size={14} /></button>
                     </div>
-                    <div className={`px-2 py-0.5 rounded-lg border text-[8px] font-black uppercase tracking-widest ${isRestricted ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20'}`}>
+                    <div className={`px-2 py-0.5 rounded-lg border text-[8px] font-black uppercase tracking-widest ${isRestricted ? 'bg-rose-500/10 text-rose-500 border-rose-500/20' : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'}`}>
                        LVL {audio.minAccessLevel}+
                     </div>
                  </div>
@@ -213,6 +223,12 @@ const AudioLibrary: React.FC<AudioLibraryProps> = ({ user = MOCK_USER }) => {
             </div>
           );
         })}
+        {filteredAudios.length === 0 && (
+          <div className="col-span-full py-20 flex flex-col items-center justify-center text-slate-600 opacity-50 space-y-4">
+            <Music size={64} />
+            <p className="text-xs font-black uppercase tracking-widest">No se encontraron activos en esta categoría.</p>
+          </div>
+        )}
       </div>
 
       {/* Floating Master Player */}

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Bot, MessageSquare, Save, Zap, Send, Sparkles, RefreshCw, Cpu, Target, ChevronRight, Info, Volume2, Gauge } from 'lucide-react';
 import { GoogleGenAI } from "@google/genai";
@@ -24,14 +23,14 @@ const AIStudio: React.FC = () => {
     setIsTyping(true);
     
     try {
+      // Inicialización correcta según reglas Gemini v3
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const response = await ai.models.generateContent({
         model: 'gemini-3-pro-preview',
         contents: userText,
         config: {
-          systemInstruction: `Eres un agente telefónico especializado llamado ${selectedBot.name}. Tu directiva principal es: ${selectedBot.prompt}. Tu tono es profesional, empático y orientado a resultados. Usa frases cortas aptas para síntesis de voz.`,
+          systemInstruction: `Eres un agente de ventas experto de CUBERBOX llamado ${selectedBot.name}. Objetivo: ${selectedBot.prompt}. Tono: Profesional, ejecutivo y persuasivo.`,
           temperature: 0.7,
-          thinkingConfig: { thinkingBudget: 2000 }
         },
       });
 
@@ -39,8 +38,8 @@ const AIStudio: React.FC = () => {
       setChatHistory(prev => [...prev, {role: 'bot', text: botResponse}]);
     } catch (error: any) {
       console.error("Gemini Engine Error:", error);
-      toast('Error en el puente neuronal: ' + (error.message || 'Falla de conexión'), 'error', 'AI Core Critical');
-      setChatHistory(prev => [...prev, {role: 'bot', text: "[CRITICAL_ERROR]: El motor Gemini 3 Pro ha rechazado la solicitud."}]);
+      toast('Error en el puente neuronal: Revise su API_KEY.', 'error', 'AI Core Critical');
+      setChatHistory(prev => [...prev, {role: 'bot', text: "[ERROR]: El motor neuronal no pudo procesar la solicitud."}]);
     } finally {
       setIsTyping(false);
     }
@@ -48,10 +47,10 @@ const AIStudio: React.FC = () => {
 
   const handleSaveConfig = async () => {
     setIsSaving(true);
-    await new Promise(resolve => setTimeout(resolve, 1200));
+    await new Promise(resolve => setTimeout(resolve, 1500));
     setBots(prev => prev.map(b => b.id === selectedBot.id ? selectedBot : b));
     setIsSaving(false);
-    toast(`Red neuronal "${selectedBot.name}" sincronizada.`, 'success', 'Sincronización OK');
+    toast(`Cerebro "${selectedBot.name}" sincronizado con FreeSwitch mod_esl.`, 'success', 'Sincronización OK');
   };
 
   const updateBotProperty = (key: keyof AIBot, value: any) => {
@@ -64,15 +63,15 @@ const AIStudio: React.FC = () => {
         <div>
           <h2 className="text-3xl font-black text-white tracking-tighter uppercase flex items-center">
             <Bot className="mr-4 text-purple-400" size={36} />
-            AI Studio & Neural Lab
+            AI & Neural Lab
           </h2>
-          <p className="text-slate-400 text-sm font-medium mt-1">Ingeniería de prompts avanzada para agentes virtuales.</p>
+          <p className="text-slate-400 text-sm font-medium mt-1">Ingeniería de comportamiento LLM para el Dialer v4.7.9.</p>
         </div>
       </div>
 
       <div className="grid grid-cols-12 gap-8">
         <div className="col-span-12 lg:col-span-4 space-y-4">
-           <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] px-4 mb-4">Brains en Ejecución</h4>
+           <h4 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.4em] px-4 mb-4">Brains en Producción</h4>
            <div className="space-y-3 max-h-[600px] overflow-y-auto scrollbar-hide">
              {bots.map(bot => (
                <div 
@@ -81,14 +80,14 @@ const AIStudio: React.FC = () => {
                 className={`p-6 rounded-[36px] border-2 cursor-pointer transition-all relative overflow-hidden group ${selectedBot.id === bot.id ? 'bg-purple-600/10 border-purple-500 shadow-2xl' : 'glass border-slate-800 hover:border-slate-700'}`}
                >
                   <div className="flex items-center space-x-5 relative z-10">
-                     <div className={`p-3 rounded-2xl ${selectedBot.id === bot.id ? 'bg-purple-600 text-white shadow-lg' : 'bg-slate-800 text-slate-500'}`}>
+                     <div className={`p-3 rounded-2xl ${selectedBot.id === bot.id ? 'bg-purple-600 text-white shadow-lg' : 'bg-slate-900 text-slate-500'}`}>
                         <Zap size={24} />
                      </div>
                      <div className="flex-1 min-w-0">
                         <h4 className="font-black text-white uppercase tracking-tight truncate">{bot.name}</h4>
                         <p className="text-[9px] text-slate-500 font-black uppercase mt-1 tracking-widest flex items-center">
                           <Target size={10} className="mr-1 text-blue-400" />
-                          {MOCK_CAMPAIGNS.find(c => c.id === bot.campaignId)?.name || 'Global'}
+                          Campaña: {MOCK_CAMPAIGNS.find(c => c.id === bot.campaignId)?.name || 'Global'}
                         </p>
                      </div>
                   </div>
@@ -105,8 +104,8 @@ const AIStudio: React.FC = () => {
                        <Cpu size={28} />
                     </div>
                     <div>
-                       <h3 className="text-2xl font-black text-white uppercase tracking-tighter">Prompt Core</h3>
-                       <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Directivas de Comportamiento v3.0</p>
+                       <h3 className="text-2xl font-black text-white uppercase tracking-tighter">System Directives</h3>
+                       <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Lógica de Inferencia v3.1</p>
                     </div>
                  </div>
                  <button 
@@ -122,17 +121,17 @@ const AIStudio: React.FC = () => {
               <div className="space-y-6">
                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-4">
-                       <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] ml-2">Campaña de Destino</label>
+                       <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] ml-2">Asignación Campaña</label>
                        <select 
                         value={selectedBot.campaignId}
                         onChange={(e) => updateBotProperty('campaignId', e.target.value)}
-                        className="w-full bg-slate-950 border-2 border-slate-800 rounded-[28px] px-6 py-4 text-sm text-white font-bold outline-none focus:border-blue-500 appearance-none transition-all shadow-inner cursor-pointer"
+                        className="w-full bg-slate-950 border-2 border-slate-800 rounded-[28px] px-6 py-4 text-sm text-white font-bold outline-none focus:border-blue-500 appearance-none transition-all shadow-inner"
                        >
                          {MOCK_CAMPAIGNS.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                        </select>
                     </div>
                     <div className="space-y-4">
-                       <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] ml-2">Nombre del Agente Virtual</label>
+                       <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] ml-2">Nombre del Avatar AI</label>
                        <input 
                         type="text" 
                         value={selectedBot.name}
@@ -143,29 +142,22 @@ const AIStudio: React.FC = () => {
                  </div>
 
                  <div className="space-y-4">
-                    <div className="flex justify-between items-center ml-2">
-                       <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">System Instruction (Identidad)</label>
-                       <span className="text-[9px] text-emerald-500 font-black uppercase tracking-widest flex items-center"><Sparkles size={10} className="mr-1" /> Optimizado para voz</span>
-                    </div>
+                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em] ml-2">Prompt Maestro (Comportamiento)</label>
                     <textarea 
                      value={selectedBot.prompt}
                      onChange={e => updateBotProperty('prompt', e.target.value)}
                      className="w-full h-48 bg-slate-950 border-2 border-slate-800 rounded-[40px] p-8 text-sm text-slate-300 font-medium outline-none focus:border-purple-500 transition-all shadow-inner leading-relaxed resize-none"
-                     placeholder="Describe la personalidad y las reglas del bot..."
+                     placeholder="Define la misión del bot..."
                     />
                  </div>
               </div>
            </div>
 
-           <div className="glass flex-1 rounded-[56px] border border-slate-800 shadow-2xl flex flex-col overflow-hidden min-h-[550px]">
+           <div className="glass flex-1 rounded-[56px] border border-slate-800 shadow-2xl flex flex-col overflow-hidden min-h-[500px]">
               <div className="p-8 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between">
-                 <div className="flex items-center space-x-4">
-                    <div className="p-2.5 bg-blue-600 rounded-xl text-white shadow-lg">
-                       <MessageSquare size={18} />
-                    </div>
-                    <h3 className="text-xl font-black text-white uppercase tracking-tighter">Live Preview Sandbox</h3>
-                 </div>
-                 <button onClick={() => setChatHistory([])} className="text-[10px] font-black text-slate-600 hover:text-rose-500 uppercase tracking-widest">Reset Context</button>
+                 <h3 className="text-xl font-black text-white uppercase tracking-tighter flex items-center">
+                    <MessageSquare size={18} className="mr-3 text-blue-500" /> Live Simulation Hub
+                 </h3>
               </div>
 
               <div className="flex-1 p-10 overflow-y-auto scrollbar-hide space-y-6 bg-slate-950/20">
@@ -173,21 +165,13 @@ const AIStudio: React.FC = () => {
                    <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}>
                       <div className={`max-w-[80%] p-6 rounded-[32px] text-sm relative shadow-2xl ${msg.role === 'user' ? 'bg-blue-600 text-white rounded-tr-none' : 'glass border-slate-700 text-slate-200 rounded-tl-none'}`}>
                         <p className="font-medium leading-relaxed">{msg.text}</p>
-                        <div className={`text-[9px] mt-3 font-black uppercase tracking-widest ${msg.role === 'user' ? 'text-blue-100/50' : 'text-slate-500'}`}>
-                           {msg.role === 'user' ? 'TESTER' : selectedBot.name}
+                        <div className="text-[9px] mt-3 font-black uppercase tracking-widest opacity-40">
+                           {msg.role === 'user' ? 'PRUEBA_LÍNEA' : 'MOTOR_IA'}
                         </div>
                       </div>
                    </div>
                  ))}
-                 {isTyping && (
-                   <div className="flex justify-start">
-                      <div className="glass p-6 rounded-[32px] border-slate-700 flex space-x-2">
-                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce"></div>
-                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce [animation-delay:0.2s]"></div>
-                        <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-bounce [animation-delay:0.4s]"></div>
-                      </div>
-                   </div>
-                 )}
+                 {isTyping && <div className="p-4 rounded-full bg-slate-900 text-blue-400 w-fit animate-pulse text-[10px] font-black uppercase tracking-widest">Procesando señal...</div>}
               </div>
 
               <div className="p-8 bg-slate-900/60 border-t border-slate-800">
@@ -197,7 +181,7 @@ const AIStudio: React.FC = () => {
                       value={previewMsg}
                       onChange={e => setPreviewMsg(e.target.value)}
                       onKeyDown={e => e.key === 'Enter' && handleSendMessage()}
-                      placeholder="Simula un lead..."
+                      placeholder="Simular interacción del cliente..."
                       className="flex-1 bg-transparent py-6 text-sm text-white outline-none placeholder-slate-800 font-medium"
                     />
                     <button 

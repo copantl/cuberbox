@@ -4,7 +4,8 @@ import {
   Activity, Users, PhoneIncoming, Zap, AlertTriangle, Timer, 
   Search, Filter, Headphones, Power, RefreshCw, ChevronRight,
   ShieldAlert, Radio, Clock, ShieldCheck, Play, Pause, X,
-  MonitorCheck, MoreHorizontal, ArrowUpRight, BarChart3
+  MonitorCheck, MoreHorizontal, ArrowUpRight, BarChart3,
+  Bell, BellRing, LogOut, ArrowRightCircle, Smartphone, AlertCircle
 } from 'lucide-react';
 import { useToast } from '../ToastContext';
 import { GTRAgentMetric, GTRQueueMetric } from '../types';
@@ -29,15 +30,25 @@ const GTRDashboard: React.FC = () => {
   const [queues, setQueues] = useState<GTRQueueMetric[]>(MOCK_QUEUES);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
+  const [activeAlerts, setActiveAlerts] = useState<string[]>([]);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setAgents(prev => prev.map(a => ({
-        ...a,
-        statusDuration: a.statusDuration + 1,
-        currentCallDuration: a.status === 'INCALL' ? (a.currentCallDuration || 0) + 1 : undefined,
-        warningLevel: (a.status === 'WRAPUP' && a.statusDuration > 30) || (a.status === 'PAUSED' && a.statusDuration > 600) ? 'CRITICAL' : a.statusDuration > 300 ? 'LOW' : 'NONE'
-      })));
+      setAgents(prev => prev.map(a => {
+        const newDuration = a.statusDuration + 1;
+        let warning: GTRAgentMetric['warningLevel'] = 'NONE';
+        
+        if (a.status === 'WRAPUP' && newDuration > 30) warning = 'CRITICAL';
+        else if (a.status === 'PAUSED' && newDuration > 600) warning = 'CRITICAL';
+        else if (newDuration > 300) warning = 'LOW';
+
+        return {
+          ...a,
+          statusDuration: newDuration,
+          currentCallDuration: a.status === 'INCALL' ? (a.currentCallDuration || 0) + 1 : undefined,
+          warningLevel: warning
+        };
+      }));
     }, 1000);
     return () => clearInterval(timer);
   }, []);
@@ -56,8 +67,19 @@ const GTRDashboard: React.FC = () => {
   , [agents, searchTerm, filterStatus]);
 
   const handleForceReady = (id: string) => {
-    toast('Señal remota enviada: Forzando estado READY.', 'info', 'GTR Action');
+    toast('Señal remota: Forzando estado READY.', 'info', 'GTR Action');
     setAgents(agents.map(a => a.agentId === id ? { ...a, status: 'READY', statusDuration: 0, warningLevel: 'NONE' } : a));
+  };
+
+  const handlePoke = (name: string) => {
+     toast(`Enviando alerta visual a ${name}...`, 'success', 'Supervisor Poke');
+  };
+
+  const handleForceLogout = (id: string) => {
+    if(confirm('¿Deseas desconectar forzosamente al agente? El socket se cerrará inmediatamente.')) {
+       setAgents(agents.filter(a => a.agentId !== id));
+       toast('Agente desconectado por el supervisor.', 'warning');
+    }
   };
 
   return (
@@ -66,174 +88,172 @@ const GTRDashboard: React.FC = () => {
         <div>
           <h2 className="text-3xl font-black text-white tracking-tighter uppercase flex items-center">
             <MonitorCheck className="mr-4 text-blue-500" size={36} />
-            Consola de Gestión GTR
+            Supervisión Táctica GTR
           </h2>
-          <p className="text-slate-400 text-sm font-medium">Control táctico en tiempo real del desempeño de la planta.</p>
+          <p className="text-slate-400 text-sm font-medium">Control de tiempos y auditoría de planta en vivo v4.7.9.</p>
         </div>
         <div className="flex items-center space-x-4">
            <div className="bg-slate-900 border border-slate-800 px-6 py-2.5 rounded-full flex items-center space-x-3">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-              <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Postgres SQL Bridge: OK</span>
+              <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest">Postgres Link: Active</span>
            </div>
         </div>
       </div>
 
-      {/* Queue Performance Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {queues.map((q, i) => (
           <div key={i} className={`glass p-8 rounded-[48px] border-2 shadow-2xl relative overflow-hidden transition-all ${q.callsWaiting > 5 ? 'border-rose-500/30' : 'border-slate-800'}`}>
              <div className="flex justify-between items-center mb-6">
                 <h3 className="font-black text-white uppercase tracking-tight text-lg">{q.queueName}</h3>
-                <div className={`p-2 rounded-xl ${q.callsWaiting > 0 ? 'bg-rose-500 text-white animate-bounce' : 'bg-slate-800 text-slate-500'}`}>
+                <div className={`p-2 rounded-xl ${q.callsWaiting > 0 ? 'bg-rose-500 text-white animate-bounce' : 'bg-slate-900 text-slate-500 border border-slate-800'}`}>
                    <PhoneIncoming size={20} />
                 </div>
              </div>
              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
-                   <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">En Espera</p>
+                   <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Waiting</p>
                    <p className={`text-4xl font-black ${q.callsWaiting > 5 ? 'text-rose-500' : 'text-white'}`}>{q.callsWaiting}</p>
                 </div>
                 <div className="space-y-1">
-                   <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">SLA (Real)</p>
+                   <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">SLA Goal</p>
                    <p className={`text-4xl font-black ${q.slaPercent < 80 ? 'text-amber-400' : 'text-emerald-400'}`}>{q.slaPercent}%</p>
                 </div>
-             </div>
-             <div className="mt-6 pt-6 border-t border-slate-800/50 flex justify-between items-center">
-                <span className="text-[9px] font-black text-slate-500 uppercase">Longest Wait: <span className="text-white font-mono">{q.longestWait}s</span></span>
-                <span className="text-[9px] font-black text-slate-500 uppercase">Ready: <span className="text-emerald-500 font-mono">{q.agentsReady}/{q.agentsLogged}</span></span>
              </div>
           </div>
         ))}
       </div>
 
-      {/* Main Agent Matrix */}
-      <div className="glass rounded-[56px] border border-slate-700/50 shadow-2xl overflow-hidden flex flex-col">
-         <div className="p-10 border-b border-slate-800 bg-slate-900/60 flex flex-col lg:flex-row items-center justify-between gap-8">
-            <div className="flex items-center space-x-5">
-               <div className="w-14 h-14 rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-500 shadow-inner">
-                  <Users size={24} />
-               </div>
-               <div>
-                  <h3 className="text-xl font-black text-white uppercase tracking-tight">Agent Matrix Control</h3>
-                  <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Supervisión disciplinaria de estados</p>
-               </div>
-            </div>
-            
-            <div className="flex items-center gap-4 w-full lg:w-auto">
-               <div className="relative flex-1 lg:w-80">
-                  <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
-                  <input 
-                    type="text" 
-                    placeholder="Buscar agente..." 
-                    value={searchTerm}
-                    onChange={e => setSearchTerm(e.target.value)}
-                    className="w-full bg-slate-950 border-2 border-slate-800 rounded-[24px] pl-14 pr-6 py-4 text-xs text-white font-bold outline-none focus:border-blue-500 shadow-inner"
-                  />
-               </div>
-               <select 
-                 value={filterStatus}
-                 onChange={e => setFilterStatus(e.target.value)}
-                 className="bg-slate-950 border-2 border-slate-800 rounded-[24px] px-6 py-4 text-[10px] font-black text-slate-300 uppercase outline-none focus:border-blue-500"
-               >
-                  <option value="ALL">TODOS LOS ESTADOS</option>
-                  <option value="READY">READY</option>
-                  <option value="INCALL">IN CALL</option>
-                  <option value="PAUSED">PAUSED</option>
-                  <option value="WRAPUP">WRAP-UP</option>
-               </select>
-            </div>
-         </div>
+      <div className="grid grid-cols-12 gap-8">
+        <div className="col-span-12 lg:col-span-9 flex flex-col">
+          <div className="glass rounded-[56px] border border-slate-700/50 shadow-2xl overflow-hidden flex flex-col">
+             <div className="p-10 border-b border-slate-800 bg-slate-900/60 flex flex-col lg:flex-row items-center justify-between gap-8">
+                <div className="flex items-center space-x-5">
+                   <div className="w-14 h-14 rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-500 shadow-inner">
+                      <Users size={24} />
+                   </div>
+                   <div>
+                      <h3 className="text-xl font-black text-white uppercase tracking-tight">Agent Overdrive Matrix</h3>
+                      <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Control Disciplinario en Tiempo Real</p>
+                   </div>
+                </div>
+                <div className="flex items-center gap-4 w-full lg:w-auto">
+                   <div className="relative flex-1 lg:w-80">
+                      <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
+                      <input 
+                        type="text" 
+                        placeholder="Buscar operador..." 
+                        value={searchTerm}
+                        onChange={e => setSearchTerm(e.target.value)}
+                        className="w-full bg-slate-950 border-2 border-slate-800 rounded-[24px] pl-14 pr-6 py-4 text-xs text-white font-bold outline-none focus:border-blue-500 shadow-inner"
+                      />
+                   </div>
+                </div>
+             </div>
 
-         <div className="overflow-x-auto scrollbar-hide">
-            <table className="w-full text-left">
-               <thead className="bg-slate-950/40 text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">
-                  <tr>
-                     <th className="px-10 py-6">Agente / Campaña</th>
-                     <th className="px-10 py-6 text-center">Estado</th>
-                     <th className="px-10 py-6 text-center">Duración</th>
-                     <th className="px-10 py-6 text-center">KPI Hoy</th>
-                     <th className="px-10 py-6 text-right">Controles GTR</th>
-                  </tr>
-               </thead>
-               <tbody className="divide-y divide-slate-800/50">
-                  {filteredAgents.map(agent => (
-                    <tr key={agent.agentId} className={`hover:bg-blue-600/5 transition-all group ${agent.warningLevel === 'CRITICAL' ? 'bg-rose-600/5' : ''}`}>
-                       <td className="px-10 py-8">
-                          <div className="flex items-center space-x-6">
-                             <div className="w-12 h-12 rounded-2xl bg-slate-800 flex items-center justify-center text-[11px] font-black text-blue-400 border border-slate-700 shadow-lg">
-                                {agent.agentName.split(' ').map(n=>n[0]).join('')}
-                             </div>
-                             <div>
-                                <span className="font-black text-sm text-slate-200 uppercase tracking-tight">{agent.agentName}</span>
-                                <p className="text-[9px] text-slate-600 font-bold uppercase tracking-widest mt-1">{agent.campaignName}</p>
-                             </div>
-                          </div>
-                       </td>
-                       <td className="px-10 py-8 text-center">
-                          <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border ${
-                            agent.status === 'READY' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
-                            agent.status === 'INCALL' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' :
-                            agent.status === 'PAUSED' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
-                            'bg-rose-500/10 text-rose-400 border-rose-500/20'
-                          }`}>
-                            {agent.status}
-                          </span>
-                       </td>
-                       <td className="px-10 py-8 text-center">
-                          <div className={`text-lg font-mono font-black tabular-nums ${agent.warningLevel === 'CRITICAL' ? 'text-rose-500 animate-pulse' : 'text-slate-300'}`}>
-                             {formatTime(agent.statusDuration)}
-                          </div>
-                       </td>
-                       <td className="px-10 py-8 text-center">
-                          <div className="flex items-center justify-center space-x-6">
-                             <div>
-                                <p className="text-[8px] font-black text-slate-600 uppercase">Ventas</p>
-                                <p className="text-sm font-black text-white">{agent.salesToday}</p>
-                             </div>
-                             <div>
-                                <p className="text-[8px] font-black text-slate-600 uppercase">Ocupación</p>
-                                <p className="text-sm font-black text-blue-400">{agent.occupancyRate}%</p>
-                             </div>
-                          </div>
-                       </td>
-                       <td className="px-10 py-8 text-right">
-                          <div className="flex items-center justify-end space-x-2">
-                             <button 
-                               onClick={() => handleForceReady(agent.agentId)}
-                               className="p-3 bg-slate-900 border border-slate-800 hover:bg-emerald-600 hover:text-white rounded-2xl transition-all shadow-xl active:scale-90"
-                               title="Forzar Ready"
-                             >
-                                <Play size={16} fill="currentColor" />
-                             </button>
-                             <button 
-                               className="p-3 bg-slate-900 border border-slate-800 hover:bg-amber-600 hover:text-white rounded-2xl transition-all shadow-xl active:scale-90"
-                               title="Intervenir Llamada"
-                             >
-                                <Headphones size={16} />
-                             </button>
-                             <button 
-                               className="p-3 bg-slate-900 border border-slate-800 hover:bg-rose-600 hover:text-white rounded-2xl transition-all shadow-xl active:scale-90"
-                               title="Desconectar"
-                             >
-                                <Power size={16} />
-                             </button>
-                          </div>
-                       </td>
-                    </tr>
-                  ))}
-               </tbody>
-            </table>
-         </div>
-         
-         <div className="p-8 bg-slate-950/40 border-t border-slate-800 flex items-center justify-between">
-            <div className="flex items-center space-x-8 text-[9px] font-black text-slate-600 uppercase tracking-widest">
-               <div className="flex items-center"><div className="w-2 h-2 rounded-full bg-emerald-500 mr-2"></div> Producción Nominal</div>
-               <div className="flex items-center"><div className="w-2 h-2 rounded-full bg-rose-500 mr-2"></div> Alerta Disciplinaria</div>
-            </div>
-            <button className="text-[10px] font-black text-blue-400 hover:text-blue-300 uppercase tracking-widest flex items-center">
-               Logs de Gestión Histórica <ChevronRight size={14} className="ml-1" />
-            </button>
-         </div>
+             <div className="overflow-x-auto scrollbar-hide">
+                <table className="w-full text-left">
+                   <thead className="bg-slate-950/40 text-[10px] font-black text-slate-500 uppercase tracking-[0.4em]">
+                      <tr>
+                         <th className="px-10 py-6">Agente</th>
+                         <th className="px-10 py-6 text-center">Estado</th>
+                         <th className="px-10 py-6 text-center">Duración</th>
+                         <th className="px-10 py-6 text-center">Ocupación</th>
+                         <th className="px-10 py-6 text-right">Mandos Supervisor</th>
+                      </tr>
+                   </thead>
+                   <tbody className="divide-y divide-slate-800/50">
+                      {filteredAgents.map(agent => (
+                        <tr key={agent.agentId} className={`hover:bg-blue-600/5 transition-all group ${agent.warningLevel === 'CRITICAL' ? 'bg-rose-600/10' : ''}`}>
+                           <td className="px-10 py-8">
+                              <div className="flex items-center space-x-6">
+                                 <div className={`w-12 h-12 rounded-2xl bg-slate-800 flex items-center justify-center text-[11px] font-black text-blue-400 border border-slate-700 shadow-lg ${agent.warningLevel === 'CRITICAL' ? 'border-rose-500 shadow-rose-500/20' : ''}`}>
+                                    {agent.agentName.split(' ').map(n=>n[0]).join('')}
+                                 </div>
+                                 <div>
+                                    <span className="font-black text-sm text-slate-200 uppercase tracking-tight">{agent.agentName}</span>
+                                    <p className="text-[9px] text-slate-600 font-bold uppercase tracking-widest mt-1">{agent.campaignName}</p>
+                                 </div>
+                              </div>
+                           </td>
+                           <td className="px-10 py-8 text-center">
+                              <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border transition-all ${
+                                agent.status === 'READY' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                                agent.status === 'INCALL' ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' :
+                                agent.status === 'PAUSED' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                                'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                              }`}>
+                                {agent.status}
+                              </span>
+                           </td>
+                           <td className="px-10 py-8 text-center">
+                              <div className={`text-lg font-mono font-black tabular-nums ${agent.warningLevel === 'CRITICAL' ? 'text-rose-500 animate-pulse' : 'text-slate-300'}`}>
+                                 {formatTime(agent.statusDuration)}
+                              </div>
+                           </td>
+                           <td className="px-10 py-8 text-center">
+                              <div className="flex flex-col items-center space-y-2">
+                                 <p className="text-sm font-black text-white">{agent.occupancyRate}%</p>
+                                 <div className="w-16 h-1 bg-slate-900 rounded-full overflow-hidden">
+                                    <div className={`h-full ${agent.occupancyRate > 85 ? 'bg-emerald-500' : 'bg-rose-500'}`} style={{ width: `${agent.occupancyRate}%` }}></div>
+                                 </div>
+                              </div>
+                           </td>
+                           <td className="px-10 py-8 text-right">
+                              <div className="flex items-center justify-end space-x-2">
+                                 <button onClick={() => handlePoke(agent.agentName)} className="p-3 bg-slate-900 border border-slate-800 hover:bg-blue-600 text-slate-500 hover:text-white rounded-xl transition-all shadow-xl" title="Enviar Poke Alerta"><Bell size={16} /></button>
+                                 <button onClick={() => handleForceReady(agent.agentId)} className="p-3 bg-slate-900 border border-slate-800 hover:bg-emerald-600 text-slate-500 hover:text-white rounded-xl transition-all shadow-xl" title="Forzar Ready"><Play size={16} fill="currentColor" /></button>
+                                 <button onClick={() => handleForceLogout(agent.agentId)} className="p-3 bg-slate-900 border border-slate-800 hover:bg-rose-600 text-slate-500 hover:text-white rounded-xl transition-all shadow-xl" title="Forzar Logout"><LogOut size={16} /></button>
+                              </div>
+                           </td>
+                        </tr>
+                      ))}
+                   </tbody>
+                </table>
+             </div>
+          </div>
+        </div>
+
+        <div className="col-span-12 lg:col-span-3 space-y-8">
+           <div className="glass p-8 rounded-[56px] border border-rose-500/20 bg-rose-500/5 shadow-2xl space-y-8">
+              <h3 className="text-xl font-black text-white uppercase tracking-tight flex items-center">
+                 <AlertCircle className="mr-3 text-rose-500" /> Threshold Alerts
+              </h3>
+              <div className="space-y-4 max-h-[600px] overflow-y-auto scrollbar-hide pr-2">
+                 {agents.filter(a => a.warningLevel === 'CRITICAL').map(a => (
+                    <div key={a.agentId} className="p-5 bg-slate-950/80 border border-rose-500/30 rounded-3xl space-y-3 animate-pulse">
+                       <div className="flex justify-between items-center">
+                          <span className="text-[10px] font-black text-rose-400 uppercase tracking-widest">{a.status} EXCESIVO</span>
+                          <span className="text-[10px] font-mono text-rose-300">{formatTime(a.statusDuration)}</span>
+                       </div>
+                       <p className="text-xs font-black text-white uppercase tracking-tight">{a.agentName}</p>
+                       <button onClick={() => handleForceReady(a.agentId)} className="w-full py-2 bg-rose-600 text-white rounded-xl text-[9px] font-black uppercase tracking-widest active:scale-95">Normalizar Estado</button>
+                    </div>
+                 ))}
+                 {agents.filter(a => a.warningLevel === 'CRITICAL').length === 0 && (
+                    <div className="py-20 text-center opacity-20">
+                       <ShieldCheck size={64} className="mx-auto text-emerald-500 mb-4" />
+                       <p className="text-xs font-black uppercase tracking-widest text-white">No hay desvíos críticos</p>
+                    </div>
+                 )}
+              </div>
+           </div>
+
+           <div className="p-8 glass rounded-[48px] border border-blue-500/20 bg-blue-600/5 space-y-6">
+              <h4 className="font-black text-lg text-white uppercase tracking-tighter flex items-center">
+                 <Zap className="mr-3 text-blue-400" size={20} /> Overdrive Stats
+              </h4>
+              <div className="space-y-4">
+                 <div className="p-4 bg-slate-950 rounded-2xl border border-slate-800">
+                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest">Avg planta ready</p>
+                    <p className="text-xl font-black text-emerald-400">14.2s</p>
+                 </div>
+                 <div className="p-4 bg-slate-950 rounded-2xl border border-slate-800">
+                    <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest">Time Leaks (Global)</p>
+                    <p className="text-xl font-black text-rose-500">42m 12s</p>
+                 </div>
+              </div>
+           </div>
+        </div>
       </div>
     </div>
   );

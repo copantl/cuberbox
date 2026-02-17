@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo, useEffect } from 'react';
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -11,10 +12,10 @@ import {
   Database, Layers, CheckCircle2, AlertTriangle, ArrowRight, Coffee,
   Mic, UserCheck, Mail, PhoneOff, Smartphone, List, ChevronRight, Info,
   TrendingDown, Star, ShieldCheck, Sparkles, BrainCircuit,
-  // Added missing Smile and FileText imports to fix errors on lines 169 and 293
   Smile, FileText
 } from 'lucide-react';
 import { MOCK_CAMPAIGNS, MOCK_CDR_DATA, MOCK_PAUSE_RECORDS, PAUSE_CODES } from '../constants';
+import { useToast } from '../ToastContext';
 
 const agentKPIs = [
   { name: 'Maria G.', fcr: 82, aht: 310, csat: 4.9, qa: 98, occupancy: 88, pauseTime: 4500, trend: 'up' },
@@ -48,12 +49,13 @@ const MOCK_LISTS_PERFORMANCE = [
     noAnswer: 1700, 
     dnc: 120, 
     sales: 88, 
-    penetration: 42.5,
+    penetration: 42.5, 
     avgDuration: '3m 15s'
   },
 ];
 
 const Reports: React.FC = () => {
+  const { toast } = useToast();
   const [reportType, setReportType] = useState<'KPI' | 'PAUSE' | 'CDR' | 'LIST'>('KPI');
   const [selectedListId, setSelectedListId] = useState('1001');
   const [cdrFilter, setCdrFilter] = useState("");
@@ -69,7 +71,7 @@ const Reports: React.FC = () => {
   ];
 
   const handleExport = () => {
-    alert(`Generando reporte estructurado de "${selectedList.name}"... El archivo CSV estará listo en segundos.`);
+    toast(`Generando reporte estructurado de "${selectedList.name}"... El archivo CSV estará listo en segundos.`, "info", "Exportación BI");
   };
 
   const filteredCDR = MOCK_CDR_DATA.filter(cdr => 
@@ -409,7 +411,8 @@ const Reports: React.FC = () => {
                   <kpi.icon size={24} />
                 </div>
                 <div>
-                   <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{kpi.label}</p>                   <h3 className="text-3xl font-black text-white tracking-tighter mt-1">{kpi.val}</h3>
+                   <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{kpi.label}</p>
+                   <h3 className="text-3xl font-black text-white tracking-tighter mt-1">{kpi.val}</h3>
                    <p className="text-[9px] text-slate-600 font-bold uppercase mt-1">{kpi.sub}</p>
                 </div>
               </div>

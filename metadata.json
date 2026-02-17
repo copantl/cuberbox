@@ -4,6 +4,6 @@
     "microphone",
     "geolocation"
   ],
-  "name": "CUBERBOX ELITE v5.1 | Titan Cluster Orchestrator",
-  "description": "La solución líder para contact centers de alto rendimiento. Orquestación SIP con IA Gemini integrada y escalabilidad elástica Titan."
+  "name": "CUBERBOX Pro v4.7.9 | Adaptive Media Engine",
+  "description": "Réplica modernizada de Vicidial con soporte nativo para Clúster FreeSwitch 1.10, PostgreSQL 16 y alta disponibilidad via Keepalived/HAProxy."
 }

@@ -1,14 +1,11 @@
-
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { 
-  Database, HardDrive, Search, Filter, Play, Pause, Download, 
+  Database, HardDrive, Search, Filter, Play, Download, 
   Trash2, RefreshCw, ShieldCheck, PieChart, Info, Save, X,
   ChevronRight, ArrowUpRight, Share2, Terminal, Clock, 
   Smartphone, Headphones, Mic, Sparkles, Wand2, Cloud,
   ExternalLink, FileText, Zap, Layers, AlertCircle,
-  FolderOpen, Settings, Volume2, Shield, Activity,
-  // Added missing CheckCircle2 import
-  CheckCircle2
+  FolderOpen, Settings, Volume2, Shield, Activity, CheckCircle2
 } from 'lucide-react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -26,11 +23,10 @@ const StorageServer: React.FC = () => {
   const [isBackingUp, setIsBackingUp] = useState(false);
   const [isPurging, setIsPurging] = useState(false);
 
-  // Storage Stats Data
   const storageData = [
     { name: 'Alpha Node', val: 65, color: '#3b82f6' },
     { name: 'Beta Node', val: 22, color: '#10b981' },
-    { name: 'NAS Backup', val: 40, color: '#f59e0b' },
+    { name: 'NAS Backup', val: 40, color: '#f59e0b' }
   ];
 
   const handleBackup = async () => {
@@ -76,7 +72,6 @@ const StorageServer: React.FC = () => {
              {isBackingUp ? <RefreshCw className="animate-spin" size={20} /> : <Cloud size={20} />}
              <span className="text-[10px] font-black uppercase tracking-widest">Generar Backup</span>
            </button>
-           {/* Fixed: replaced undefined handleOpenConfig with setActiveTab('CONFIG') */}
            <button 
             onClick={() => setActiveTab('CONFIG')}
             className="p-4 bg-slate-900 border border-slate-800 hover:bg-slate-800 text-slate-500 hover:text-white rounded-2xl transition-all shadow-lg"
@@ -86,13 +81,12 @@ const StorageServer: React.FC = () => {
         </div>
       </div>
 
-      {/* Tabs de Navegación del Plano */}
       <div className="flex space-x-2 bg-slate-900 border-2 border-slate-800 p-1.5 rounded-2xl w-fit shadow-inner">
         {[
           { id: 'DASHBOARD', label: 'Estatado Nodos', icon: Activity },
           { id: 'EXPLORER', label: 'Búsqueda Forense', icon: Search },
           { id: 'BACKUPS', label: 'Logs de Backup', icon: Layers },
-          { id: 'CONFIG', label: 'Políticas Purga', icon: Shield },
+          { id: 'CONFIG', label: 'Políticas Purga', icon: Shield }
         ].map(tab => (
           <button
             key={tab.id}
@@ -307,7 +301,7 @@ const StorageServer: React.FC = () => {
                   { label: 'Destino Local', val: 'NAS_CLUSTER_01', icon: HardDrive, col: 'blue' },
                   { label: 'Destino Cloud', val: 'AWS_S3_GLACIER', icon: Cloud, col: 'indigo' },
                   { label: 'Frecuencia', val: 'Diario 02:00 AM', icon: Clock, col: 'emerald' },
-                  { label: 'Última Carga', val: 'Hace 4h', icon: Save, col: 'amber' },
+                  { label: 'Última Carga', val: 'Hace 4h', icon: Save, col: 'amber' }
                 ].map((k, i) => (
                   <div key={i} className="glass p-8 rounded-[40px] border border-slate-700/50 shadow-xl flex flex-col justify-between group">
                      <div className={`p-3 rounded-2xl bg-${k.col}-600/10 text-${k.col}-400 w-fit mb-6 border border-white/5`}>
@@ -445,7 +439,6 @@ const StorageServer: React.FC = () => {
         )}
       </div>
 
-      {/* Floating Audio Player Context (Cuando se selecciona una grabación) */}
       {selectedRec && (
         <div className="fixed bottom-10 left-1/2 -translate-x-1/2 w-full max-w-4xl z-[150] px-6 animate-in slide-in-from-bottom-10 duration-500">
            <div className="glass p-8 rounded-[48px] border-2 border-blue-500/30 shadow-[0_0_100px_rgba(59,130,246,0.2)] bg-[#020617]/95 flex items-center space-x-10 relative overflow-hidden group">

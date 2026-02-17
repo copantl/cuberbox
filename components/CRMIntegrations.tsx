@@ -10,8 +10,8 @@ import { MOCK_CRM_INTEGRATIONS } from '../constants';
 const PROVIDERS = [
   { id: 'ODOO', name: 'Odoo ERP', icon: '💎', color: 'from-purple-500 to-purple-700' },
   { id: 'IDEMPIERE', name: 'iDempiere', icon: '🏛️', color: 'from-blue-500 to-blue-700' },
-  { id: 'WORKFORCE', name: 'Workforce', icon: '👥', color: 'from-emerald-500 to-emerald-700' },
-  { id: 'SALESFORCE', name: 'Salesforce', icon: '☁️', color: 'from-cyan-500 to-cyan-700' },
+  { id: 'SALESFORCE_PLATFORM', name: 'Salesforce Platform', icon: '☁️', color: 'from-blue-400 to-blue-600' },
+  { id: 'SALESFORCE', name: 'Salesforce CRM', icon: '☁️', color: 'from-cyan-500 to-cyan-700' },
   { id: 'CUSTOM', name: 'Custom Webhook', icon: '⚡', color: 'from-amber-500 to-amber-700' },
 ];
 
