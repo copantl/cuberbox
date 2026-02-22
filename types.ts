@@ -23,10 +23,9 @@ export interface Lead {
 export interface Script {
   id: string;
   name: string;
-  content: string; // Markdown-ish with {{variables}}
+  content: string; 
 }
 
-// Added CampaignRealTime interface
 export interface CampaignRealTime {
   callsActive: number;
   callsRinging: number;
@@ -53,16 +52,7 @@ export interface Campaign {
   recordingMode: 'ALL_CALLS' | 'MANUAL' | 'NEVER';
   scriptId?: string;
   mohId?: string;
-  // Added liveStats property
   liveStats?: CampaignRealTime;
-}
-
-export interface HopperLead {
-  id: string;
-  phone: string;
-  priority: number;
-  listId: string;
-  attempts: number;
 }
 
 export interface User {
@@ -74,32 +64,30 @@ export interface User {
   extension: string;
   status: 'online' | 'offline' | 'oncall' | 'paused' | 'wrapup';
   userLevel: number;
-  // Added missing properties
   groupId?: string;
   mfaEnabled?: boolean;
-  mfaSecret?: string;
-  authMethod?: string;
 }
 
-// Added missing interfaces
-export interface CallCode {
+export type ChannelType = 'WHATSAPP' | 'TIKTOK' | 'FACEBOOK' | 'INSTAGRAM' | 'SMS';
+export type InteractionStatus = 'QUEUE' | 'ASSIGNED' | 'RESOLVED';
+
+export interface WhatsAppMessage {
   id: string;
-  name: string;
-  isSale: boolean;
-  isDNC: boolean;
-  isCallback: boolean;
-  selectable: boolean;
-  color: string;
-  description?: string;
-  hotkey?: string;
-  category?: 'HUMAN' | 'MACHINE' | 'SYSTEM';
+  text: string;
+  sender: 'AGENT' | 'CUSTOMER' | 'SYSTEM';
+  timestamp: string;
 }
 
-export interface AIBot {
+export interface WhatsAppConversation {
   id: string;
-  name: string;
-  prompt: string;
-  campaignId: string;
+  contactName: string;
+  channel: ChannelType;
+  status: InteractionStatus;
+  agentId?: string;
+  sentiment: 'POSITIVE' | 'NEUTRAL' | 'NEGATIVE';
+  lastActivity: string;
+  messages: WhatsAppMessage[];
+  summary?: string;
 }
 
 export interface UserGroup {
@@ -121,21 +109,6 @@ export interface UserGroup {
   };
   memberIds: string[];
 }
-
-export interface WhatsAppMessage {
-  id: string;
-  text: string;
-  sender: 'AGENT' | 'CUSTOMER';
-  timestamp: string;
-}
-
-export interface WhatsAppConversation {
-  id: string;
-  contactName: string;
-  messages: WhatsAppMessage[];
-}
-
-export type ChannelType = 'WABA' | 'SMS' | 'TIKTOK';
 
 export interface CRMIntegration {
   id: string;
@@ -263,7 +236,6 @@ export type SyncStatus = 'ONLINE' | 'OFFLINE' | 'PROVISIONING' | 'REPLICATING' |
 
 export interface ClusterNode {
   id: string;
-  name: string;
   ip: string;
   role: NodeRole;
   status: SyncStatus;
@@ -273,7 +245,6 @@ export interface ClusterNode {
   threads: number;
   dbLatency: number;
   lastSync?: string;
-  sshPort?: number;
 }
 
 export interface GTRAgentMetric {
@@ -355,4 +326,26 @@ export interface HAConfig {
   interface: string;
   keepalivedPriority: number;
   healthCheckInterval: number;
+}
+
+// Added CallCode interface
+export interface CallCode {
+  id: string;
+  name: string;
+  isSale: boolean;
+  isDNC: boolean;
+  isCallback: boolean;
+  selectable: boolean;
+  color: string;
+  description: string;
+  hotkey?: string;
+  category?: string;
+}
+
+// Added AIBot interface
+export interface AIBot {
+  id: string;
+  name: string;
+  campaignId: string;
+  prompt: string;
 }

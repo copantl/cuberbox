@@ -276,7 +276,7 @@ const AnalyticsHub: React.FC = () => {
                   <p className="text-emerald-400/80">[{new Date().toLocaleTimeString()}] AUTH: Superset_Service_Account authenticated via JWT</p>
                   <p className="text-blue-400/80">[{new Date().toLocaleTimeString()}] QUERY: Incoming SELECT from 172.16.4.12 (id: 742)</p>
                   <p className="text-slate-500">[{new Date().toLocaleTimeString()}] DATA: Exported 12,400 bytes to Apache Superset instance</p>
-                  <p className="text-amber-500/80">[{new Date().toLocaleTimeString()}] WARN: Query execution time > 200ms detected on table leads_performance</p>
+                  <p className="text-amber-500/80">[{new Date().toLocaleTimeString()}] WARN: Query execution time &gt; 200ms detected on table leads_performance</p>
                   <p className="text-emerald-400/80">[{new Date().toLocaleTimeString()}] HEARTBEAT: External BI tool status UP</p>
                </div>
             </div>

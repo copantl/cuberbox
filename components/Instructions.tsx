@@ -92,7 +92,7 @@ const Instructions: React.FC = () => {
                 <div>
                   <h4 className="text-sm font-black text-white uppercase tracking-widest mb-1">Nota de Seguridad</h4>
                   <p className="text-xs text-slate-500 leading-relaxed font-bold uppercase tracking-wider">
-                     El script generará una contraseña aleatoria para el Event Socket (ESL). Asegúrese de sincronizarla en la pestaña de Configuración > Core.
+                     El script generará una contraseña aleatoria para el Event Socket (ESL). Asegúrese de sincronizarla en la pestaña de Configuración &gt; Core.
                   </p>
                 </div>
              </div>

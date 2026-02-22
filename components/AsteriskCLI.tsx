@@ -89,7 +89,7 @@ const AsteriskCLI: React.FC = () => {
 
       <div className="p-6 bg-slate-950 border-t border-slate-800">
         <div className="flex items-center space-x-4 bg-slate-900 border-2 border-slate-800 rounded-2xl px-6 py-4 focus-within:border-orange-500 transition-all">
-          <span className="text-orange-500 font-black font-mono">asterisk*CLI></span>
+          <span className="text-orange-500 font-black font-mono">asterisk*CLI&gt;</span>
           <input 
             type="text" 
             placeholder=" pjsip show endpoints | core reload | manager show connected ..." 
