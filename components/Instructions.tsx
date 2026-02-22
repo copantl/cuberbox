@@ -105,16 +105,66 @@ const Instructions: React.FC = () => {
                 <h3 className="text-2xl font-black text-white uppercase mb-8 flex items-center"><Terminal className="mr-4 text-blue-500" /> Secuencia SSH Manual</h3>
                 <div className="space-y-6">
                    <div className="p-8 bg-slate-950 rounded-3xl border border-slate-800">
-                      <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 1: Clonar Nexus Framework</p>
-                      <code className="text-emerald-400 text-sm font-mono">git clone https://github.com/copantl/cuberbox-pro.git /opt/cuberbox</code>
+                      <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 1: Preparación del Servidor</p>
+                      <p className="text-xs text-slate-500 mb-4 font-bold uppercase tracking-wider">Primero, instalamos las herramientas básicas y librerías que el sistema necesita para funcionar correctamente.</p>
+                      <code className="text-emerald-400 text-[11px] font-mono block leading-relaxed bg-black/40 p-4 rounded-xl">apt-get update && apt-get install -y gnupg2 wget lsb-release curl build-essential cmake automake autoconf libtool libtool-bin pkg-config libssl-dev zlib1g-dev libdb-dev libncurses5-dev libsqlite3-dev libcurl4-openssl-dev libpcre3-dev libspeex-dev libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev libopus-dev libsndfile1-dev libshout3-dev libmpg123-dev python3-dev git golang-go haproxy keepalived</code>
                    </div>
                    <div className="p-8 bg-slate-950 rounded-3xl border border-slate-800">
-                      <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 2: Inyectar DB SQL</p>
-                      <code className="text-emerald-400 text-sm font-mono">{'sudo -u postgres psql < /opt/cuberbox/setup/schema.sql'}</code>
+                      <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 2: Configuración de Repositorios</p>
+                      <p className="text-xs text-slate-500 mb-4 font-bold uppercase tracking-wider">Conectamos el servidor con las fuentes oficiales de software. Reemplace [TOKEN] con su clave de SignalWire.</p>
+                      <code className="text-emerald-400 text-[11px] font-mono block leading-relaxed bg-black/40 p-4 rounded-xl">
+                        echo "machine assignments.signalwire.com login signalwire password [TOKEN]" &gt; /etc/apt/auth.conf.d/signalwire.conf<br/>
+                        wget --http-user=signalwire --http-password=[TOKEN] -O - https://assignments.signalwire.com/reference/gpg/signalwire_pub.gpg | apt-key add -<br/>
+                        echo "deb https://assignments.signalwire.com/reference/debian/$(lsb_release -sc) release main" &gt; /etc/apt/sources.list.d/freeswitch.list<br/>
+                        sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" &gt; /etc/apt/sources.list.d/pgdg.list'<br/>
+                        wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+                      </code>
                    </div>
                    <div className="p-8 bg-slate-950 rounded-3xl border border-slate-800">
-                      <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 3: Lanzar FreeSwitch CLI</p>
-                      <code className="text-emerald-400 text-sm font-mono">fs_cli -H 127.0.0.1 -P 8021</code>
+                      <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 3: Instalación de Motores</p>
+                      <p className="text-xs text-slate-500 mb-4 font-bold uppercase tracking-wider">Instalamos las librerías de SignalWire, FreeSwitch y PostgreSQL. Este paso es el más importante.</p>
+                      <code className="text-emerald-400 text-[11px] font-mono block leading-relaxed bg-black/40 p-4 rounded-xl">apt-get update && apt-get install -y libks-dev signalwire-client-c-dev freeswitch-all freeswitch-mod-esl freeswitch-mod-verto postgresql-16</code>
+                   </div>
+                   <div className="p-8 bg-slate-950 rounded-3xl border border-slate-800">
+                      <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 4: Base de Datos Segura</p>
+                      <p className="text-xs text-slate-500 mb-4 font-bold uppercase tracking-wider">Creamos el espacio donde se guardará toda la información de sus clientes y llamadas.</p>
+                      <code className="text-emerald-400 text-[11px] font-mono block leading-relaxed bg-black/40 p-4 rounded-xl">
+                        sudo -u postgres psql -c "CREATE USER cuberbox_admin WITH PASSWORD 'TitanPass2024!';"<br/>
+                        sudo -u postgres psql -c "CREATE DATABASE cuberbox_db OWNER cuberbox_admin;"
+                      </code>
+                   </div>
+                   <div className="p-8 bg-slate-950 rounded-3xl border border-slate-800">
+                      <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 5: Seguridad SSL</p>
+                      <p className="text-xs text-slate-500 mb-4 font-bold uppercase tracking-wider">Generamos certificados para que las llamadas desde el navegador sean privadas y seguras.</p>
+                      <code className="text-emerald-400 text-[11px] font-mono block leading-relaxed bg-black/40 p-4 rounded-xl">
+                        mkdir -p /etc/freeswitch/tls<br/>
+                        openssl req -x509 -nodes -days 3650 -newkey rsa:4096 -keyout /etc/freeswitch/tls/wss.key -out /etc/freeswitch/tls/wss.crt -subj "/C=US/ST=Tech/L=Cloud/O=Cuberbox/CN=sip.tu-dominio.com"<br/>
+                        cat /etc/freeswitch/tls/wss.crt /etc/freeswitch/tls/wss.key &gt; /etc/freeswitch/tls/wss.pem<br/>
+                        chown -R freeswitch:freeswitch /etc/freeswitch/tls
+                      </code>
+                   </div>
+                   <div className="p-8 bg-slate-950 rounded-3xl border border-slate-800">
+                      <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 6: Alta Disponibilidad</p>
+                      <p className="text-xs text-slate-500 mb-4 font-bold uppercase tracking-wider">Configuramos el sistema de vigilancia que mantiene su servidor siempre en línea.</p>
+                      <code className="text-emerald-400 text-[11px] font-mono block leading-relaxed bg-black/40 p-4 rounded-xl">
+                        mkdir -p /etc/keepalived<br/>
+                        cat &lt;&lt;EOF &gt; /etc/keepalived/keepalived.conf<br/>
+                        vrrp_instance VI_1 &#123;<br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;state MASTER<br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;interface eth0<br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;virtual_router_id 51<br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;priority 150<br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;advert_int 1<br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;authentication &#123;<br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;auth_type PASS<br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;auth_pass nexus_ha_key<br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&#125;<br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;virtual_ipaddress &#123;<br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;192.168.1.100<br/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&#125;<br/>
+                        &#125;<br/>
+                        EOF
+                      </code>
                    </div>
                 </div>
              </div>

@@ -39,11 +39,13 @@ const MANUAL_DATABASE: ManualEntry[] = [
     category: 'OPERACIONES',
     summary: 'Interfaz unificada para la gestión de tráfico entrante, saliente y omnicanal.',
     functionality: 'La terminal opera sobre el protocolo Verto (WebRTC), permitiendo comunicación de baja latencia sin necesidad de softphones externos. Gestiona estados de pausa, marcación manual, scripts dinámicos y matrices de tipificación con hotkeys.',
-    usage: '1. Inicie sesión con su extensión. 2. Active el modo "Ready". 3. Al recibir un lead, el Script se inyectará automáticamente con los datos del cliente. 4. Use la matriz derecha para tipificar en menos de 2 segundos.',
+    usage: 'Para comenzar a trabajar, el agente debe seguir un flujo lógico que garantiza que el sistema lo reconozca como activo y listo para recibir clientes.',
     steps: [
-      { title: 'Anclaje de Sesión', desc: 'Al entrar, el sistema realiza una llamada de anclaje a la sala de conferencia 8600+EXT para mantener el canal de audio abierto.' },
-      { title: 'Gestión de Pausas', desc: 'Utilice los Pause Codes configurados (Almuerzo, Break, etc.) para detener la inyección de leads del Hopper.' },
-      { title: 'Transferencias', desc: 'Habilite el panel de transferencias para mover llamadas a colas de supervisión o niveles superiores de venta.' }
+      { title: 'Paso 1: Inicio de Sesión y Anclaje', desc: 'Ingrese sus credenciales y extensión. El sistema realizará automáticamente una llamada a su navegador. Debe contestar esta llamada; es el "puente de audio" que lo mantendrá conectado con el servidor durante toda su jornada.' },
+      { title: 'Paso 2: Selección de Campaña', desc: 'Elija la campaña en la que va a trabajar. Esto cargará los scripts, bases de datos y reglas de marcación específicas para ese proyecto.' },
+      { title: 'Paso 3: Ponerse en modo "Ready"', desc: 'Haga clic en el botón verde de "Ready". A partir de este momento, el motor predictivo comenzará a enviarle llamadas o mensajes de redes sociales de forma automática.' },
+      { title: 'Paso 4: Gestión de la Interacción', desc: 'Cuando entre una llamada, verá los datos del cliente en pantalla. Siga el script sugerido. Al terminar, use la matriz de botones a la derecha para indicar qué sucedió (Venta, No Contesta, etc.).' },
+      { title: 'Paso 5: Uso de Pausas', desc: 'Si necesita retirarse de su puesto, use el menú de Pausas. Elija el motivo correcto (Almuerzo, Capacitación, etc.). Esto es vital para que el supervisor sepa por qué no está recibiendo llamadas.' }
     ]
   },
   {
@@ -53,11 +55,12 @@ const MANUAL_DATABASE: ManualEntry[] = [
     category: 'INFRAESTRUCTURA',
     summary: 'Algoritmo de marcación adaptativa basado en probabilidad y tasa de abandono.',
     functionality: 'El motor calcula el "Dial Ratio" dinámicamente. El Hopper actúa como un búfer de memoria pre-cargando los mejores leads de la base de datos para inyectarlos en el marcador en microsegundos cuando un agente queda libre.',
-    usage: 'Configura el "Auto Dial Level" en la campaña. Un nivel de 4.0 significa que el sistema marcará 4 líneas por cada agente libre, ajustándose según el Drop Rate detectado.',
+    usage: 'Como administrador, su objetivo es mantener a los agentes hablando el mayor tiempo posible sin generar demasiadas llamadas abandonadas.',
     steps: [
-      { title: 'Configuración de Ratio', desc: 'Ajuste el multiplicador según la contactabilidad de la base. Ratios altos para bases frías, bajos para bases calientes.' },
-      { title: 'AMD (Answering Machine Detection)', desc: 'Active el filtrado de buzones para que el sistema cuelgue automáticamente las máquinas y solo pase humanos al agente.' },
-      { title: 'Hopper Flush', desc: 'Use esta función si cambia la prioridad de las listas para limpiar la cola actual de marcación.' }
+      { title: 'Paso 1: Carga de Bases de Datos', desc: 'Suba sus archivos CSV con los contactos. El sistema los procesará y los asignará a las listas correspondientes de la campaña.' },
+      { title: 'Paso 2: Configuración del Hopper', desc: 'Defina cuántos leads quiere que el sistema tenga "listos" en memoria. Un valor de 500 es ideal para la mayoría de las operaciones medianas.' },
+      { title: 'Paso 3: Ajuste del Nivel de Marcación', desc: 'Comience con un ratio bajo (ej. 1.5). Si nota que los agentes esperan mucho, suba el ratio. Si nota que entran llamadas y no hay agentes libres (Drop), baje el ratio inmediatamente.' },
+      { title: 'Paso 4: Activación de AMD', desc: 'Habilite la detección de contestadoras. Esto ahorra tiempo a sus agentes al filtrar automáticamente los buzones de voz, entregándoles solo personas reales.' }
     ]
   },
   {
@@ -67,24 +70,53 @@ const MANUAL_DATABASE: ManualEntry[] = [
     category: 'AI & NEURAL',
     summary: 'Integración de Gemini 3 Pro para análisis semántico y asistencia en vivo.',
     functionality: 'Utiliza modelos LLM para auditar el 100% de las grabaciones, detectar sentimientos, extraer compromisos de pago y sugerir respuestas al agente en el Hub Omnicanal.',
-    usage: 'En el módulo AI Studio, defina el "System Instruction" de su bot. Vincule el bot a una campaña para habilitar la auditoría automática post-llamada.',
+    usage: 'Configure su asistente virtual para que aprenda sobre su negocio y ayude a sus agentes a cerrar más ventas.',
     steps: [
-      { title: 'Neural Prompting', desc: 'Escriba instrucciones detalladas sobre el tono y los KPIs que la IA debe evaluar en cada interacción.' },
-      { title: 'Sentiment Analysis', desc: 'La IA calificará cada llamada como POSITIVA, NEUTRAL o NEGATIVA basándose en la transcripción del audio.' },
-      { title: 'Auto-Scoring', desc: 'El sistema genera una nota de calidad (QA) sin intervención humana, reduciendo costos de supervisión.' }
+      { title: 'Paso 1: Definir la Personalidad de la IA', desc: 'En el AI Studio, escriba las instrucciones del sistema. Dígale a la IA quién es (ej: "Eres un experto en ventas inmobiliarias") y qué debe buscar en las llamadas.' },
+      { title: 'Paso 2: Configurar Reglas de Evaluación', desc: 'Indique qué criterios debe calificar la IA: ¿El agente saludó correctamente? ¿Mencionó el precio? ¿Fue amable?' },
+      { title: 'Paso 3: Revisión de Sentimientos', desc: 'Acceda al panel de analítica para ver el "clima" de sus llamadas. La IA marcará en rojo las conversaciones donde el cliente se notó molesto para que usted pueda intervenir.' },
+      { title: 'Paso 4: Uso de Sugerencias en Vivo', desc: 'Active la asistencia para agentes. Mientras chatean por WhatsApp, la IA les sugerirá la mejor respuesta basada en el historial de la conversación.' }
     ]
   },
   {
-    id: 'cluster-ha-config',
-    title: 'Clúster y Alta Disponibilidad',
-    icon: ShieldCheck,
-    category: 'INFRAESTRUCTURA',
-    summary: 'Arquitectura distribuida para garantizar 99.99% de uptime.',
-    functionality: 'Nexus Pro utiliza Keepalived para gestionar una Virtual IP (VIP). Si el nodo maestro falla, un nodo esclavo asume la identidad de red en menos de 2 segundos, manteniendo las llamadas activas.',
-    usage: 'Monitoree el estado de los nodos en el "Clúster Monitor". Use el botón de "Promote Master" solo en caso de mantenimiento programado del servidor principal.',
+    id: 'manual-installation-nexus',
+    title: 'Guía de Instalación Manual',
+    icon: TerminalSquare,
+    category: 'ADMINISTRACIÓN',
+    summary: 'Procedimiento paso a paso para el despliegue de la infraestructura Nexus desde cero.',
+    functionality: 'Esta guía detalla la secuencia técnica necesaria para instalar FreeSwitch 1.10, PostgreSQL 16 y el stack de alta disponibilidad en servidores Debian 12/13 limpios.',
+    usage: 'Esta guía es para técnicos. Siga cada paso con calma. Si un comando falla, no continúe al siguiente sin resolver el error.',
     steps: [
-      { title: 'Vínculo PostgreSQL', desc: 'Asegure que todos los nodos apunten al clúster de base de datos con replicación síncrona habilitada.' },
-      { title: 'Sofia Sync', desc: 'Los perfiles de SIP se sincronizan automáticamente para que los Carriers estén registrados en todos los nodos simultáneamente.' }
+      { 
+        title: 'Paso 1: Preparar el Terreno', 
+        desc: 'Primero, debemos limpiar y preparar el servidor con todas las herramientas básicas que FreeSwitch necesitará.',
+        code: 'apt-get update && apt-get install -y gnupg2 wget lsb-release curl build-essential cmake automake autoconf libtool libtool-bin pkg-config libssl-dev zlib1g-dev libdb-dev libncurses5-dev libsqlite3-dev libcurl4-openssl-dev libpcre3-dev libspeex-dev libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev libopus-dev libsndfile1-dev libshout3-dev libmpg123-dev python3-dev git golang-go haproxy keepalived'
+      },
+      { 
+        title: 'Paso 2: Conectar con SignalWire', 
+        desc: 'FreeSwitch requiere un token oficial para descargar sus archivos. Ingrese su token donde dice [TOKEN]. Esto le da acceso a la versión más estable y segura.',
+        code: 'echo "machine assignments.signalwire.com login signalwire password [TOKEN]" > /etc/apt/auth.conf.d/signalwire.conf\nwget --http-user=signalwire --http-password=[TOKEN] -O - https://assignments.signalwire.com/reference/gpg/signalwire_pub.gpg | apt-key add -\necho "deb https://assignments.signalwire.com/reference/debian/$(lsb_release -sc) release main" > /etc/apt/sources.list.d/freeswitch.list\nsh -c \'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list\'\nwget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -'
+      },
+      { 
+        title: 'Paso 3: Instalación del Corazón del Sistema', 
+        desc: 'Ahora instalamos las librerías de SignalWire, el motor de llamadas FreeSwitch y PostgreSQL.',
+        code: 'apt-get update && apt-get install -y libks-dev signalwire-client-c-dev freeswitch-all freeswitch-mod-esl freeswitch-mod-verto postgresql-16'
+      },
+      { 
+        title: 'Paso 4: Configurar la Base de Datos', 
+        desc: 'Creamos un usuario y una base de datos segura. Piense en esto como crear la oficina donde el sistema guardará todos sus archivos importantes.',
+        code: 'sudo -u postgres psql -c "CREATE USER cuberbox_admin WITH PASSWORD \'TitanPass2024!\';" \nsudo -u postgres psql -c "CREATE DATABASE cuberbox_db OWNER cuberbox_admin;"'
+      },
+      { 
+        title: 'Paso 5: Seguridad SSL (El Candado)', 
+        desc: 'Para que las llamadas por navegador funcionen, necesitamos certificados de seguridad. Esto encripta la voz para que nadie pueda escucharla externamente.',
+        code: 'mkdir -p /etc/freeswitch/tls\nopenssl req -x509 -nodes -days 3650 -newkey rsa:4096 -keyout /etc/freeswitch/tls/wss.key -out /etc/freeswitch/tls/wss.crt -subj "/C=US/ST=Tech/L=Cloud/O=Cuberbox/CN=sip.tu-dominio.com"\ncat /etc/freeswitch/tls/wss.crt /etc/freeswitch/tls/wss.key > /etc/freeswitch/tls/wss.pem\nchown -R freeswitch:freeswitch /etc/freeswitch/tls'
+      },
+      { 
+        title: 'Paso 6: Alta Disponibilidad (El Respaldo)', 
+        desc: 'Configuramos un sistema que vigila el servidor. Si algo falla, el sistema de respaldo toma el control automáticamente sin que usted lo note.',
+        code: 'mkdir -p /etc/keepalived\ncat <<EOF > /etc/keepalived/keepalived.conf\nvrrp_instance VI_1 {\n    state MASTER\n    interface eth0\n    virtual_router_id 51\n    priority 150\n    advert_int 1\n    authentication {\n        auth_type PASS\n        auth_pass nexus_ha_key\n    }\n    virtual_ipaddress {\n        192.168.1.100\n    }\n}\nEOF'
+      }
     ]
   }
 ];

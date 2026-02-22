@@ -45,8 +45,14 @@ fi
 OS_VER=$(lsb_release -sc)
 echo -e "${GREEN}[SYSTEM] Detectado Debian: ${OS_VER}${NC}"
 
-# 4. Instalación de Dependencias Previas (Manual PieceByte)
-echo -e "${BLUE}[1/5] Instalando dependencias de sistema y librerías de medios...${NC}"
+# 4. Configuración de Repositorios SignalWire
+echo -e "${BLUE}[1/5] Configurando repositorio oficial de FreeSwitch 1.10...${NC}"
+echo "machine assignments.signalwire.com login signalwire password $SW_TOKEN" > /etc/apt/auth.conf.d/signalwire.conf
+wget --http-user=signalwire --http-password=$SW_TOKEN -O - https://assignments.signalwire.com/reference/gpg/signalwire_pub.gpg | apt-key add -
+echo "deb https://assignments.signalwire.com/reference/debian/$(lsb_release -sc) release main" > /etc/apt/sources.list.d/freeswitch.list
+
+# 5. Instalación de Dependencias (Manual PieceByte)
+echo -e "${BLUE}[2/5] Instalando dependencias de sistema y librerías de medios...${NC}"
 apt-get update && apt-get install -y \
     gnupg2 wget lsb-release curl software-properties-common \
     build-essential cmake automake autoconf libtool libtool-bin \
@@ -57,15 +63,8 @@ apt-get update && apt-get install -y \
     libavformat-dev libswscale-dev libavresample-dev python3-dev \
     libks-dev signalwire-client-c-dev
 
-# 5. Configuración de Repositorios SignalWire
-echo -e "${BLUE}[2/5] Configurando repositorio oficial de FreeSwitch 1.10...${NC}"
-echo "machine assignments.signalwire.com login signalwire password $SW_TOKEN" > /etc/apt/auth.conf.d/signalwire.conf
-wget --http-user=signalwire --http-password=$SW_TOKEN -O - https://assignments.signalwire.com/reference/gpg/signalwire_pub.gpg | apt-key add -
-echo "deb https://assignments.signalwire.com/reference/debian/$(lsb_release -sc) release main" > /etc/apt/sources.list.d/freeswitch.list
-
 # 6. Instalación de FreeSwitch Core y Módulos ESL/Verto
 echo -e "${BLUE}[3/5] Descargando e instalando FreeSwitch Engine...${NC}"
-apt-get update
 apt-get install -y freeswitch-all freeswitch-mod-esl freeswitch-mod-verto
 
 # 7. Aprovisionamiento ESL y Seguridad (Puerto 8021)
