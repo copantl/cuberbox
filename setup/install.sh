@@ -47,9 +47,9 @@ echo -e "${GREEN}[SYSTEM] Detectado Debian: ${OS_VER}${NC}"
 
 # 4. Configuración de Repositorios SignalWire
 echo -e "${BLUE}[1/5] Configurando repositorio oficial de FreeSwitch 1.10...${NC}"
-echo "machine assignments.signalwire.com login signalwire password $SW_TOKEN" > /etc/apt/auth.conf.d/signalwire.conf
-wget --http-user=signalwire --http-password=$SW_TOKEN -O - https://assignments.signalwire.com/reference/gpg/signalwire_pub.gpg | apt-key add -
-echo "deb https://assignments.signalwire.com/reference/debian/$(lsb_release -sc) release main" > /etc/apt/sources.list.d/freeswitch.list
+# Usamos el token directamente en la URL para evitar errores de autenticación 404/401
+wget --http-user=signalwire --http-password=$SW_TOKEN -O - https://assignments.signalwire.com/reference/gpg/signalwire_pub.gpg | gpg --dearmor -o /usr/share/keyrings/signalwire-freeswitch-repo.gpg
+echo "deb [signed-by=/usr/share/keyrings/signalwire-freeswitch-repo.gpg] https://signalwire:$SW_TOKEN@assignments.signalwire.com/reference/debian/$(lsb_release -sc) release main" | tee /etc/apt/sources.list.d/freeswitch.list > /dev/null
 
 # 5. Instalación de Dependencias (Manual PieceByte)
 echo -e "${BLUE}[2/5] Instalando dependencias de sistema y librerías de medios...${NC}"
@@ -82,8 +82,10 @@ EOF
 
 # 8. Instalación de PostgreSQL 16
 echo -e "${BLUE}[5/5] Instalando PostgreSQL 16 para Data Plane...${NC}"
-sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+# Limpiamos llaves antiguas para evitar advertencias de legacy keyring
+apt-key del ACCC4CF8 || true
+wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/postgresql-archive-keyring.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
 apt-get update && apt-get install -y postgresql-16
 sudo -u postgres psql -c "CREATE USER cuberbox_admin WITH PASSWORD 'TitanPass2024!';" || true
 sudo -u postgres psql -c "CREATE DATABASE cuberbox_db OWNER cuberbox_admin;" || true

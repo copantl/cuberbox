@@ -104,6 +104,11 @@ const Instructions: React.FC = () => {
              <div className="p-10 glass rounded-[48px] border border-slate-800">
                 <h3 className="text-2xl font-black text-white uppercase mb-8 flex items-center"><Terminal className="mr-4 text-blue-500" /> Secuencia SSH Manual</h3>
                 <div className="space-y-6">
+                   <div className="p-8 bg-rose-950/30 rounded-3xl border border-rose-500/30">
+                      <p className="text-[10px] font-black text-rose-500 uppercase mb-3 tracking-widest">⚠️ Comando de Reparación</p>
+                      <p className="text-xs text-rose-300 mb-4 font-bold uppercase tracking-wider">Si tiene errores de "Tipo echo desconocido", ejecute esto primero:</p>
+                      <code className="text-rose-400 text-[11px] font-mono block leading-relaxed bg-black/40 p-4 rounded-xl">rm -f /etc/apt/sources.list.d/freeswitch.list /etc/apt/sources.list.d/pgdg.list && apt-get update</code>
+                   </div>
                    <div className="p-8 bg-slate-950 rounded-3xl border border-slate-800">
                       <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 1: Preparación del Servidor</p>
                       <p className="text-xs text-slate-500 mb-4 font-bold uppercase tracking-wider">Primero, instalamos las herramientas básicas y librerías que el sistema necesita para funcionar correctamente.</p>
@@ -113,11 +118,10 @@ const Instructions: React.FC = () => {
                       <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 2: Configuración de Repositorios</p>
                       <p className="text-xs text-slate-500 mb-4 font-bold uppercase tracking-wider">Conectamos el servidor con las fuentes oficiales de software. Reemplace [TOKEN] con su clave de SignalWire.</p>
                       <code className="text-emerald-400 text-[11px] font-mono block leading-relaxed bg-black/40 p-4 rounded-xl">
-                        echo "machine assignments.signalwire.com login signalwire password [TOKEN]" &gt; /etc/apt/auth.conf.d/signalwire.conf<br/>
-                        wget --http-user=signalwire --http-password=[TOKEN] -O - https://assignments.signalwire.com/reference/gpg/signalwire_pub.gpg | apt-key add -<br/>
-                        echo "deb https://assignments.signalwire.com/reference/debian/$(lsb_release -sc) release main" &gt; /etc/apt/sources.list.d/freeswitch.list<br/>
-                        sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" &gt; /etc/apt/sources.list.d/pgdg.list'<br/>
-                        wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+                        wget --http-user=signalwire --http-password=[TOKEN] -O - https://assignments.signalwire.com/reference/gpg/signalwire_pub.gpg | gpg --dearmor -o /usr/share/keyrings/signalwire-freeswitch-repo.gpg<br/>
+                        echo "deb [signed-by=/usr/share/keyrings/signalwire-freeswitch-repo.gpg] https://signalwire:[TOKEN]@assignments.signalwire.com/reference/debian/$(lsb_release -sc) release main" | tee /etc/apt/sources.list.d/freeswitch.list &gt; /dev/null<br/>
+                        wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-archive-keyring.gpg<br/>
+                        echo "deb [signed-by=/usr/share/keyrings/postgresql-archive-keyring.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list &gt; /dev/null
                       </code>
                    </div>
                    <div className="p-8 bg-slate-950 rounded-3xl border border-slate-800">
@@ -164,6 +168,20 @@ const Instructions: React.FC = () => {
                         &nbsp;&nbsp;&nbsp;&nbsp;&#125;<br/>
                         &#125;<br/>
                         EOF
+                      </code>
+                   </div>
+                   <div className="p-8 bg-slate-950 rounded-3xl border border-slate-800">
+                      <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 7: Instalación del Aplicativo</p>
+                      <p className="text-xs text-slate-500 mb-4 font-bold uppercase tracking-wider">Desplegamos la interfaz web y el conector de eventos para el usuario final.</p>
+                      <code className="text-emerald-400 text-[11px] font-mono block leading-relaxed bg-black/40 p-4 rounded-xl">
+                        # Instalar Node y Go<br/>
+                        curl -fsSL https://deb.nodesource.com/setup_20.x | bash -<br/>
+                        apt-get install -y nodejs golang-go<br/>
+                        <br/>
+                        # Clonar y Construir<br/>
+                        git clone https://github.com/copantl/cuberbox-pro.git /opt/cuberbox<br/>
+                        cd /opt/cuberbox/backend && go build -o connector main.go<br/>
+                        cd .. && npm install && npm run build
                       </code>
                    </div>
                 </div>

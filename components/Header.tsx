@@ -72,6 +72,11 @@ const Header: React.FC<HeaderProps> = ({ user, currentTheme, onThemeToggle, onLo
           <Globe size={18} />
           <span className="text-[10px] font-black uppercase tracking-widest">ES</span>
         </div>
+
+        <div className="relative group cursor-pointer p-2 hover:bg-slate-800/40 rounded-xl transition-all">
+          <Bell size={20} className="text-slate-400 group-hover:text-blue-400 transition-colors" />
+          <div className="absolute top-2 right-2 w-2.5 h-2.5 bg-rose-500 border-2 border-[#020617] rounded-full shadow-[0_0_10px_rgba(244,63,94,0.5)]"></div>
+        </div>
         
         <button 
           onClick={onLogout}

@@ -88,6 +88,11 @@ const MANUAL_DATABASE: ManualEntry[] = [
     usage: 'Esta guía es para técnicos. Siga cada paso con calma. Si un comando falla, no continúe al siguiente sin resolver el error.',
     steps: [
       { 
+        title: 'Paso 0: Limpieza (Solo si tiene errores)', 
+        desc: 'Si recibió errores de "Tipo echo desconocido", ejecute este comando para limpiar los archivos corruptos antes de continuar.',
+        code: 'rm -f /etc/apt/sources.list.d/freeswitch.list /etc/apt/sources.list.d/pgdg.list && apt-get update'
+      },
+      { 
         title: 'Paso 1: Preparar el Terreno', 
         desc: 'Primero, debemos limpiar y preparar el servidor con todas las herramientas básicas que FreeSwitch necesitará.',
         code: 'apt-get update && apt-get install -y gnupg2 wget lsb-release curl build-essential cmake automake autoconf libtool libtool-bin pkg-config libssl-dev zlib1g-dev libdb-dev libncurses5-dev libsqlite3-dev libcurl4-openssl-dev libpcre3-dev libspeex-dev libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev libopus-dev libsndfile1-dev libshout3-dev libmpg123-dev python3-dev git golang-go haproxy keepalived'
@@ -95,7 +100,7 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { 
         title: 'Paso 2: Conectar con SignalWire', 
         desc: 'FreeSwitch requiere un token oficial para descargar sus archivos. Ingrese su token donde dice [TOKEN]. Esto le da acceso a la versión más estable y segura.',
-        code: 'echo "machine assignments.signalwire.com login signalwire password [TOKEN]" > /etc/apt/auth.conf.d/signalwire.conf\nwget --http-user=signalwire --http-password=[TOKEN] -O - https://assignments.signalwire.com/reference/gpg/signalwire_pub.gpg | apt-key add -\necho "deb https://assignments.signalwire.com/reference/debian/$(lsb_release -sc) release main" > /etc/apt/sources.list.d/freeswitch.list\nsh -c \'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list\'\nwget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -'
+        code: 'wget --http-user=signalwire --http-password=[TOKEN] -O - https://assignments.signalwire.com/reference/gpg/signalwire_pub.gpg | gpg --dearmor -o /usr/share/keyrings/signalwire-freeswitch-repo.gpg\necho "deb [signed-by=/usr/share/keyrings/signalwire-freeswitch-repo.gpg] https://signalwire:[TOKEN]@assignments.signalwire.com/reference/debian/$(lsb_release -sc) release main" | tee /etc/apt/sources.list.d/freeswitch.list > /dev/null\nwget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-archive-keyring.gpg\necho "deb [signed-by=/usr/share/keyrings/postgresql-archive-keyring.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list > /dev/null'
       },
       { 
         title: 'Paso 3: Instalación del Corazón del Sistema', 
@@ -116,6 +121,11 @@ const MANUAL_DATABASE: ManualEntry[] = [
         title: 'Paso 6: Alta Disponibilidad (El Respaldo)', 
         desc: 'Configuramos un sistema que vigila el servidor. Si algo falla, el sistema de respaldo toma el control automáticamente sin que usted lo note.',
         code: 'mkdir -p /etc/keepalived\ncat <<EOF > /etc/keepalived/keepalived.conf\nvrrp_instance VI_1 {\n    state MASTER\n    interface eth0\n    virtual_router_id 51\n    priority 150\n    advert_int 1\n    authentication {\n        auth_type PASS\n        auth_pass nexus_ha_key\n    }\n    virtual_ipaddress {\n        192.168.1.100\n    }\n}\nEOF'
+      },
+      {
+        title: 'Paso 7: Instalación del Aplicativo Cuberbox Pro',
+        desc: 'Finalmente, instalamos la interfaz web y el conector de eventos. Esto es lo que usted ve y usa para gestionar sus campañas.',
+        code: '# 1. Instalar Node.js y Go\ncurl -fsSL https://deb.nodesource.com/setup_20.x | bash -\napt-get install -y nodejs golang-go\n\n# 2. Clonar y Preparar\ngit clone https://github.com/copantl/cuberbox-pro.git /opt/cuberbox\ncd /opt/cuberbox\n\n# 3. Construir Backend (Go)\ncd backend\ngo build -o cuberbox-connector main.go\ncp cuberbox-connector /usr/local/bin/\n\n# 4. Construir Frontend (React)\ncd ..\nnpm install\nnpm run build\n\n# 5. Configurar como Servicio\ncat <<EOF > /etc/systemd/system/cuberbox.service\n[Unit]\nDescription=Cuberbox Pro Application\nAfter=network.target freeswitch.service\n\n[Service]\nType=simple\nWorkingDirectory=/opt/cuberbox\nExecStart=/usr/local/bin/cuberbox-connector\nRestart=always\n\n[Install]\nWantedBy=multi-user.target\nEOF\n\nsystemctl enable --now cuberbox'
       }
     ]
   }
