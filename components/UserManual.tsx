@@ -7,8 +7,8 @@ import {
   Trash2, Lock, Activity, FileText, Code, CheckCircle2, AlertCircle,
   Play, Headphones, TerminalSquare, GitMerge, MessageCircle, Share2,
   Music, Smartphone as PhoneIcon, BarChart3, Target, Mic, PhoneIncoming,
-  // Added missing imports
-  ListChecks, Copy
+  ListChecks, Copy, Settings, PieChart, Filter, Mail, MessageSquare, 
+  Workflow, Globe2, ShieldAlert, Layout
 } from 'lucide-react';
 // Added missing useToast import
 import { useToast } from '../ToastContext';
@@ -46,6 +46,201 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { title: 'Paso 3: Ponerse en modo "Ready"', desc: 'Haga clic en el botón verde de "Ready". A partir de este momento, el motor predictivo comenzará a enviarle llamadas o mensajes de redes sociales de forma automática.' },
       { title: 'Paso 4: Gestión de la Interacción', desc: 'Cuando entre una llamada, verá los datos del cliente en pantalla. Siga el script sugerido. Al terminar, use la matriz de botones a la derecha para indicar qué sucedió (Venta, No Contesta, etc.).' },
       { title: 'Paso 5: Uso de Pausas', desc: 'Si necesita retirarse de su puesto, use el menú de Pausas. Elija el motivo correcto (Almuerzo, Capacitación, etc.). Esto es vital para que el supervisor sepa por qué no está recibiendo llamadas.' }
+    ]
+  },
+  {
+    id: 'campaigns-manager',
+    title: 'Gestión de Campañas',
+    icon: Target,
+    category: 'OPERACIONES',
+    summary: 'Configuración de estrategias de contacto masivo y atención entrante.',
+    functionality: 'Permite definir el comportamiento del marcador, asignar bases de datos, configurar scripts de venta y establecer horarios de operación. Soporta campañas predictivas, progresivas, manuales e inbound con colas ACD.',
+    usage: 'Diseñe campañas eficientes equilibrando la carga de trabajo de los agentes con la calidad del contacto.',
+    steps: [
+      { title: 'Paso 1: Creación de Campaña', desc: 'Defina el nombre, tipo (Outbound/Inbound) y el método de marcación (Predictivo es el recomendado para ventas).' },
+      { title: 'Paso 2: Asignación de Listas', desc: 'Vincule las bases de datos cargadas previamente. Puede asignar múltiples listas a una sola campaña y priorizarlas.' },
+      { title: 'Paso 3: Configuración de CID', desc: 'Establezca los números de máscara (Caller ID) que verán los clientes. Use rotación de números para mejorar la tasa de respuesta.' },
+      { title: 'Paso 4: Definición de Horarios', desc: 'Configure los "Call Times" para cumplir con las regulaciones locales y evitar llamar en horarios no permitidos.' }
+    ]
+  },
+  {
+    id: 'real-time-monitor',
+    title: 'Monitoreo en Tiempo Real',
+    icon: Activity,
+    category: 'OPERACIONES',
+    summary: 'Supervisión en vivo de agentes, llamadas y métricas críticas de nivel de servicio.',
+    functionality: 'Visualiza el estado exacto de cada extensión, el tiempo en llamada, el ratio de ocupación y las llamadas en espera. Permite realizar escucha silenciosa (Barge), susurro (Whisper) e intervención (Join).',
+    usage: 'Utilice este panel para detectar cuellos de botella y asistir a agentes que tengan dificultades en vivo.',
+    steps: [
+      { title: 'Paso 1: Vista General del Clúster', desc: 'Observe el estado global: agentes logueados vs. agentes en llamada. El color azul indica conversación activa.' },
+      { title: 'Paso 2: Escucha Activa', desc: 'Haga clic en el icono de audífono junto a un agente para escuchar su llamada sin que el cliente ni el agente lo noten.' },
+      { title: 'Paso 3: Susurro de Coaching', desc: 'Use el modo "Whisper" para hablarle solo al agente y darle instrucciones durante una negociación difícil.' },
+      { title: 'Paso 4: Gestión de Pausas', desc: 'Si un agente excede el tiempo de pausa permitido, puede forzar su cambio a estado "Ready" o desloguearlo desde el panel.' }
+    ]
+  },
+  {
+    id: 'reports-analytics',
+    title: 'Reportes & Business Intelligence',
+    icon: BarChart3,
+    category: 'OPERACIONES',
+    summary: 'Extracción de datos históricos y análisis de productividad profunda.',
+    functionality: 'Genera reportes detallados de llamadas (CDR), productividad por agente, efectividad de listas y costos de telefonía. Exportación nativa a CSV, PDF y JSON para integración con PowerBI.',
+    usage: 'Tome decisiones basadas en datos analizando las tendencias semanales y mensuales de su operación.',
+    steps: [
+      { title: 'Paso 1: Selección de Filtros', desc: 'Elija el rango de fechas, las campañas y los agentes específicos que desea analizar.' },
+      { title: 'Paso 2: Reporte de Productividad', desc: 'Revise el tiempo "Talk", "Wait", "Pause" y "Wrap-up" para identificar a sus mejores talentos.' },
+      { title: 'Paso 3: Análisis de Disposiciones', desc: 'Vea qué porcentaje de sus llamadas terminan en Venta, Buzón o No Interesado para ajustar su base de datos.' },
+      { title: 'Paso 4: Programación de Envíos', desc: 'Configure el sistema para que envíe automáticamente los reportes diarios a su correo electrónico cada mañana.' }
+    ]
+  },
+  {
+    id: 'users-permissions-pro',
+    title: 'Usuarios y Seguridad',
+    icon: Users,
+    category: 'ADMINISTRACIÓN',
+    summary: 'Control de acceso granular y gestión de perfiles de usuario.',
+    functionality: 'Administra credenciales, niveles de acceso (Agente, Supervisor, Admin) y pertenencia a grupos. Implementa MFA (Autenticación de Dos Factores) para accesos remotos.',
+    usage: 'Mantenga la seguridad de su información limitando el acceso solo a lo estrictamente necesario para cada rol.',
+    steps: [
+      { title: 'Paso 1: Creación de Perfiles', desc: 'Defina qué botones y menús puede ver un usuario. Un agente no debería ver reportes de costos, por ejemplo.' },
+      { title: 'Paso 2: Alta de Usuarios', desc: 'Asigne una extensión única y una contraseña robusta. Vincule al usuario con un grupo de supervisión.' },
+      { title: 'Paso 3: Configuración de MFA', desc: 'Active el código de seguridad por aplicación (Google Authenticator) para proteger las cuentas de administrador.' },
+      { title: 'Paso 4: Auditoría de Logs', desc: 'Revise quién entró al sistema, desde qué IP y qué cambios realizó en la configuración.' }
+    ]
+  },
+  {
+    id: 'crm-integrations-hub',
+    title: 'Integraciones CRM & Webhooks',
+    icon: Network,
+    category: 'ADMINISTRACIÓN',
+    summary: 'Sincronización de datos con sistemas externos en tiempo real.',
+    functionality: 'Permite disparar eventos (Webhooks) cuando ocurre una venta o una llamada termina. Integración nativa con Salesforce, Zoho, HubSpot y bases de datos SQL externas.',
+    usage: 'Automatice el flujo de información para que sus agentes no tengan que capturar datos en dos sistemas diferentes.',
+    steps: [
+      { title: 'Paso 1: Configuración de URL de Destino', desc: 'Ingrese la URL de su CRM donde Cuberbox debe enviar la información de las llamadas.' },
+      { title: 'Paso 2: Mapeo de Campos', desc: 'Indique qué dato de Cuberbox (ej. Teléfono) corresponde a qué campo en su CRM.' },
+      { title: 'Paso 3: Definición de Triggers', desc: 'Elija en qué momento enviar los datos: ¿Al iniciar la llamada o solo cuando se tipifica como "Venta"?' },
+      { title: 'Paso 4: Prueba de Conectividad', desc: 'Use el botón de "Test" para verificar que su CRM está recibiendo los datos correctamente.' }
+    ]
+  },
+  {
+    id: 'omnichannel-whatsapp',
+    title: 'Módulo Omnicanal (WhatsApp/Email)',
+    icon: MessageCircle,
+    category: 'OPERACIONES',
+    summary: 'Gestión de chats y correos electrónicos desde la misma interfaz de voz.',
+    functionality: 'Integra la API oficial de WhatsApp Business y servidores SMTP/IMAP. Permite el uso de plantillas, bots de auto-respuesta y transferencia de chats entre agentes.',
+    usage: 'Atienda a sus clientes por el canal de su preferencia sin que el agente cambie de aplicación.',
+    steps: [
+      { title: 'Paso 1: Vinculación de Canales', desc: 'Escanee el código QR o configure los tokens de la API para activar sus líneas de WhatsApp.' },
+      { title: 'Paso 2: Creación de Plantillas', desc: 'Diseñe mensajes pre-aprobados para iniciar conversaciones de forma masiva y legal.' },
+      { title: 'Paso 3: Configuración de Chatbots', desc: 'Cree flujos de auto-atención para resolver dudas frecuentes antes de pasar con un humano.' },
+      { title: 'Paso 4: Bandeja de Entrada Unificada', desc: 'Los agentes recibirán los chats en la misma pantalla donde reciben las llamadas, manteniendo el historial completo.' }
+    ]
+  },
+  {
+    id: 'cluster-ha-nexus',
+    title: 'Gestión de Clúster & HA',
+    icon: Server,
+    category: 'INFRAESTRUCTURA',
+    summary: 'Control de nodos, balanceo de carga y redundancia geográfica.',
+    functionality: 'Administra múltiples servidores FreeSwitch trabajando como uno solo. Gestiona el "Failover" automático mediante Keepalived y la replicación de base de datos en tiempo real.',
+    usage: 'Asegure que su operación nunca se detenga, incluso si un servidor físico falla por completo.',
+    steps: [
+      { title: 'Paso 1: Registro de Nodos', desc: 'Agregue las IPs de sus servidores esclavos al panel central para que el clúster los reconozca.' },
+      { title: 'Paso 2: Sincronización de Archivos', desc: 'Active rsync para que las grabaciones y configuraciones de audio estén presentes en todos los nodos.' },
+      { title: 'Paso 3: Monitoreo de Heartbeat', desc: 'Verifique que los nodos se "saluden" constantemente. Si uno deja de responder, el tráfico se moverá al otro.' },
+      { title: 'Paso 4: Mantenimiento Programado', desc: 'Ponga un nodo en modo "Drain" para realizar actualizaciones sin desconectar las llamadas activas.' }
+    ]
+  },
+  {
+    id: 'broadcast-ai-voice',
+    title: 'Broadcast AI & Voicebots',
+    icon: Mic,
+    category: 'AI & NEURAL',
+    summary: 'Campañas masivas de audio con interacción inteligente y TTS natural.',
+    functionality: 'Envía miles de llamadas simultáneas con voces humanas generadas por IA. El bot puede escuchar al cliente, entender su intención y transferir a un agente solo si hay interés real.',
+    usage: 'Ideal para cobranza masiva, confirmación de citas y encuestas de satisfacción automatizadas.',
+    steps: [
+      { title: 'Paso 1: Diseño del Diálogo', desc: 'Escriba el guion que el bot dirá. Use variables como [Nombre] para que la llamada sea personalizada.' },
+      { title: 'Paso 2: Entrenamiento de Intenciones', desc: 'Dígale al bot qué hacer si el cliente dice "Sí", "No", "No puedo" o "Llamen más tarde".' },
+      { title: 'Paso 3: Selección de Voz Neural', desc: 'Elija entre voces masculinas o femeninas con acentos locales para generar confianza en el cliente.' },
+      { title: 'Paso 4: Lanzamiento y Escalado', desc: 'Inicie la campaña. El sistema detectará automáticamente cuántos canales de telefonía tiene disponibles para no saturar su troncal.' }
+    ]
+  },
+  {
+    id: 'ivr-designer-pro',
+    title: 'Diseñador de IVR Visual',
+    icon: Network,
+    category: 'INFRAESTRUCTURA',
+    summary: 'Interfaz drag-and-drop para la creación de flujos de atención telefónica.',
+    functionality: 'Permite construir árboles de decisión complejos, menús multinivel, consultas a bases de datos en tiempo real y transferencias inteligentes basadas en el horario o la disponibilidad de agentes.',
+    usage: 'Cree experiencias de usuario fluidas que resuelvan dudas rápidamente sin intervención humana.',
+    steps: [
+      { title: 'Paso 1: Lienzo de Diseño', desc: 'Arrastre los bloques de "Reproducir Audio", "Capturar Dígitos" o "Transferir" al lienzo.' },
+      { title: 'Paso 2: Configuración de Nodos', desc: 'Haga doble clic en un nodo para subir el archivo de audio o definir qué sucede si el cliente presiona la opción 1.' },
+      { title: 'Paso 3: Integración de Datos', desc: 'Use el nodo "Data Query" para validar el número de cuenta del cliente contra su base de datos antes de pasarlo con un agente.' },
+      { title: 'Paso 4: Publicación en Vivo', desc: 'Guarde y asigne el IVR a un número de teléfono entrante (DID) para que los cambios surtan efecto inmediatamente.' }
+    ]
+  },
+  {
+    id: 'quality-assurance-audit',
+    title: 'Auditoría de Calidad (QA)',
+    icon: ShieldCheck,
+    category: 'OPERACIONES',
+    summary: 'Evaluación sistemática de interacciones para mejora continua.',
+    functionality: 'Proporciona formularios de evaluación personalizables, reproducción de grabaciones con marcadores de tiempo y reportes de desempeño por agente o supervisor.',
+    usage: 'Identifique áreas de mejora y reconozca el buen desempeño mediante auditorías objetivas.',
+    steps: [
+      { title: 'Paso 1: Búsqueda de Grabaciones', desc: 'Filtre por fecha, agente o duración para encontrar las llamadas que desea auditar.' },
+      { title: 'Paso 2: Aplicación de Formulario', desc: 'Escuche la llamada y califique los ítems (ej. ¿Cerró la venta?, ¿Siguió el script?).' },
+      { title: 'Paso 3: Retroalimentación', desc: 'Deje comentarios específicos en el minuto exacto donde el agente cometió un error o tuvo un acierto.' },
+      { title: 'Paso 4: Calibración', desc: 'Compare las notas de diferentes auditores para asegurar que todos están evaluando bajo los mismos criterios.' }
+    ]
+  },
+  {
+    id: 'workflows-automation-engine',
+    title: 'Motor de Workflows',
+    icon: Workflow,
+    category: 'AI & NEURAL',
+    summary: 'Automatización de tareas post-llamada y procesos de negocio.',
+    functionality: 'Ejecuta acciones automáticas basadas en eventos del sistema. Por ejemplo: enviar un SMS de agradecimiento después de una venta o alertar a un supervisor si una llamada dura más de 20 minutos.',
+    usage: 'Elimine tareas repetitivas y asegure que ningún lead se pierda por falta de seguimiento.',
+    steps: [
+      { title: 'Paso 1: Definición del Disparador', desc: 'Elija qué evento inicia el flujo (ej. "Llamada Finalizada con éxito").' },
+      { title: 'Paso 2: Establecimiento de Condiciones', desc: 'Añada filtros: "Solo si el monto es mayor a $1000" o "Solo para clientes nuevos".' },
+      { title: 'Paso 3: Configuración de Acciones', desc: 'Defina qué debe pasar: ¿Enviar un correo?, ¿Actualizar el CRM?, ¿Notificar por Slack?' },
+      { title: 'Paso 4: Monitoreo de Ejecución', desc: 'Revise el historial para confirmar que todos los flujos se están ejecutando correctamente.' }
+    ]
+  },
+  {
+    id: 'lists-dnc-management',
+    title: 'Gestión de Listas & DNC',
+    icon: ListChecks,
+    category: 'ADMINISTRACIÓN',
+    summary: 'Control de bases de datos y cumplimiento legal (Do Not Call).',
+    functionality: 'Permite la carga masiva de contactos, limpieza de duplicados y gestión de la lista negra global (DNC) para evitar multas legales por llamar a personas que no lo desean.',
+    usage: 'Mantenga sus bases de datos limpias y productivas cumpliendo siempre con la normativa vigente.',
+    steps: [
+      { title: 'Paso 1: Carga de Contactos', desc: 'Suba archivos CSV/Excel. El sistema mapeará automáticamente los campos de teléfono y nombre.' },
+      { title: 'Paso 2: Limpieza de Base', desc: 'Use la herramienta de "Deduplicación" para eliminar registros repetidos y ahorrar canales de marcación.' },
+      { title: 'Paso 3: Gestión de DNC', desc: 'Añada números a la lista negra. El marcador filtrará estos números automáticamente incluso si están en sus listas de campaña.' },
+      { title: 'Paso 4: Reciclaje de Listas', desc: 'Configure cuándo volver a llamar a los números que no contestaron (ej. "Llamar de nuevo en 4 horas").' }
+    ]
+  },
+  {
+    id: 'network-ports-matrix',
+    title: 'Matriz de Puertos y Red',
+    icon: Globe2,
+    category: 'INFRAESTRUCTURA',
+    summary: 'Configuración de Firewall y conectividad requerida para el ecosistema Nexus.',
+    functionality: 'Detalla los puertos lógicos que deben estar abiertos en el Firewall perimetral y del servidor para permitir el tráfico de señalización SIP, medios RTP y gestión de datos.',
+    usage: 'Asegúrese de que su proveedor de red o administrador de IT habilite estos puertos para evitar llamadas sin audio o errores de conexión en la terminal.',
+    steps: [
+      { title: 'Señalización SIP (5060-5061)', desc: 'Puerto 5060 (UDP/TCP) para tráfico estándar y 5061 (TLS) para tráfico encriptado. Vital para el registro de teléfonos físicos y troncales.' },
+      { title: 'WebRTC Verto (8081-8082)', desc: 'Puertos seguros (WSS) utilizados por la terminal del agente en el navegador. Deben estar abiertos para que el "Anclaje de Audio" funcione.' },
+      { title: 'Rango de Medios RTP (16384-32768)', desc: 'Rango UDP masivo para el transporte de la voz. Si estos puertos están cerrados, las llamadas se conectarán pero no habrá audio (One-way audio).' },
+      { title: 'Gestión y Datos (3000, 5432, 8021)', desc: '3000: Interfaz Web Cuberbox. 5432: Base de Datos PostgreSQL. 8021: Event Socket Layer (ESL) para control del motor desde el backend.' }
     ]
   },
   {
