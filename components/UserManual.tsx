@@ -229,6 +229,115 @@ const MANUAL_DATABASE: ManualEntry[] = [
     ]
   },
   {
+    id: 'systemd-automation',
+    title: 'Automatización de Servicios',
+    icon: Terminal,
+    category: 'ADMINISTRACIÓN',
+    summary: 'Script de instalación automática para systemd.',
+    functionality: 'Proporciona un script que detecta automáticamente las rutas de su sistema y crea los archivos .service necesarios sin errores manuales.',
+    usage: 'Ejecute el script setup-service.sh que se encuentra en la raíz del proyecto.',
+    steps: [
+      { 
+        title: 'Ejecutar Script de Configuración', 
+        desc: 'Este comando le dará permisos de ejecución al script y lo ejecutará como root para configurar los servicios.',
+        code: 'chmod +x setup-service.sh\nsudo ./setup-service.sh'
+      },
+      { 
+        title: 'Verificación de Estado', 
+        desc: 'Confirme que ambos servicios estén corriendo correctamente.',
+        code: 'systemctl status cuberbox-web\nsystemctl status cuberbox'
+      }
+    ]
+  },
+  {
+    id: 'systemd-unit-creation',
+    title: 'Creación de Servicios (Unit Files)',
+    icon: FileText,
+    category: 'ADMINISTRACIÓN',
+    summary: 'Cómo crear manualmente los archivos .service si no existen.',
+    functionality: 'Proporciona los comandos exactos para generar los archivos de configuración que systemd requiere para administrar Cuberbox como un servicio del sistema.',
+    usage: 'Use esta guía si recibe el error "Unit file does not exist" al intentar usar systemctl.',
+    steps: [
+      { 
+        title: 'Crear cuberbox-web.service', 
+        desc: 'Ejecute este bloque completo para crear el servicio del servidor web (Puerto 3000).',
+        code: 'cat <<EOF > /etc/systemd/system/cuberbox-web.service\n[Unit]\nDescription=Cuberbox Web Interface\nAfter=network.target\n\n[Service]\nType=simple\nWorkingDirectory=/opt/cuberbox\nExecStart=/usr/bin/npm run dev -- --host 0.0.0.0\nRestart=always\nEnvironment=NODE_ENV=production\n\n[Install]\nWantedBy=multi-user.target\nEOF'
+      },
+      { 
+        title: 'Crear cuberbox-connector.service', 
+        desc: 'Ejecute este bloque para crear el servicio del motor de eventos (Puerto 8021).',
+        code: 'cat <<EOF > /etc/systemd/system/cuberbox.service\n[Unit]\nDescription=Cuberbox Pro Connector\nAfter=network.target freeswitch.service\n\n[Service]\nType=simple\nWorkingDirectory=/opt/cuberbox\nExecStart=/usr/local/bin/cuberbox-connector\nRestart=always\n\n[Install]\nWantedBy=multi-user.target\nEOF'
+      },
+      { 
+        title: 'Activar Servicios', 
+        desc: 'Después de crear los archivos, ejecute estos comandos para ponerlos en marcha.',
+        code: 'systemctl daemon-reload\nsystemctl enable --now cuberbox-web\nsystemctl enable --now cuberbox'
+      }
+    ]
+  },
+  {
+    id: 'emergency-port-3000',
+    title: 'Emergencia: Puerto 3000 Down',
+    icon: Zap,
+    category: 'ADMINISTRACIÓN',
+    summary: 'Procedimiento de rescate cuando la interfaz web no carga.',
+    functionality: 'Diagnostica si el fallo es por dependencias faltantes, errores de compilación de Vite o si el proceso de Node.js se detuvo.',
+    usage: 'Use esta guía si puede hacer ping al servidor pero el navegador muestra "Conexión rechazada" en el puerto 3000.',
+    steps: [
+      { 
+        title: 'Paso 1: Test de Proceso Vivo', 
+        desc: 'Verifique si hay algún proceso de Node escuchando. Si no sale nada, el servidor está apagado.',
+        code: 'ps aux | grep node'
+      },
+      { 
+        title: 'Paso 2: Reinstalación de Módulos', 
+        desc: 'A veces la carpeta node_modules se corrompe. Borre y reinstale para asegurar integridad.',
+        code: 'rm -rf node_modules && npm install'
+      },
+      { 
+        title: 'Paso 3: Forzar Inicio Manual', 
+        desc: 'Intente arrancar el servidor manualmente para ver los errores en tiempo real en la consola.',
+        code: 'npm run dev -- --host 0.0.0.0'
+      },
+      { 
+        title: 'Paso 4: Persistencia con Systemd', 
+        desc: 'Una vez que funcione manualmente, asegúrese de que el servicio cuberbox-web esté activo para que inicie con el servidor.',
+        code: 'systemctl daemon-reload && systemctl enable --now cuberbox-web'
+      }
+    ]
+  },
+  {
+    id: 'troubleshooting-service',
+    title: 'Resolución de Errores: Systemd',
+    icon: ShieldAlert,
+    category: 'ADMINISTRACIÓN',
+    summary: 'Guía para corregir fallos de inicio del servicio (Error 203/EXEC).',
+    functionality: 'Explica cómo diagnosticar y reparar el error 203/EXEC que ocurre cuando el binario del conector no es ejecutable o no existe en la ruta /usr/local/bin.',
+    usage: 'Si el comando "systemctl status cuberbox" muestra un error en rojo, siga estos pasos para restaurar el servicio.',
+    steps: [
+      { 
+        title: 'Paso 1: Verificar Existencia del Binario', 
+        desc: 'Asegúrese de que el archivo realmente exista en la ruta. Si no aparece, el proceso de compilación falló.',
+        code: 'ls -lh /usr/local/bin/cuberbox-connector'
+      },
+      { 
+        title: 'Paso 2: Corregir Permisos de Ejecución', 
+        desc: 'A veces el archivo se copia pero pierde el bit de ejecución. Este comando le otorga los permisos necesarios.',
+        code: 'chmod +x /usr/local/bin/cuberbox-connector'
+      },
+      { 
+        title: 'Paso 3: Recompilar el Conector (Si no existe)', 
+        desc: 'Si el binario falta, debe entrar a la carpeta del backend y volver a generarlo con Go.',
+        code: 'cd /opt/cuberbox/backend\ngo build -o cuberbox-connector main.go\ncp cuberbox-connector /usr/local/bin/\nsystemctl restart cuberbox'
+      },
+      { 
+        title: 'Paso 4: Verificar Logs del Sistema', 
+        desc: 'Si el error persiste, revise los mensajes detallados del kernel para ver si falta alguna librería.',
+        code: 'journalctl -u cuberbox.service -f'
+      }
+    ]
+  },
+  {
     id: 'network-ports-matrix',
     title: 'Matriz de Puertos y Red',
     icon: Globe2,
@@ -318,9 +427,14 @@ const MANUAL_DATABASE: ManualEntry[] = [
         code: 'mkdir -p /etc/keepalived\ncat <<EOF > /etc/keepalived/keepalived.conf\nvrrp_instance VI_1 {\n    state MASTER\n    interface eth0\n    virtual_router_id 51\n    priority 150\n    advert_int 1\n    authentication {\n        auth_type PASS\n        auth_pass nexus_ha_key\n    }\n    virtual_ipaddress {\n        192.168.1.100\n    }\n}\nEOF'
       },
       {
-        title: 'Paso 7: Instalación del Aplicativo Cuberbox Pro',
-        desc: 'Finalmente, instalamos la interfaz web y el conector de eventos. Esto es lo que usted ve y usa para gestionar sus campañas.',
-        code: '# 1. Instalar Node.js y Go\ncurl -fsSL https://deb.nodesource.com/setup_20.x | bash -\napt-get install -y nodejs golang-go\n\n# 2. Clonar y Preparar\ngit clone https://github.com/copantl/cuberbox-pro.git /opt/cuberbox\ncd /opt/cuberbox\n\n# 3. Construir Backend (Go)\ncd backend\ngo build -o cuberbox-connector main.go\ncp cuberbox-connector /usr/local/bin/\n\n# 4. Construir Frontend (React)\ncd ..\nnpm install\nnpm run build\n\n# 5. Configurar como Servicio\ncat <<EOF > /etc/systemd/system/cuberbox.service\n[Unit]\nDescription=Cuberbox Pro Application\nAfter=network.target freeswitch.service\n\n[Service]\nType=simple\nWorkingDirectory=/opt/cuberbox\nExecStart=/usr/local/bin/cuberbox-connector\nRestart=always\n\n[Install]\nWantedBy=multi-user.target\nEOF\n\nsystemctl enable --now cuberbox'
+        title: 'Paso 7: Instalación del Aplicativo Web (Puerto 3000)',
+        desc: 'Para que la interfaz sea accesible, debemos levantar el servidor Node.js. Esto habilitará el puerto 3000 que usted reportó como cerrado.',
+        code: '# 1. Instalar dependencias\ncd /opt/cuberbox\nnpm install\n\n# 2. Construir el sitio\nnpm run build\n\n# 3. Crear servicio para el Web Server\ncat <<EOF > /etc/systemd/system/cuberbox-web.service\n[Unit]\nDescription=Cuberbox Web Interface\nAfter=network.target\n\n[Service]\nType=simple\nWorkingDirectory=/opt/cuberbox\nExecStart=/usr/bin/npm run dev\nRestart=always\nEnvironment=NODE_ENV=production\n\n[Install]\nWantedBy=multi-user.target\nEOF\n\n# 4. Activar y verificar\nsystemctl enable --now cuberbox-web\nsystemctl status cuberbox-web'
+      },
+      {
+        title: 'Paso 8: Verificación de Puertos',
+        desc: 'Una vez activados ambos servicios, verifique que los puertos 3000 (Web) y 8021 (ESL) estén en estado LISTEN.',
+        code: 'netstat -tulpn | grep -E "3000|8021"'
       }
     ]
   }
