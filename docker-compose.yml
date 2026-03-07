@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: cuberbox_admin
+      POSTGRES_PASSWORD: TitanPass2024!
+      POSTGRES_DB: cuberbox_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - nexus_net
+
+  freeswitch:
+    image: signalwire/freeswitch:1.10
+    volumes:
+      - ./freeswitch/conf:/etc/freeswitch
+    networks:
+      - nexus_net
+    cap_add:
+      - NET_ADMIN
+      - SYS_NICE
+      - SYS_RESOURCE
+
+  connector:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    depends_on:
+      - freeswitch
+    networks:
+      - nexus_net
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=db
+      - DB_USER=cuberbox_admin
+      - DB_PASS=TitanPass2024!
+      - DB_NAME=cuberbox_db
+    depends_on:
+      - db
+      - connector
+    networks:
+      - nexus_net
+
+  haproxy:
+    image: haproxy:latest
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - web
+    networks:
+      - nexus_net
+
+networks:
+  nexus_net:
+    driver: bridge
+
+volumes:
+  postgres_data:

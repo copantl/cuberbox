@@ -229,6 +229,195 @@ const MANUAL_DATABASE: ManualEntry[] = [
     ]
   },
   {
+    id: 'github-clone-nexus',
+    title: 'Descarga desde GitHub',
+    icon: Code,
+    category: 'ADMINISTRACIÓN',
+    summary: 'Pasos para clonar el repositorio oficial y preparar el entorno.',
+    functionality: 'Permite obtener la última versión estable del código fuente directamente desde los servidores de control de versiones.',
+    usage: 'Use este procedimiento para instalaciones nuevas o para actualizar su entorno de desarrollo.',
+    steps: [
+      { 
+        title: 'Paso 1: Clonar Repositorio', 
+        desc: 'Use git para descargar los archivos. Asegúrese de tener sus llaves SSH configuradas o use el token de acceso personal.',
+        code: 'git clone https://github.com/tu-organizacion/cuberbox-pro.git\ncd cuberbox-pro'
+      },
+      { 
+        title: 'Paso 2: Configurar Ramas', 
+        desc: 'Cambie a la rama de producción para asegurar estabilidad.',
+        code: 'git checkout main\ngit pull origin main'
+      },
+      { 
+        title: 'Paso 3: Inicializar Submódulos', 
+        desc: 'Si el proyecto usa submódulos para el motor de audio, inicialícelos ahora.',
+        code: 'git submodule update --init --recursive'
+      }
+    ]
+  },
+  {
+    id: 'network-ports-matrix',
+    title: 'Matriz de Puertos y Red',
+    icon: Globe2,
+    category: 'INFRAESTRUCTURA',
+    summary: 'Configuración de Firewall y conectividad requerida para el ecosistema Nexus.',
+    functionality: 'Detalla los puertos lógicos que deben estar abiertos en el Firewall perimetral y del servidor para permitir el tráfico de señalización SIP, medios RTP y gestión de datos.',
+    usage: 'Asegúrese de que su proveedor de red o administrador de IT habilite estos puertos para evitar llamadas sin audio o errores de conexión en la terminal.',
+    steps: [
+      { title: 'Señalización SIP (5060-5061)', desc: 'Puerto 5060 (UDP/TCP) para tráfico estándar y 5061 (TLS) para tráfico encriptado. Vital para el registro de teléfonos físicos y troncales.' },
+      { title: 'WebRTC Verto (8081-8082)', desc: 'Puertos seguros (WSS) utilizados por la terminal del agente en el navegador. Deben estar abiertos para que el "Anclaje de Audio" funcione.' },
+      { title: 'Rango de Medios RTP (16384-32768)', desc: 'Rango UDP masivo para el transporte de la voz. Si estos puertos están cerrados, las llamadas se conectarán pero no habrá audio (One-way audio).' },
+      { title: 'Gestión y Datos (3000, 5432, 8021)', desc: '3000: Interfaz Web Cuberbox. 5432: Base de Datos PostgreSQL. 8021: Event Socket Layer (ESL) para control del motor desde el backend.' }
+    ]
+  },
+  {
+    id: 'predictive-dialer-core',
+    title: 'Motor Predictivo & Hopper',
+    icon: Zap,
+    category: 'INFRAESTRUCTURA',
+    summary: 'Algoritmo de marcación adaptativa basado en probabilidad y tasa de abandono.',
+    functionality: 'El motor calcula el "Dial Ratio" dinámicamente. El Hopper actúa como un búfer de memoria pre-cargando los mejores leads de la base de datos para inyectarlos en el marcador en microsegundos cuando un agente queda libre.',
+    usage: 'Como administrador, su objetivo es mantener a los agentes hablando el mayor tiempo posible sin generar demasiadas llamadas abandonadas.',
+    steps: [
+      { title: 'Paso 1: Carga de Bases de Datos', desc: 'Suba sus archivos CSV con los contactos. El sistema los procesará y los asignará a las listas correspondientes de la campaña.' },
+      { title: 'Paso 2: Configuración del Hopper', desc: 'Defina cuántos leads quiere que el sistema tenga "listos" en memoria. Un valor de 500 es ideal para la mayoría de las operaciones medianas.' },
+      { title: 'Paso 3: Ajuste del Nivel de Marcación', desc: 'Comience con un ratio bajo (ej. 1.5). Si nota que los agentes esperan mucho, suba el ratio. Si nota que entran llamadas y no hay agentes libres (Drop), baje el ratio inmediatamente.' },
+      { title: 'Paso 4: Activación de AMD', desc: 'Habilite la detección de contestadoras. Esto ahorra tiempo a sus agentes al filtrar automáticamente los buzones de voz, entregándoles solo personas reales.' }
+    ]
+  },
+  {
+    id: 'ai-studio-gemini',
+    title: 'AI Studio & Coaching',
+    icon: Bot,
+    category: 'AI & NEURAL',
+    summary: 'Integración de Gemini 3 Pro para análisis semántico y asistencia en vivo.',
+    functionality: 'Utiliza modelos LLM para auditar el 100% de las grabaciones, detectar sentimientos, extraer compromisos de pago y sugerir respuestas al agente en el Hub Omnicanal.',
+    usage: 'Configure su asistente virtual para que aprenda sobre su negocio y ayude a sus agentes a cerrar más ventas.',
+    steps: [
+      { title: 'Paso 1: Definir la Personalidad de la IA', desc: 'En el AI Studio, escriba las instrucciones del sistema. Dígale a la IA quién es (ej: "Eres un experto en ventas inmobiliarias") y qué debe buscar en las llamadas.' },
+      { title: 'Paso 2: Configurar Reglas de Evaluación', desc: 'Indique qué criterios debe calificar la IA: ¿El agente saludó correctamente? ¿Mencionó el precio? ¿Fue amable?' },
+      { title: 'Paso 3: Revisión de Sentimientos', desc: 'Acceda al panel de analítica para ver el "clima" de sus llamadas. La IA marcará en rojo las conversaciones donde el cliente se notó molesto para que usted pueda intervenir.' },
+      { title: 'Paso 4: Uso de Sugerencias en Vivo', desc: 'Active la asistencia para agentes. Mientras chatean por WhatsApp, la IA les sugerirá la mejor respuesta basada en el historial de la conversación.' }
+    ]
+  },
+  {
+    id: 'manual-installation-nexus',
+    title: 'Guía de Instalación Manual',
+    icon: TerminalSquare,
+    category: 'ADMINISTRACIÓN',
+    summary: 'Procedimiento paso a paso para el despliegue de la infraestructura Nexus desde cero.',
+    functionality: 'Esta guía detalla la secuencia técnica necesaria para compilar FreeSwitch 1.10 desde fuentes, instalar PostgreSQL 16 y configurar el stack de alta disponibilidad en servidores Debian 12/13.',
+    usage: 'Esta guía es para técnicos senior. La compilación puede tardar entre 10 y 20 minutos dependiendo del hardware. No interrumpa el proceso de "make".',
+    steps: [
+      { 
+        title: 'Paso 1: Dependencias, Node.js y Go', 
+        desc: 'Instalamos las herramientas de compilación y los lenguajes necesarios para el backend y el frontend.',
+        code: '# 1. Herramientas base\napt-get update && apt-get install -y gnupg2 wget lsb-release curl build-essential cmake automake autoconf libtool libtool-bin pkg-config libssl-dev zlib1g-dev libdb-dev libncurses5-dev libsqlite3-dev libcurl4-openssl-dev libpcre3-dev libspeex-dev libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev libopus-dev libsndfile1-dev libshout3-dev libmpg123-dev python3-dev git haproxy keepalived\n\n# 2. Instalar Node.js 20 (LTS)\ncurl -fsSL https://deb.nodesource.com/setup_20.x | bash -\napt-get install -y nodejs\n\n# 3. Instalar Go 1.22\nwget https://go.dev/dl/go1.22.1.linux-amd64.tar.gz\ntar -C /usr/local -xzf go1.22.1.linux-amd64.tar.gz\nexport PATH=$PATH:/usr/local/go/bin\necho "export PATH=\\$PATH:/usr/local/go/bin" >> ~/.bashrc'
+      },
+      { 
+        title: 'Paso 2: Obtener Fuentes y Librerías de SignalWire', 
+        desc: 'Descargamos el código fuente oficial y las librerías críticas (libks y signalwire-c) necesarias para la comunicación moderna.',
+        code: 'cd /usr/src\n# Instalar librerías de soporte\napt-get install -y libks-dev signalwire-client-c-dev\n\n# Clonar FreeSwitch v1.10\ngit clone https://github.com/signalwire/freeswitch.git -b v1.10 freeswitch\ncd freeswitch\n./bootstrap.sh -j'
+      },
+      { 
+        title: 'Paso 3: Compilación e Instalación Profesional', 
+        desc: 'Configuramos el entorno de compilación y ejecutamos la construcción. Usamos "nproc" para usar todos los núcleos del procesador y acelerar el proceso.',
+        code: './configure --enable-core-pgsql-support\nmake -j$(nproc)\nmake install\nmake cd-sounds-install\nmake cd-moh-install\n\n# Crear enlaces simbólicos para comandos globales\nln -s /usr/local/freeswitch/bin/freeswitch /usr/bin/freeswitch\nln -s /usr/local/freeswitch/bin/fs_cli /usr/bin/fs_cli'
+      },
+      { 
+        title: 'Paso 4: Configurar PostgreSQL 16', 
+        desc: 'Instalamos y configuramos la base de datos para el almacenamiento de llamadas y configuración.',
+        code: 'wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-archive-keyring.gpg\necho "deb [signed-by=/usr/share/keyrings/postgresql-archive-keyring.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list > /dev/null\napt-get update && apt-get install -y postgresql-16\n\nsudo -u postgres psql -c "CREATE USER cuberbox_admin WITH PASSWORD \'TitanPass2024!\';" \nsudo -u postgres psql -c "CREATE DATABASE cuberbox_db OWNER cuberbox_admin;"'
+      },
+      { 
+        title: 'Paso 5: Seguridad SSL (El Candado)', 
+        desc: 'Para que las llamadas por navegador funcionen, necesitamos certificados de seguridad. Esto encripta la voz para que nadie pueda escucharla externamente.',
+        code: 'mkdir -p /etc/freeswitch/tls\nopenssl req -x509 -nodes -days 3650 -newkey rsa:4096 -keyout /etc/freeswitch/tls/wss.key -out /etc/freeswitch/tls/wss.crt -subj "/C=US/ST=Tech/L=Cloud/O=Cuberbox/CN=sip.tu-dominio.com"\ncat /etc/freeswitch/tls/wss.crt /etc/freeswitch/tls/wss.key > /etc/freeswitch/tls/wss.pem\nchown -R freeswitch:freeswitch /etc/freeswitch/tls'
+      },
+      { 
+        title: 'Paso 6: Alta Disponibilidad (El Respaldo)', 
+        desc: 'Configuramos un sistema que vigila el servidor. Si algo falla, el sistema de respaldo toma el control automáticamente sin que usted lo note.',
+        code: 'mkdir -p /etc/keepalived\ncat <<EOF > /etc/keepalived/keepalived.conf\nvrrp_instance VI_1 {\n    state MASTER\n    interface eth0\n    virtual_router_id 51\n    priority 150\n    advert_int 1\n    authentication {\n        auth_type PASS\n        auth_pass nexus_ha_key\n    }\n    virtual_ipaddress {\n        192.168.1.100\n    }\n}\nEOF'
+      },
+      {
+        title: 'Paso 7: Obtener el Aplicativo de GitHub',
+        desc: 'Descargamos la última versión estable del código fuente desde el repositorio oficial.',
+        code: 'cd /opt\ngit clone https://github.com/tu-usuario/cuberbox.git\ncd cuberbox'
+      },
+      {
+        title: 'Paso 8: Instalación del Aplicativo Web (Puerto 3000)',
+        desc: 'Para que la interfaz sea accesible, debemos levantar el servidor Node.js. Esto habilitará el puerto 3000 que usted reportó como cerrado.',
+        code: '# 1. Instalar dependencias\nnpm install\n\n# 2. Construir el sitio\nnpm run build\n\n# 3. Crear servicio para el Web Server\ncat <<EOF > /etc/systemd/system/cuberbox-web.service\n[Unit]\nDescription=Cuberbox Web Interface\nAfter=network.target\n\n[Service]\nType=simple\nWorkingDirectory=/opt/cuberbox\nExecStart=/usr/bin/npm run dev\nRestart=always\nEnvironment=NODE_ENV=production\n\n[Install]\nWantedBy=multi-user.target\nEOF\n\n# 4. Activar y verificar\nsystemctl enable --now cuberbox-web\nsystemctl status cuberbox-web'
+      },
+      {
+        title: 'Paso 9: Verificación de Puertos',
+        desc: 'Una vez activados ambos servicios, verifique que los puertos 3000 (Web) y 8021 (ESL) estén en estado LISTEN.',
+        code: 'netstat -tulpn | grep -E "3000|8021"'
+      }
+    ]
+  },
+  {
+    id: 'docker-deployment-debian12',
+    title: 'Despliegue Docker (Debian 12)',
+    icon: Box,
+    category: 'ADMINISTRACIÓN',
+    summary: 'Guía para instalar Cuberbox Pro usando contenedores Docker en Debian 12.',
+    functionality: 'Aísla cada componente (Base de datos, Telefonía, Backend, Frontend) en contenedores independientes, facilitando la portabilidad y escalabilidad.',
+    usage: 'Ideal para entornos de producción modernos y despliegues rápidos en la nube.',
+    steps: [
+      { 
+        title: 'Paso 1: Instalar Docker y Compose', 
+        desc: 'Prepare su Debian 12 instalando el motor de Docker y el plugin de Compose.',
+        code: 'apt-get update\napt-get install -y ca-certificates curl gnupg\ninstall -m 0755 -d /etc/apt/keyrings\ncurl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg\nchmod a+r /etc/apt/keyrings/docker.gpg\necho "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null\napt-get update\napt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin'
+      },
+      {
+        title: 'Paso 2: Descargar el Proyecto de GitHub',
+        desc: 'Clonamos el repositorio oficial para obtener los archivos de configuración de Docker.',
+        code: 'cd /opt\ngit clone https://github.com/tu-usuario/cuberbox.git\ncd cuberbox'
+      },
+      { 
+        title: 'Paso 3: Preparar Archivos de Configuración', 
+        desc: 'Asegúrese de tener el archivo docker-compose.yml y los Dockerfiles en la raíz del proyecto.',
+        code: 'ls -R | grep Dockerfile\nls docker-compose.yml'
+      },
+      { 
+        title: 'Paso 4: Levantar el Stack', 
+        desc: 'Inicie todos los servicios en segundo plano. Docker descargará las imágenes y construirá sus contenedores personalizados.',
+        code: 'docker compose up -d'
+      },
+      { 
+        title: 'Paso 5: Verificación de Contenedores', 
+        desc: 'Compruebe que todos los servicios estén en estado "Running".',
+        code: 'docker compose ps'
+      }
+    ]
+  },
+  {
+    id: 'docker-cluster-ha',
+    title: 'Cluster & HA con Docker',
+    icon: Layers,
+    category: 'INFRAESTRUCTURA',
+    summary: 'Configuración de Alta Disponibilidad y Clúster usando Docker Swarm o Compose.',
+    functionality: 'Permite replicar el servicio web y el conector para distribuir la carga y asegurar que el sistema siga operando si un contenedor falla.',
+    usage: 'Utilice esta configuración para operaciones de misión crítica que no pueden permitirse tiempo de inactividad.',
+    steps: [
+      { 
+        title: 'Paso 1: Replicación de Servicios', 
+        desc: 'En su docker-compose.yml, puede definir el número de réplicas para el servicio web.',
+        code: 'services:\n  web:\n    deploy:\n      replicas: 3\n      restart_policy:\n        condition: on-failure'
+      },
+      { 
+        title: 'Paso 2: Balanceo de Carga con HAProxy', 
+        desc: 'El contenedor de HAProxy distribuirá el tráfico entre las réplicas del servicio web.',
+        code: 'docker compose up -d --scale web=3'
+      },
+      { 
+        title: 'Paso 3: Persistencia de Datos Compartida', 
+        desc: 'Para un clúster real, use volúmenes externos o un sistema de archivos compartido (NFS) para las grabaciones y la base de datos.',
+        code: 'volumes:\n  postgres_data:\n    driver: local\n    driver_opts:\n      type: nfs\n      o: addr=192.168.1.50,rw\n      device: ":/export/postgres_data"'
+      }
+    ]
+  },
+  {
     id: 'systemd-automation',
     title: 'Automatización de Servicios',
     icon: Terminal,
@@ -334,107 +523,6 @@ const MANUAL_DATABASE: ManualEntry[] = [
         title: 'Paso 4: Verificar Logs del Sistema', 
         desc: 'Si el error persiste, revise los mensajes detallados del kernel para ver si falta alguna librería.',
         code: 'journalctl -u cuberbox.service -f'
-      }
-    ]
-  },
-  {
-    id: 'network-ports-matrix',
-    title: 'Matriz de Puertos y Red',
-    icon: Globe2,
-    category: 'INFRAESTRUCTURA',
-    summary: 'Configuración de Firewall y conectividad requerida para el ecosistema Nexus.',
-    functionality: 'Detalla los puertos lógicos que deben estar abiertos en el Firewall perimetral y del servidor para permitir el tráfico de señalización SIP, medios RTP y gestión de datos.',
-    usage: 'Asegúrese de que su proveedor de red o administrador de IT habilite estos puertos para evitar llamadas sin audio o errores de conexión en la terminal.',
-    steps: [
-      { title: 'Señalización SIP (5060-5061)', desc: 'Puerto 5060 (UDP/TCP) para tráfico estándar y 5061 (TLS) para tráfico encriptado. Vital para el registro de teléfonos físicos y troncales.' },
-      { title: 'WebRTC Verto (8081-8082)', desc: 'Puertos seguros (WSS) utilizados por la terminal del agente en el navegador. Deben estar abiertos para que el "Anclaje de Audio" funcione.' },
-      { title: 'Rango de Medios RTP (16384-32768)', desc: 'Rango UDP masivo para el transporte de la voz. Si estos puertos están cerrados, las llamadas se conectarán pero no habrá audio (One-way audio).' },
-      { title: 'Gestión y Datos (3000, 5432, 8021)', desc: '3000: Interfaz Web Cuberbox. 5432: Base de Datos PostgreSQL. 8021: Event Socket Layer (ESL) para control del motor desde el backend.' }
-    ]
-  },
-  {
-    id: 'predictive-dialer-core',
-    title: 'Motor Predictivo & Hopper',
-    icon: Zap,
-    category: 'INFRAESTRUCTURA',
-    summary: 'Algoritmo de marcación adaptativa basado en probabilidad y tasa de abandono.',
-    functionality: 'El motor calcula el "Dial Ratio" dinámicamente. El Hopper actúa como un búfer de memoria pre-cargando los mejores leads de la base de datos para inyectarlos en el marcador en microsegundos cuando un agente queda libre.',
-    usage: 'Como administrador, su objetivo es mantener a los agentes hablando el mayor tiempo posible sin generar demasiadas llamadas abandonadas.',
-    steps: [
-      { title: 'Paso 1: Carga de Bases de Datos', desc: 'Suba sus archivos CSV con los contactos. El sistema los procesará y los asignará a las listas correspondientes de la campaña.' },
-      { title: 'Paso 2: Configuración del Hopper', desc: 'Defina cuántos leads quiere que el sistema tenga "listos" en memoria. Un valor de 500 es ideal para la mayoría de las operaciones medianas.' },
-      { title: 'Paso 3: Ajuste del Nivel de Marcación', desc: 'Comience con un ratio bajo (ej. 1.5). Si nota que los agentes esperan mucho, suba el ratio. Si nota que entran llamadas y no hay agentes libres (Drop), baje el ratio inmediatamente.' },
-      { title: 'Paso 4: Activación de AMD', desc: 'Habilite la detección de contestadoras. Esto ahorra tiempo a sus agentes al filtrar automáticamente los buzones de voz, entregándoles solo personas reales.' }
-    ]
-  },
-  {
-    id: 'ai-studio-gemini',
-    title: 'AI Studio & Coaching',
-    icon: Bot,
-    category: 'AI & NEURAL',
-    summary: 'Integración de Gemini 3 Pro para análisis semántico y asistencia en vivo.',
-    functionality: 'Utiliza modelos LLM para auditar el 100% de las grabaciones, detectar sentimientos, extraer compromisos de pago y sugerir respuestas al agente en el Hub Omnicanal.',
-    usage: 'Configure su asistente virtual para que aprenda sobre su negocio y ayude a sus agentes a cerrar más ventas.',
-    steps: [
-      { title: 'Paso 1: Definir la Personalidad de la IA', desc: 'En el AI Studio, escriba las instrucciones del sistema. Dígale a la IA quién es (ej: "Eres un experto en ventas inmobiliarias") y qué debe buscar en las llamadas.' },
-      { title: 'Paso 2: Configurar Reglas de Evaluación', desc: 'Indique qué criterios debe calificar la IA: ¿El agente saludó correctamente? ¿Mencionó el precio? ¿Fue amable?' },
-      { title: 'Paso 3: Revisión de Sentimientos', desc: 'Acceda al panel de analítica para ver el "clima" de sus llamadas. La IA marcará en rojo las conversaciones donde el cliente se notó molesto para que usted pueda intervenir.' },
-      { title: 'Paso 4: Uso de Sugerencias en Vivo', desc: 'Active la asistencia para agentes. Mientras chatean por WhatsApp, la IA les sugerirá la mejor respuesta basada en el historial de la conversación.' }
-    ]
-  },
-  {
-    id: 'manual-installation-nexus',
-    title: 'Guía de Instalación Manual',
-    icon: TerminalSquare,
-    category: 'ADMINISTRACIÓN',
-    summary: 'Procedimiento paso a paso para el despliegue de la infraestructura Nexus desde cero.',
-    functionality: 'Esta guía detalla la secuencia técnica necesaria para instalar FreeSwitch 1.10, PostgreSQL 16 y el stack de alta disponibilidad en servidores Debian 12/13 limpios.',
-    usage: 'Esta guía es para técnicos. Siga cada paso con calma. Si un comando falla, no continúe al siguiente sin resolver el error.',
-    steps: [
-      { 
-        title: 'Paso 0: Limpieza (Solo si tiene errores)', 
-        desc: 'Si recibió errores de "Tipo echo desconocido", ejecute este comando para limpiar los archivos corruptos antes de continuar.',
-        code: 'rm -f /etc/apt/sources.list.d/freeswitch.list /etc/apt/sources.list.d/pgdg.list && apt-get update'
-      },
-      { 
-        title: 'Paso 1: Preparar el Terreno', 
-        desc: 'Primero, debemos limpiar y preparar el servidor con todas las herramientas básicas que FreeSwitch necesitará.',
-        code: 'apt-get update && apt-get install -y gnupg2 wget lsb-release curl build-essential cmake automake autoconf libtool libtool-bin pkg-config libssl-dev zlib1g-dev libdb-dev libncurses5-dev libsqlite3-dev libcurl4-openssl-dev libpcre3-dev libspeex-dev libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev libopus-dev libsndfile1-dev libshout3-dev libmpg123-dev python3-dev git golang-go haproxy keepalived'
-      },
-      { 
-        title: 'Paso 2: Conectar con SignalWire', 
-        desc: 'FreeSwitch requiere un token oficial para descargar sus archivos. Ingrese su token donde dice [TOKEN]. Esto le da acceso a la versión más estable y segura.',
-        code: 'wget --http-user=signalwire --http-password=[TOKEN] -O - https://assignments.signalwire.com/reference/gpg/signalwire_pub.gpg | gpg --dearmor -o /usr/share/keyrings/signalwire-freeswitch-repo.gpg\necho "deb [signed-by=/usr/share/keyrings/signalwire-freeswitch-repo.gpg] https://signalwire:[TOKEN]@assignments.signalwire.com/reference/debian/$(lsb_release -sc) release main" | tee /etc/apt/sources.list.d/freeswitch.list > /dev/null\nwget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-archive-keyring.gpg\necho "deb [signed-by=/usr/share/keyrings/postgresql-archive-keyring.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list > /dev/null'
-      },
-      { 
-        title: 'Paso 3: Instalación del Corazón del Sistema', 
-        desc: 'Ahora instalamos las librerías de SignalWire, el motor de llamadas FreeSwitch y PostgreSQL.',
-        code: 'apt-get update && apt-get install -y libks-dev signalwire-client-c-dev freeswitch-all freeswitch-mod-esl freeswitch-mod-verto postgresql-16'
-      },
-      { 
-        title: 'Paso 4: Configurar la Base de Datos', 
-        desc: 'Creamos un usuario y una base de datos segura. Piense en esto como crear la oficina donde el sistema guardará todos sus archivos importantes.',
-        code: 'sudo -u postgres psql -c "CREATE USER cuberbox_admin WITH PASSWORD \'TitanPass2024!\';" \nsudo -u postgres psql -c "CREATE DATABASE cuberbox_db OWNER cuberbox_admin;"'
-      },
-      { 
-        title: 'Paso 5: Seguridad SSL (El Candado)', 
-        desc: 'Para que las llamadas por navegador funcionen, necesitamos certificados de seguridad. Esto encripta la voz para que nadie pueda escucharla externamente.',
-        code: 'mkdir -p /etc/freeswitch/tls\nopenssl req -x509 -nodes -days 3650 -newkey rsa:4096 -keyout /etc/freeswitch/tls/wss.key -out /etc/freeswitch/tls/wss.crt -subj "/C=US/ST=Tech/L=Cloud/O=Cuberbox/CN=sip.tu-dominio.com"\ncat /etc/freeswitch/tls/wss.crt /etc/freeswitch/tls/wss.key > /etc/freeswitch/tls/wss.pem\nchown -R freeswitch:freeswitch /etc/freeswitch/tls'
-      },
-      { 
-        title: 'Paso 6: Alta Disponibilidad (El Respaldo)', 
-        desc: 'Configuramos un sistema que vigila el servidor. Si algo falla, el sistema de respaldo toma el control automáticamente sin que usted lo note.',
-        code: 'mkdir -p /etc/keepalived\ncat <<EOF > /etc/keepalived/keepalived.conf\nvrrp_instance VI_1 {\n    state MASTER\n    interface eth0\n    virtual_router_id 51\n    priority 150\n    advert_int 1\n    authentication {\n        auth_type PASS\n        auth_pass nexus_ha_key\n    }\n    virtual_ipaddress {\n        192.168.1.100\n    }\n}\nEOF'
-      },
-      {
-        title: 'Paso 7: Instalación del Aplicativo Web (Puerto 3000)',
-        desc: 'Para que la interfaz sea accesible, debemos levantar el servidor Node.js. Esto habilitará el puerto 3000 que usted reportó como cerrado.',
-        code: '# 1. Instalar dependencias\ncd /opt/cuberbox\nnpm install\n\n# 2. Construir el sitio\nnpm run build\n\n# 3. Crear servicio para el Web Server\ncat <<EOF > /etc/systemd/system/cuberbox-web.service\n[Unit]\nDescription=Cuberbox Web Interface\nAfter=network.target\n\n[Service]\nType=simple\nWorkingDirectory=/opt/cuberbox\nExecStart=/usr/bin/npm run dev\nRestart=always\nEnvironment=NODE_ENV=production\n\n[Install]\nWantedBy=multi-user.target\nEOF\n\n# 4. Activar y verificar\nsystemctl enable --now cuberbox-web\nsystemctl status cuberbox-web'
-      },
-      {
-        title: 'Paso 8: Verificación de Puertos',
-        desc: 'Una vez activados ambos servicios, verifique que los puertos 3000 (Web) y 8021 (ESL) estén en estado LISTEN.',
-        code: 'netstat -tulpn | grep -E "3000|8021"'
       }
     ]
   }
