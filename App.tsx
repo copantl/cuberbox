@@ -45,6 +45,9 @@ import FormDesigner from './components/FormDesigner';
 import ExternalCRMHub from './components/ExternalCRMHub';
 import AccessControl from './components/AccessControl';
 import Logo from './components/Logo';
+import { RecordingsManager } from './components/RecordingsManager';
+import { TelephonyConsole } from './components/TelephonyConsole';
+import { LiveChannelMonitor } from './components/LiveChannelMonitor';
 
 import { User, UserRole, ThemeType } from './types';
 import { MOCK_USER } from './constants';
@@ -104,6 +107,7 @@ const App: React.FC = () => {
                     <Route path="/agent" element={<AgentScreen user={user} />} />
                     <Route path="/realtime" element={<AccessControl userLevel={user.userLevel} minLevel={4}><RealTimeMonitor /></AccessControl>} />
                     <Route path="/gtr" element={<AccessControl userLevel={user.userLevel} minLevel={4}><GTRDashboard /></AccessControl>} />
+                    <Route path="/live-monitor" element={<AccessControl userLevel={user.userLevel} minLevel={4}><LiveChannelMonitor /></AccessControl>} />
                     <Route path="/whatsapp" element={<AccessControl userLevel={user.userLevel} minLevel={1}><WhatsAppModule /></AccessControl>} />
                     <Route path="/blueprint" element={<AccessControl userLevel={user.userLevel} minLevel={6}><Workflows /></AccessControl>} />
 
@@ -122,6 +126,7 @@ const App: React.FC = () => {
                     <Route path="/analytics-hub" element={<AccessControl userLevel={user.userLevel} minLevel={6}><AnalyticsHub /></AccessControl>} />
                     <Route path="/reports" element={<AccessControl userLevel={user.userLevel} minLevel={4}><Reports /></AccessControl>} />
                     <Route path="/qa" element={<AccessControl userLevel={user.userLevel} minLevel={5}><QualityAssurance /></AccessControl>} />
+                    <Route path="/recordings" element={<AccessControl userLevel={user.userLevel} minLevel={4}><RecordingsManager /></AccessControl>} />
                     <Route path="/integrations" element={<AccessControl userLevel={user.userLevel} minLevel={8}><ExternalIntegrations /></AccessControl>} />
                     <Route path="/crm" element={<AccessControl userLevel={user.userLevel} minLevel={8}><CRMIntegrations /></AccessControl>} />
                     <Route path="/crm-designer" element={<AccessControl userLevel={user.userLevel} minLevel={8}><FormDesigner /></AccessControl>} />
@@ -132,6 +137,7 @@ const App: React.FC = () => {
                     <Route path="/cluster-provisioning" element={<AccessControl userLevel={user.userLevel} minLevel={9}><ClusterProvisioning /></AccessControl>} />
                     <Route path="/ha-config" element={<AccessControl userLevel={user.userLevel} minLevel={9}><HAConfig /></AccessControl>} />
                     <Route path="/telephony" element={<AccessControl userLevel={user.userLevel} minLevel={9}><TelephonyConfig /></AccessControl>} />
+                    <Route path="/telephony-console" element={<AccessControl userLevel={user.userLevel} minLevel={9}><TelephonyConsole /></AccessControl>} />
                     <Route path="/storage" element={<AccessControl userLevel={user.userLevel} minLevel={9}><StorageServer /></AccessControl>} />
 
                     {/* Governance */}

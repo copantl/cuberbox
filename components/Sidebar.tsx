@@ -27,6 +27,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggle, role, userLevel }) =>
     { name: 'Terminal Agente', icon: Smartphone, path: '/agent', roles: [UserRole.AGENT, UserRole.ADMIN, UserRole.MANAGER], minLevel: 1, cat: 'COMMAND CENTER' },
     { name: 'Monitor GTR', icon: MonitorCheck, path: '/realtime', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 4, cat: 'COMMAND CENTER' },
     { name: 'GTR Avanzado', icon: Activity, path: '/gtr', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 4, cat: 'COMMAND CENTER' },
+    { name: 'Monitor Burbujas', icon: Radio, path: '/live-monitor', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 4, cat: 'COMMAND CENTER' },
     { name: 'Omnicanal Hub', icon: Share2, path: '/whatsapp', roles: [UserRole.AGENT, UserRole.ADMIN, UserRole.MANAGER], minLevel: 1, cat: 'COMMAND CENTER' },
     { name: 'Blueprints', icon: Workflow, path: '/blueprint', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 6, cat: 'COMMAND CENTER' },
 
@@ -45,6 +46,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggle, role, userLevel }) =>
     { name: 'Analytics Hub', icon: BarChart3, path: '/analytics-hub', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 6, cat: 'DATA & BI' },
     { name: 'Reportes BI', icon: FileText, path: '/reports', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 4, cat: 'DATA & BI' },
     { name: 'Calidad & QA', icon: ShieldCheck, path: '/qa', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 5, cat: 'DATA & BI' },
+    { name: 'Grabaciones', icon: Headphones, path: '/recordings', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 4, cat: 'DATA & BI' },
     { name: 'Cloud Mesh', icon: Cloud, path: '/integrations', roles: [UserRole.ADMIN], minLevel: 8, cat: 'DATA & BI' },
     { name: 'CRM Connect', icon: Globe, path: '/crm', roles: [UserRole.ADMIN], minLevel: 8, cat: 'DATA & BI' },
     { name: 'Form Designer', icon: Layers, path: '/crm-designer', roles: [UserRole.ADMIN], minLevel: 8, cat: 'DATA & BI' },
@@ -55,6 +57,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggle, role, userLevel }) =>
     { name: 'Provisioning', icon: Zap, path: '/cluster-provisioning', roles: [UserRole.ADMIN], minLevel: 9, cat: 'INFRASTRUCTURE' },
     { name: 'HA Config', icon: Shield, path: '/ha-config', roles: [UserRole.ADMIN], minLevel: 9, cat: 'INFRASTRUCTURE' },
     { name: 'SIP Telephony', icon: PhoneCall, path: '/telephony', roles: [UserRole.ADMIN], minLevel: 9, cat: 'INFRASTRUCTURE' },
+    { name: 'Consola ESL', icon: Terminal, path: '/telephony-console', roles: [UserRole.ADMIN], minLevel: 9, cat: 'INFRASTRUCTURE' },
     { name: 'Media Storage', icon: HardDrive, path: '/storage', roles: [UserRole.ADMIN], minLevel: 9, cat: 'INFRASTRUCTURE' },
 
     // GOVERNANCE

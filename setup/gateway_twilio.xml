@@ -1,0 +1,14 @@
+<include>
+  <gateway name="twilio">
+    <!-- Twilio SIP Trunking Gateway -->
+    <param name="realm" value="your-domain.pstn.twilio.com"/>
+    <param name="username" value="your_account_sid"/>
+    <param name="password" value="your_auth_token"/>
+    <param name="register" value="false"/>
+    <!-- Recomendado para Twilio -->
+    <param name="caller-id-in-from" value="true"/>
+    <param name="proxy" value="your-domain.pstn.twilio.com"/>
+    <param name="expire-seconds" value="3600"/>
+    <param name="retry-seconds" value="30"/>
+  </gateway>
+</include>

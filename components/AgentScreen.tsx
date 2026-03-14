@@ -11,11 +11,11 @@ import {
   MessageCircle, Mail, Send, History, Star, ArrowRightLeft,
   Settings2, Signal, BarChart3, Flame, Timer, Calendar,
   CheckCircle as CheckIcon, Wand2, BrainCircuit, TrendingUp, TrendingDown,
-  MessageCircleCode, Lightbulb,
+  MessageCircleCode, Lightbulb, Globe,
   // Fix: Added missing Copy icon import
   Copy
 } from 'lucide-react';
-import { PAUSE_CODES, MOCK_CAMPAIGNS, MOCK_USER, MOCK_CALL_CODES } from '../constants';
+import { PAUSE_CODES, MOCK_CAMPAIGNS, MOCK_USER, MOCK_CALL_CODES, MOCK_TRUNKS } from '../constants';
 import { User as UserType } from '../types';
 import { useToast } from '../ToastContext';
 import { GoogleGenAI } from "@google/genai";
@@ -47,6 +47,12 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
   const [aiSuggestion, setAiSuggestion] = useState<string>("");
   const [isAiThinking, setIsAiThinking] = useState(false);
   const [sentiment, setSentiment] = useState<'POSITIVE' | 'NEUTRAL' | 'NEGATIVE'>('NEUTRAL');
+
+  // Real Dial States
+  const [isDialerOpen, setIsDialerOpen] = useState(false);
+  const [dialNumber, setDialNumber] = useState("");
+  const [selectedGateway, setSelectedGateway] = useState("");
+  const [isDialing, setIsDialing] = useState(false);
 
   // Callback States
   const [isCallbackModalOpen, setIsCallbackModalOpen] = useState(false);
@@ -83,6 +89,52 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
       setAiSuggestion("Saluda al cliente y confirma si tiene 2 minutos para hablar sobre el ROI del proyecto Diamond.");
       toast('Llamada Conectada: Alexander Pierce', 'success');
     }, 2000);
+  };
+
+  const performRealDial = async () => {
+    if (!dialNumber) {
+      toast('Ingrese un número de destino.', 'error');
+      return;
+    }
+    
+    setIsDialing(true);
+    try {
+      const response = await fetch('/api/telephony/originate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          destination: dialNumber,
+          extension: user.extension,
+          gateway: selectedGateway || null
+        })
+      });
+      
+      const data = await response.json();
+      if (response.ok) {
+        toast('Llamada originada. Su extensión debería sonar.', 'success', 'FreeSwitch ESL');
+        setStatus('RINGING');
+        setTimer(0);
+        setIsDialerOpen(false);
+        // Simular que contesta el agente y luego el destino
+        setTimeout(() => {
+          setStatus('INCALL');
+          setCurrentLead({
+            id: 'MANUAL',
+            name: 'Llamada Manual',
+            phone: dialNumber,
+            city: 'Manual',
+            address: 'Manual',
+            script: 'Llamada manual en curso...'
+          });
+        }, 3000);
+      } else {
+        toast(data.error || 'Error al originar llamada.', 'error');
+      }
+    } catch (error) {
+      toast('Error de red al conectar con el servidor.', 'error');
+    } finally {
+      setIsDialing(false);
+    }
   };
 
   const handleAiConsult = async (context: string) => {
@@ -195,7 +247,12 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
 
          <div className="flex items-center space-x-4">
             {status === 'READY' ? (
-               <button onClick={handleDial} className="bg-emerald-600 hover:bg-emerald-500 text-white px-10 py-4 rounded-[24px] font-black text-[10px] uppercase tracking-widest shadow-xl">Manual Dial</button>
+               <div className="flex items-center space-x-2">
+                  <button onClick={() => setIsDialerOpen(true)} className="bg-blue-600 hover:bg-blue-500 text-white px-10 py-4 rounded-[24px] font-black text-[10px] uppercase tracking-widest shadow-xl flex items-center">
+                    <Smartphone size={16} className="mr-2" /> Dial Real
+                  </button>
+                  <button onClick={handleDial} className="bg-emerald-600 hover:bg-emerald-500 text-white px-10 py-4 rounded-[24px] font-black text-[10px] uppercase tracking-widest shadow-xl">Simular Dial</button>
+               </div>
             ) : (
                <button onClick={() => { setStatus('READY'); setCurrentLead(null); setTimer(0); setAiSuggestion(""); }} className="bg-rose-600 hover:bg-rose-500 text-white px-10 py-4 rounded-[24px] font-black text-[10px] uppercase tracking-widest shadow-xl">Colgar / Terminar</button>
             )}
@@ -446,6 +503,71 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
             </div>
          </div>
       </div>
+
+      {/* MODAL DE DIALER MANUAL REAL */}
+      {isDialerOpen && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-300">
+           <div className="relative w-full max-w-md glass rounded-[64px] border border-slate-700/50 shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-300">
+              <div className="p-10 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between">
+                 <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-400 border border-blue-500/20">
+                       <Smartphone size={24} />
+                    </div>
+                    <div>
+                       <h3 className="text-xl font-black text-white uppercase tracking-tighter">Manual Dialer</h3>
+                       <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Llamada Real vía ESL</p>
+                    </div>
+                 </div>
+                 <button onClick={() => setIsDialerOpen(false)} className="p-3 bg-slate-800 hover:bg-rose-500/10 rounded-xl text-slate-400 hover:text-rose-500 transition-all"><X size={20} /></button>
+              </div>
+
+              <div className="p-10 space-y-8">
+                 <div className="space-y-4">
+                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-2">Número de Destino</label>
+                    <div className="relative">
+                       <Phone className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-600" size={20} />
+                       <input 
+                         type="text" 
+                         value={dialNumber}
+                         onChange={e => setDialNumber(e.target.value)}
+                         className="w-full bg-slate-950 border-2 border-slate-800 rounded-[28px] pl-16 pr-8 py-5 text-xl text-white font-mono font-black outline-none focus:border-blue-500 shadow-inner" 
+                         placeholder="Ej: 13055550122" 
+                       />
+                    </div>
+                 </div>
+
+                 <div className="space-y-4">
+                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-2">Gateway SIP (Opcional)</label>
+                    <div className="relative">
+                       <Globe className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
+                       <select 
+                         value={selectedGateway}
+                         onChange={e => setSelectedGateway(e.target.value)}
+                         className="w-full bg-slate-950 border-2 border-slate-800 rounded-[28px] pl-16 pr-8 py-5 text-sm text-white font-bold outline-none focus:border-blue-500 shadow-inner appearance-none"
+                       >
+                          <option value="">Llamada Interna / Eco</option>
+                          {MOCK_TRUNKS.map(t => (
+                            <option key={t.id} value={t.name}>{t.name}</option>
+                          ))}
+                       </select>
+                    </div>
+                    <p className="text-[9px] text-slate-500 font-bold uppercase italic px-2">
+                       * Si no selecciona gateway, se realizará una prueba de eco a su extensión.
+                    </p>
+                 </div>
+
+                 <button 
+                   onClick={performRealDial}
+                   disabled={isDialing}
+                   className="w-full bg-blue-600 hover:bg-blue-500 text-white py-6 rounded-[32px] font-black text-xs uppercase tracking-[0.4em] shadow-xl shadow-blue-600/30 transition-all active:scale-95 flex items-center justify-center space-x-4 disabled:opacity-50"
+                 >
+                    {isDialing ? <RefreshCw className="animate-spin" size={20} /> : <Phone size={20} />}
+                    <span>{isDialing ? 'Originando...' : 'Llamar Ahora'}</span>
+                 </button>
+              </div>
+           </div>
+        </div>
+      )}
 
       {/* MODAL DE PROGRAMACIÓN DE CALLBACK */}
       {isCallbackModalOpen && (

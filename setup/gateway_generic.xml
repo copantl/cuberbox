@@ -1,0 +1,16 @@
+<include>
+  <gateway name="generic_provider">
+    <!-- Proveedor SIP Genérico (User/Pass Auth) -->
+    <param name="realm" value="sip.provider.com"/>
+    <param name="username" value="your_username"/>
+    <param name="auth-username" value="your_auth_username"/>
+    <param name="password" value="your_password"/>
+    <param name="register" value="true"/>
+    <param name="proxy" value="sip.provider.com"/>
+    <param name="expire-seconds" value="3600"/>
+    <param name="retry-seconds" value="30"/>
+    <!-- Opciones de compatibilidad -->
+    <param name="ping" value="25"/>
+    <param name="context" value="public"/>
+  </gateway>
+</include>

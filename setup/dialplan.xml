@@ -17,13 +17,16 @@
     <extension name="agent_permanent_bridge">
       <condition field="destination_number" expression="^8600(\d{4})$">
         <answer/>
-        <!-- Flags de Seguridad: Silencio al entrar, grabación obligatoria, moderador automático -->
         <set data="conference_member_flags=wait-mod|mute-member|waste-energy"/>
         <set data="agent_id=$1"/>
         <set data="cuberbox_app=PERMANENT_BRIDGE"/>
         <log level="notice" message="INICIANDO PUENTE PERMANENTE PARA AGENTE ${agent_id}"/>
-        <!-- Iniciar grabación de la sala completa (Forense) -->
-        <action application="set" data="api_on_answer=conference conf_$1 record /opt/cuberbox/recordings/${strftime(%Y-%m-%d)}/conf_$1.wav"/>
+        
+        <!-- Grabación Automática de la Sala -->
+        <action application="set" data="record_path=/opt/cuberbox/recordings/${strftime(%Y-%m-%d)}"/>
+        <action application="system" data="mkdir -p ${record_path}"/>
+        <action application="set" data="api_on_answer=conference conf_$1 record ${record_path}/agent_${agent_id}_${strftime(%H%M%S)}.wav"/>
+        
         <conference data="conf_$1@default"/>
       </condition>
     </extension>
@@ -33,8 +36,15 @@
       <condition field="destination_number" expression="^9999(\d{4})(\d+)$">
         <set data="target_agent=$1"/>
         <set data="lead_number=$2"/>
-        <log level="info" message="INYECTANDO LEAD ${lead_number} EN PUENTE ${target_agent}"/>
-        <!-- Marcación al lead y al contestar, inyectarlo en la conferencia del agente -->
+        <set data="customer_name=${cond(${exists(${cuberbox_customer_name})} == true ? ${cuberbox_customer_name} : 'Unknown_Lead')}"/>
+        
+        <log level="info" message="INYECTANDO LEAD ${customer_name} (${lead_number}) EN PUENTE ${target_agent}"/>
+        
+        <!-- Grabación Individual del Canal del Lead -->
+        <action application="set" data="record_path=/opt/cuberbox/recordings/${strftime(%Y-%m-%d)}"/>
+        <action application="system" data="mkdir -p ${record_path}"/>
+        <action application="record_session" data="${record_path}/${customer_name}_${lead_number}_${strftime(%H%M%S)}.wav"/>
+        
         <action application="bridge" data="{ignore_early_media=true,originate_timeout=30}sofia/gateway/twilio/${lead_number},&conference(conf_${target_agent}@default)"/>
       </condition>
     </extension>
