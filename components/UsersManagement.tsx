@@ -126,8 +126,8 @@ const UsersManagement: React.FC<{ currentUser?: User }> = ({ currentUser = MOCK_
   };
 
   const handleSave = async () => {
-    if (!editingUser?.fullName || !editingUser?.email) {
-      toast('Nombre y Email son obligatorios.', 'error');
+    if (!editingUser?.fullName || !editingUser?.email || !editingUser?.username) {
+      toast('Nombre, Email y Usuario son obligatorios.', 'error');
       return;
     }
     
@@ -339,6 +339,17 @@ const UsersManagement: React.FC<{ currentUser?: User }> = ({ currentUser = MOCK_
                       <div className="space-y-3">
                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nombre Completo</label>
                         <input type="text" value={editingUser.fullName} onChange={(e) => setEditingUser({...editingUser, fullName: e.target.value})} className="w-full bg-slate-950 border-2 border-slate-800 rounded-3xl px-8 py-5 text-sm text-white font-bold outline-none focus:border-blue-500 transition-all shadow-inner font-bold" />
+                      </div>
+                      <div className="space-y-3">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Correo Electrónico</label>
+                        <input type="email" value={editingUser.email} onChange={(e) => setEditingUser({...editingUser, email: e.target.value})} className="w-full bg-slate-950 border-2 border-slate-800 rounded-3xl px-8 py-5 text-sm text-white font-bold outline-none focus:border-blue-500 transition-all shadow-inner" placeholder="usuario@empresa.com" />
+                      </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-3">
+                        <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nombre de Usuario (Login)</label>
+                        <input type="text" value={editingUser.username} onChange={(e) => setEditingUser({...editingUser, username: e.target.value})} className="w-full bg-slate-950 border-2 border-slate-800 rounded-3xl px-8 py-5 text-sm text-white font-bold outline-none focus:border-blue-500 transition-all shadow-inner" placeholder="ej: jdoe" />
                       </div>
                       <div className="space-y-3">
                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Grupo (Perfil Maestro)</label>

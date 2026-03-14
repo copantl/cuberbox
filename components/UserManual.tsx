@@ -300,6 +300,52 @@ const MANUAL_DATABASE: ManualEntry[] = [
     ]
   },
   {
+    id: 'manual-compilacion-detallada',
+    title: 'Manual de Compilación Avanzado',
+    icon: Cpu,
+    category: 'INFRAESTRUCTURA',
+    summary: 'Guía técnica exhaustiva para compilar FreeSwitch 1.10 y todas sus dependencias críticas desde el código fuente.',
+    functionality: 'Este manual cubre la obtención, configuración y compilación de libks2, signalwire-client-c2, sofia-sip, spandsp y el núcleo de FreeSwitch.',
+    usage: 'Recomendado para entornos donde se requiere control total sobre los binarios y optimización específica de hardware.',
+    steps: [
+      {
+        title: '1. Preparación del Sistema y Dependencias',
+        desc: 'Antes de compilar, necesitamos un sistema Debian 12 limpio con todas las herramientas de desarrollo esenciales.',
+        code: 'apt-get update && apt-get install -y \\\n  git build-essential cmake automake autoconf libtool libtool-bin \\\n  pkg-config libssl-dev zlib1g-dev libdb-dev libncurses5-dev \\\n  libsqlite3-dev libcurl4-openssl-dev libpcre3-dev libspeex-dev \\\n  libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev libopus-dev \\\n  libsndfile1-dev libshout3-dev libmpg123-dev python3-dev uuid-dev \\\n  libjpeg-dev libtiff-dev libpq-dev libavformat-dev libswscale-dev \\\n  libavresample-dev libyaml-dev libexpat1-dev libgdbm-dev libvpx-dev \\\n  libx264-dev libbroadvoice-dev libcodec2-dev libg7221-dev libilbc-dev \\\n  libopenjp2-7-dev'
+      },
+      {
+        title: '2. Compilación de libks2',
+        desc: 'Librería de soporte fundamental para la arquitectura de SignalWire.',
+        code: 'cd /usr/src\ngit clone https://github.com/signalwire/libks.git\ncd libks\ncmake . -DCMAKE_INSTALL_PREFIX=/usr\nmake -j$(nproc)\nmake install\nldconfig'
+      },
+      {
+        title: '3. Compilación de signalwire-client-c2',
+        desc: 'Cliente C necesario para la comunicación con APIs de SignalWire y módulos modernos.',
+        code: 'cd /usr/src\ngit clone https://github.com/signalwire/signalwire-c.git\ncd signalwire-c\ncmake . -DCMAKE_INSTALL_PREFIX=/usr\nmake -j$(nproc)\nmake install\nldconfig'
+      },
+      {
+        title: '4. Compilación de sofia-sip',
+        desc: 'El stack SIP de FreeSwitch. En la versión 1.10 debe compilarse por separado.',
+        code: 'cd /usr/src\ngit clone https://github.com/freeswitch/sofia-sip.git\ncd sofia-sip\n./bootstrap.sh\n./configure --prefix=/usr\nmake -j$(nproc)\nmake install\nldconfig'
+      },
+      {
+        title: '5. Compilación de spandsp',
+        desc: 'Librería para el procesamiento de señales digitales (DSP), necesaria para mod_fax y otros.',
+        code: 'cd /usr/src\ngit clone https://github.com/freeswitch/spandsp.git\ncd spandsp\n./bootstrap.sh\n./configure --prefix=/usr\nmake -j$(nproc)\nmake install\nldconfig'
+      },
+      {
+        title: '6. Compilación de FreeSwitch 1.10',
+        desc: 'Configuración final y compilación del núcleo de telefonía.',
+        code: 'cd /usr/src\ngit clone https://github.com/signalwire/freeswitch.git -b v1.10 freeswitch\ncd freeswitch\n./bootstrap.sh -j\n\n# Personalización de módulos\n# Edite "modules.conf" para habilitar mod_av, mod_opus, etc.\n# nano modules.conf\n\n./configure --enable-core-pgsql-support\nmake -j$(nproc)\nmake install\nmake cd-sounds-install\nmake cd-moh-install'
+      },
+      {
+        title: '7. Post-Instalación y Permisos',
+        desc: 'Configuración de seguridad y enlaces simbólicos.',
+        code: 'groupadd freeswitch\nuseradd -r -g freeswitch -s /bin/false -d /usr/local/freeswitch freeswitch\nchown -R freeswitch:freeswitch /usr/local/freeswitch\nchmod -R g+w /usr/local/freeswitch\n\nln -s /usr/local/freeswitch/bin/freeswitch /usr/bin/freeswitch\nln -s /usr/local/freeswitch/bin/fs_cli /usr/bin/fs_cli'
+      }
+    ]
+  },
+  {
     id: 'manual-installation-nexus',
     title: 'Guía de Instalación Manual',
     icon: TerminalSquare,
@@ -311,17 +357,17 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { 
         title: 'Paso 1: Dependencias, Node.js y Go', 
         desc: 'Instalamos las herramientas de compilación y los lenguajes necesarios para el backend y el frontend.',
-        code: '# 1. Herramientas base\napt-get update && apt-get install -y gnupg2 wget lsb-release curl build-essential cmake automake autoconf libtool libtool-bin pkg-config libssl-dev zlib1g-dev libdb-dev libncurses5-dev libsqlite3-dev libcurl4-openssl-dev libpcre3-dev libspeex-dev libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev libopus-dev libsndfile1-dev libshout3-dev libmpg123-dev python3-dev git haproxy keepalived\n\n# 2. Instalar Node.js 20 (LTS)\ncurl -fsSL https://deb.nodesource.com/setup_20.x | bash -\napt-get install -y nodejs\n\n# 3. Instalar Go 1.22\nwget https://go.dev/dl/go1.22.1.linux-amd64.tar.gz\ntar -C /usr/local -xzf go1.22.1.linux-amd64.tar.gz\nexport PATH=$PATH:/usr/local/go/bin\necho "export PATH=\\$PATH:/usr/local/go/bin" >> ~/.bashrc'
+        code: '# 1. Herramientas base y dependencias de compilación\napt-get update && apt-get install -y gnupg2 wget lsb-release curl build-essential cmake automake autoconf libtool libtool-bin pkg-config libssl-dev zlib1g-dev libdb-dev libncurses5-dev libsqlite3-dev libcurl4-openssl-dev libpcre3-dev libspeex-dev libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev libopus-dev libsndfile1-dev libshout3-dev libmpg123-dev python3-dev git haproxy keepalived yasm libjpeg-dev libtiff-dev libpq-dev libavformat-dev libswscale-dev libavresample-dev libyaml-dev libexpat1-dev libgdbm-dev libvpx-dev libx264-dev libbroadvoice-dev libcodec2-dev libg7221-dev libilbc-dev libopenjp2-7-dev uuid-dev\n\n# 2. Instalar Node.js 20 (LTS)\ncurl -fsSL https://deb.nodesource.com/setup_20.x | bash -\napt-get install -y nodejs\n\n# 3. Instalar Go 1.22\nwget https://go.dev/dl/go1.22.1.linux-amd64.tar.gz\ntar -C /usr/local -xzf go1.22.1.linux-amd64.tar.gz\nexport PATH=$PATH:/usr/local/go/bin\necho "export PATH=\\$PATH:/usr/local/go/bin" >> ~/.bashrc'
       },
       { 
-        title: 'Paso 2: Obtener Fuentes y Librerías de SignalWire', 
-        desc: 'Descargamos el código fuente oficial y las librerías críticas (libks y signalwire-c) necesarias para la comunicación moderna.',
-        code: 'cd /usr/src\n# Instalar librerías de soporte\napt-get install -y libks-dev signalwire-client-c-dev\n\n# Clonar FreeSwitch v1.10\ngit clone https://github.com/signalwire/freeswitch.git -b v1.10 freeswitch\ncd freeswitch\n./bootstrap.sh -j'
+        title: 'Paso 2: Compilar Librerías de Soporte (libks2 y signalwire-client-c2)', 
+        desc: 'Para una instalación profesional, compilamos las librerías críticas de SignalWire (libks2 y signalwire-client-c2). Estas son el cimiento para el soporte de WebRTC y comunicación segura en FreeSwitch 1.10.',
+        code: 'cd /usr/src\n\n# 1. Compilar libks2 (Librería de soporte fundamental)\ngit clone https://github.com/signalwire/libks.git\ncd libks\ncmake . -DCMAKE_INSTALL_PREFIX=/usr\nmake -j$(nproc)\nmake install\nldconfig\ncd ..\n\n# 2. Compilar signalwire-client-c2 (Cliente C de SignalWire)\ngit clone https://github.com/signalwire/signalwire-c.git\ncd signalwire-c\ncmake . -DCMAKE_INSTALL_PREFIX=/usr\nmake -j$(nproc)\nmake install\nldconfig\ncd ..'
       },
       { 
-        title: 'Paso 3: Compilación e Instalación Profesional', 
-        desc: 'Configuramos el entorno de compilación y ejecutamos la construcción. Usamos "nproc" para usar todos los núcleos del procesador y acelerar el proceso.',
-        code: './configure --enable-core-pgsql-support\nmake -j$(nproc)\nmake install\nmake cd-sounds-install\nmake cd-moh-install\n\n# Crear enlaces simbólicos para comandos globales\nln -s /usr/local/freeswitch/bin/freeswitch /usr/bin/freeswitch\nln -s /usr/local/freeswitch/bin/fs_cli /usr/bin/fs_cli'
+        title: 'Paso 3: Compilación de FreeSwitch 1.10', 
+        desc: 'Descargamos el código fuente, preparamos los módulos y compilamos el núcleo con soporte nativo para PostgreSQL.',
+        code: 'cd /usr/src\ngit clone https://github.com/signalwire/freeswitch.git -b v1.10 freeswitch\ncd freeswitch\n./bootstrap.sh -j\n\n# Habilitar módulos necesarios en modules.conf si es necesario\n# sed -i "s/#applications\/mod_av/applications\/mod_av/" modules.conf\n\n./configure --enable-core-pgsql-support\nmake -j$(nproc)\nmake install\nmake cd-sounds-install\nmake cd-moh-install\n\n# Crear usuario del sistema y ajustar permisos\ngroupadd freeswitch\nuseradd -r -g freeswitch -s /bin/false -d /usr/local/freeswitch freeswitch\nchown -R freeswitch:freeswitch /usr/local/freeswitch\nchmod -R g+w /usr/local/freeswitch\n\n# Enlaces simbólicos globales\nln -s /usr/local/freeswitch/bin/freeswitch /usr/bin/freeswitch\nln -s /usr/local/freeswitch/bin/fs_cli /usr/bin/fs_cli'
       },
       { 
         title: 'Paso 4: Configurar PostgreSQL 16', 
@@ -331,7 +377,7 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { 
         title: 'Paso 5: Seguridad SSL (El Candado)', 
         desc: 'Para que las llamadas por navegador funcionen, necesitamos certificados de seguridad. Esto encripta la voz para que nadie pueda escucharla externamente.',
-        code: 'mkdir -p /etc/freeswitch/tls\nopenssl req -x509 -nodes -days 3650 -newkey rsa:4096 -keyout /etc/freeswitch/tls/wss.key -out /etc/freeswitch/tls/wss.crt -subj "/C=US/ST=Tech/L=Cloud/O=Cuberbox/CN=sip.tu-dominio.com"\ncat /etc/freeswitch/tls/wss.crt /etc/freeswitch/tls/wss.key > /etc/freeswitch/tls/wss.pem\nchown -R freeswitch:freeswitch /etc/freeswitch/tls'
+        code: 'mkdir -p /usr/local/freeswitch/tls\nopenssl req -x509 -nodes -days 3650 -newkey rsa:4096 -keyout /usr/local/freeswitch/tls/wss.key -out /usr/local/freeswitch/tls/wss.crt -subj "/C=US/ST=Tech/L=Cloud/O=Cuberbox/CN=sip.tu-dominio.com"\ncat /usr/local/freeswitch/tls/wss.crt /usr/local/freeswitch/tls/wss.key > /usr/local/freeswitch/tls/wss.pem\nchown -R freeswitch:freeswitch /usr/local/freeswitch/tls'
       },
       { 
         title: 'Paso 6: Alta Disponibilidad (El Respaldo)', 
@@ -380,12 +426,17 @@ const MANUAL_DATABASE: ManualEntry[] = [
         code: 'ls -R | grep Dockerfile\nls docker-compose.yml'
       },
       { 
-        title: 'Paso 4: Levantar el Stack', 
-        desc: 'Inicie todos los servicios en segundo plano. Docker descargará las imágenes y construirá sus contenedores personalizados.',
-        code: 'docker compose up -d'
+        title: 'Paso 4: Solución al Error "Pull Access Denied"', 
+        desc: 'Si recibe un error al descargar "signalwire/freeswitch", es porque la imagen oficial ahora es privada. La solución profesional es construir su propia imagen desde los fuentes.',
+        code: '# 1. Crear el archivo Dockerfile.freeswitch\ncat <<EOF > Dockerfile.freeswitch\nFROM debian:12\n\nRUN apt-get update && apt-get install -y \\\n    git build-essential cmake automake autoconf libtool libtool-bin pkg-config \\\n    libssl-dev zlib1g-dev libdb-dev libncurses5-dev libsqlite3-dev libcurl4-openssl-dev \\\n    libpcre3-dev libspeex-dev libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev \\\n    libopus-dev libsndfile1-dev libshout3-dev libmpg123-dev python3-dev uuid-dev\n\n# Compilar libks2 y signalwire-client-c2 desde fuentes\nRUN cd /usr/src && git clone https://github.com/signalwire/libks.git && cd libks && cmake . -DCMAKE_INSTALL_PREFIX=/usr && make -j$(nproc) && make install && ldconfig && \\\n    cd /usr/src && git clone https://github.com/signalwire/signalwire-c.git && cd signalwire-c && cmake . -DCMAKE_INSTALL_PREFIX=/usr && make -j$(nproc) && make install && ldconfig\n\nRUN cd /usr/src && git clone https://github.com/signalwire/freeswitch.git -b v1.10 freeswitch && \\\n    cd freeswitch && ./bootstrap.sh -j && ./configure --enable-core-pgsql-support && \\\n    make -j$(nproc) && make install && make cd-sounds-install && make cd-moh-install\n\nENTRYPOINT ["/usr/local/freeswitch/bin/freeswitch", "-nf"]\nEOF\n\n# 2. Actualizar su docker-compose.yml\n# Cambie "image: signalwire/freeswitch" por:\n# build: \n#   context: .\n#   dockerfile: Dockerfile.freeswitch'
       },
       { 
-        title: 'Paso 5: Verificación de Contenedores', 
+        title: 'Paso 5: Levantar el Stack', 
+        desc: 'Inicie todos los servicios. Docker construirá la imagen de FreeSwitch localmente, evitando el error de acceso denegado.',
+        code: 'docker compose up -d --build'
+      },
+      { 
+        title: 'Paso 6: Verificación de Contenedores', 
         desc: 'Compruebe que todos los servicios estén en estado "Running".',
         code: 'docker compose ps'
       }

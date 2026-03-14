@@ -67,6 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggle, role, userLevel }) =>
     // SYSTEM
     { name: 'Ajustes Core', icon: Settings, path: '/settings', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.AGENT], minLevel: 1, cat: 'SYSTEM' },
     { name: 'Wizard Setup', icon: Wand2, path: '/setup-wizard', roles: [UserRole.ADMIN], minLevel: 9, cat: 'SYSTEM' },
+    { name: 'Requerimientos', icon: FileText, path: '/requirements', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.AGENT], minLevel: 1, cat: 'SYSTEM' },
     { name: 'Manual Pro', icon: BookOpen, path: '/manual', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.AGENT], minLevel: 1, cat: 'SYSTEM' },
     { name: 'Nexus Deploy', icon: Terminal, path: '/instructions', roles: [UserRole.ADMIN], minLevel: 9, cat: 'SYSTEM' },
   ];

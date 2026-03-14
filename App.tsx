@@ -19,6 +19,7 @@ import AIStudio from './components/AIStudio';
 import Reports from './components/Reports';
 import Settings from './components/Settings';
 import UserManual from './components/UserManual';
+import RequirementsSpec from './components/RequirementsSpec';
 import Instructions from './components/Instructions';
 import ListsManagement from './components/ListsManagement';
 import UsersManagement from './components/UsersManagement';
@@ -143,6 +144,7 @@ const App: React.FC = () => {
                     {/* System */}
                     <Route path="/settings" element={<AccessControl userLevel={user.userLevel} minLevel={1}><Settings user={user} currentTheme={theme} onThemeChange={handleThemeChange} /></AccessControl>} />
                     <Route path="/setup-wizard" element={<AccessControl userLevel={user.userLevel} minLevel={9}><SystemSetupWizard /></AccessControl>} />
+                    <Route path="/requirements" element={<AccessControl userLevel={user.userLevel} minLevel={1}><RequirementsSpec /></AccessControl>} />
                     <Route path="/manual" element={<AccessControl userLevel={user.userLevel} minLevel={1}><UserManual /></AccessControl>} />
                     <Route path="/instructions" element={<AccessControl userLevel={user.userLevel} minLevel={9}><Instructions /></AccessControl>} />
                     
