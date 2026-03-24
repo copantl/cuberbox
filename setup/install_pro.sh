@@ -103,8 +103,8 @@ apt-get install -y freeswitch-all \
     freeswitch-mod-esl freeswitch-mod-verto freeswitch-mod-rtc \
     freeswitch-mod-av freeswitch-mod-opus freeswitch-mod-shout \
     freeswitch-mod-sndfile freeswitch-mod-native-file freeswitch-mod-lua \
-    freeswitch-mod-python3 freeswitch-mod-pgsql freeswitch-mod-vpx \
-    freeswitch-mod-h26x freeswitch-mod-commands freeswitch-mod-dptools \
+    freeswitch-mod-python3 freeswitch-mod-pgsql \
+    freeswitch-mod-commands freeswitch-mod-dptools \
     freeswitch-mod-dialplan-xml freeswitch-mod-sofia freeswitch-mod-event-socket \
     freeswitch-mod-conference freeswitch-mod-db freeswitch-mod-hash \
     freeswitch-mod-voicemail freeswitch-mod-expr freeswitch-mod-valet-parking \
