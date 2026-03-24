@@ -75,7 +75,24 @@ apt-get update && apt-get install -y \
     libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev \
     libopus-dev libsndfile1-dev libshout3-dev libmpg123-dev \
     libavformat-dev libswscale-dev libswresample-dev python3-dev \
-    libks-dev libsignalwire-client-c-dev libyuv-dev libvpx-dev
+    libyuv-dev libvpx-dev git uuid-dev
+
+# 6.1 Compilación de Dependencias SignalWire desde Fuentes (Garantiza compatibilidad)
+echo -e "${BLUE}[3.1/5] Compilando libks y signalwire-c desde fuentes...${NC}"
+mkdir -p /usr/src/libs
+cd /usr/src/libs
+
+if [ ! -d "libks" ]; then
+    git clone https://github.com/signalwire/libks.git
+    cd libks && cmake . -DCMAKE_INSTALL_PREFIX=/usr && make -j$(nproc) && make install && cd ..
+fi
+
+if [ ! -d "signalwire-c" ]; then
+    git clone https://github.com/signalwire/signalwire-c.git
+    cd signalwire-c && cmake . -DCMAKE_INSTALL_PREFIX=/usr && make -j$(nproc) && make install && cd ..
+fi
+ldconfig
+cd /
 
 # 7. Instalación de FreeSwitch Core y Módulos Pro
 echo -e "${BLUE}[4/5] Descargando e instalando FreeSwitch Engine...${NC}"

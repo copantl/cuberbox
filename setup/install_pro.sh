@@ -76,9 +76,26 @@ apt-get install -y build-essential cmake automake autoconf libtool libtool-bin p
     libssl-dev zlib1g-dev libdb-dev libncurses-dev libsqlite3-dev libcurl4-openssl-dev \
     libpcre3-dev libspeex-dev libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev \
     libopus-dev libsndfile1-dev libshout3-dev libmpg123-dev python3-dev \
-    libks-dev libsignalwire-client-c-dev git golang-go haproxy keepalived \
+    git golang-go haproxy keepalived uuid-dev \
     libavformat-dev libswscale-dev libavcodec-dev libavutil-dev libswresample-dev \
     libyuv-dev libvpx-dev libx264-dev libvpx-dev
+
+# 4.1 Compilación de Dependencias SignalWire (libks & signalwire-c)
+echo -e "${BLUE}[2.1/7] Compilando librerías SignalWire desde fuentes...${NC}"
+mkdir -p /usr/src/libs
+cd /usr/src/libs
+
+if [ ! -d "libks" ]; then
+    git clone https://github.com/signalwire/libks.git
+    cd libks && cmake . -DCMAKE_INSTALL_PREFIX=/usr && make -j$(nproc) && make install && cd ..
+fi
+
+if [ ! -d "signalwire-c" ]; then
+    git clone https://github.com/signalwire/signalwire-c.git
+    cd signalwire-c && cmake . -DCMAKE_INSTALL_PREFIX=/usr && make -j$(nproc) && make install && cd ..
+fi
+ldconfig
+cd /
 
 # 5. Instalación de FreeSwitch & PostgreSQL 16
 echo -e "${BLUE}[3/7] Desplegando Media & Data Plane...${NC}"

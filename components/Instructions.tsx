@@ -119,8 +119,8 @@ const Instructions: React.FC = () => {
                       <p className="text-xs text-slate-500 mb-4 font-bold uppercase tracking-wider">Conectamos el servidor con las fuentes oficiales de software. Reemplace [TOKEN] con su clave de SignalWire.</p>
                       <code className="text-emerald-400 text-[11px] font-mono block leading-relaxed bg-black/40 p-4 rounded-xl">
                         wget --http-user=signalwire --http-password=[TOKEN] -O /usr/share/keyrings/signalwire-freeswitch-repo.gpg https://freeswitch.signalwire.com/repo/deb/debian-release/signalwire-freeswitch-repo.gpg<br/>
-                        echo "machine freeswitch.signalwire.com login signalwire password [TOKEN]" > /etc/apt/auth.conf.d/freeswitch.conf<br/>
-                        echo "deb [signed-by=/usr/share/keyrings/signalwire-freeswitch-repo.gpg] https://freeswitch.signalwire.com/repo/deb/debian-release/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/freeswitch.list<br/>
+                        echo "machine freeswitch.signalwire.com login signalwire password [TOKEN]" &gt; /etc/apt/auth.conf.d/freeswitch.conf<br/>
+                        echo "deb [signed-by=/usr/share/keyrings/signalwire-freeswitch-repo.gpg] https://freeswitch.signalwire.com/repo/deb/debian-release/ $(lsb_release -sc) main" &gt; /etc/apt/sources.list.d/freeswitch.list<br/>
                         wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-archive-keyring.gpg<br/>
                         echo "deb [signed-by=/usr/share/keyrings/postgresql-archive-keyring.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list &gt; /dev/null
                       </code>
@@ -128,7 +128,16 @@ const Instructions: React.FC = () => {
                    <div className="p-8 bg-slate-950 rounded-3xl border border-slate-800">
                       <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 3: Instalación de Motores</p>
                       <p className="text-xs text-slate-500 mb-4 font-bold uppercase tracking-wider">Instalamos las librerías de SignalWire, FreeSwitch y PostgreSQL. Este paso es el más importante.</p>
-                      <code className="text-emerald-400 text-[11px] font-mono block leading-relaxed bg-black/40 p-4 rounded-xl">apt-get update && apt-get install -y libks-dev signalwire-client-c-dev freeswitch-all freeswitch-mod-esl freeswitch-mod-verto postgresql-16</code>
+                      <code className="text-emerald-400 text-[11px] font-mono block leading-relaxed bg-black/40 p-4 rounded-xl">
+                        # Compilar SignalWire Core<br/>
+                        mkdir -p /usr/src/libs && cd /usr/src/libs<br/>
+                        git clone https://github.com/signalwire/libks.git && cd libks && cmake . -DCMAKE_INSTALL_PREFIX=/usr && make install<br/>
+                        cd .. && git clone https://github.com/signalwire/signalwire-c.git && cd signalwire-c && cmake . -DCMAKE_INSTALL_PREFIX=/usr && make install<br/>
+                        ldconfig<br/>
+                        <br/>
+                        # Instalar FreeSwitch y DB<br/>
+                        apt-get update && apt-get install -y freeswitch-all freeswitch-mod-esl freeswitch-mod-verto postgresql-16
+                      </code>
                    </div>
                    <div className="p-8 bg-slate-950 rounded-3xl border border-slate-800">
                       <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 4: Base de Datos Segura</p>
