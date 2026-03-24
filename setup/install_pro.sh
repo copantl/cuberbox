@@ -46,34 +46,69 @@ fi
 
 # 3. Preparación de Repositorios (Debian 12/13)
 echo -e "${BLUE}[1/7] Actualizando fuentes y repositorios oficiales...${NC}"
-apt-get update && apt-get install -y gnupg2 wget lsb-release curl software-properties-common ca-certificates
+apt-get update && apt-get install -y gnupg gnupg2 wget lsb-release curl software-properties-common ca-certificates
 
-# Repositorio PostgreSQL (PGDG)
-apt-key del ACCC4CF8 || true
+# Repositorio PostgreSQL (PGDG) - Modern approach
+mkdir -p /usr/share/keyrings
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-archive-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/postgresql-archive-keyring.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
 
 # Repositorio SignalWire (FreeSwitch 1.10)
-# Usamos el token directamente en la URL para evitar errores de autenticación 404/401
-wget --http-user=signalwire --http-password=$SW_TOKEN -O - https://assignments.signalwire.com/reference/gpg/signalwire_pub.gpg | gpg --dearmor -o /usr/share/keyrings/signalwire-freeswitch-repo.gpg
-echo "deb [signed-by=/usr/share/keyrings/signalwire-freeswitch-repo.gpg] https://signalwire:$SW_TOKEN@assignments.signalwire.com/reference/debian/$(lsb_release -sc) release main" | tee /etc/apt/sources.list.d/freeswitch.list > /dev/null
+# Limpiar configuraciones previas
+rm -f /etc/apt/sources.list.d/freeswitch.list
+rm -f /etc/apt/auth.conf.d/freeswitch.conf
+
+# Descargar llave GPG (Usando curl para mayor compatibilidad con auth)
+curl -u signalwire:$SW_TOKEN -o /usr/share/keyrings/signalwire-freeswitch-repo.gpg https://freeswitch.signalwire.com/repo/deb/debian-release/signalwire-freeswitch-repo.gpg
+
+# Configurar autenticación para APT
+mkdir -p /etc/apt/auth.conf.d
+echo "machine freeswitch.signalwire.com login signalwire password $SW_TOKEN" > /etc/apt/auth.conf.d/freeswitch.conf
+chmod 600 /etc/apt/auth.conf.d/freeswitch.conf
+
+# Agregar repositorio
+echo "deb [signed-by=/usr/share/keyrings/signalwire-freeswitch-repo.gpg] https://freeswitch.signalwire.com/repo/deb/debian-release/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/freeswitch.list
 
 # 4. Instalación de Dependencias Core
 echo -e "${BLUE}[2/7] Instalando dependencias de compilación y medios...${NC}"
 apt-get update
 apt-get install -y build-essential cmake automake autoconf libtool libtool-bin pkg-config \
-    libssl-dev zlib1g-dev libdb-dev libncurses5-dev libsqlite3-dev libcurl4-openssl-dev \
+    libssl-dev zlib1g-dev libdb-dev libncurses-dev libsqlite3-dev libcurl4-openssl-dev \
     libpcre3-dev libspeex-dev libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev \
     libopus-dev libsndfile1-dev libshout3-dev libmpg123-dev python3-dev \
-    libks-dev signalwire-client-c-dev git golang-go haproxy keepalived
+    libks-dev libsignalwire-client-c-dev git golang-go haproxy keepalived \
+    libavformat-dev libswscale-dev libavcodec-dev libavutil-dev libswresample-dev \
+    libyuv-dev libvpx-dev libx264-dev libvpx-dev
 
 # 5. Instalación de FreeSwitch & PostgreSQL 16
 echo -e "${BLUE}[3/7] Desplegando Media & Data Plane...${NC}"
-apt-get install -y freeswitch-all freeswitch-mod-esl freeswitch-mod-verto postgresql-16
+apt-get install -y freeswitch-all \
+    freeswitch-mod-esl freeswitch-mod-verto freeswitch-mod-rtc \
+    freeswitch-mod-av freeswitch-mod-opus freeswitch-mod-shout \
+    freeswitch-mod-sndfile freeswitch-mod-native-file freeswitch-mod-lua \
+    freeswitch-mod-python3 freeswitch-mod-pgsql freeswitch-mod-vpx \
+    freeswitch-mod-h26x freeswitch-mod-commands freeswitch-mod-dptools \
+    freeswitch-mod-dialplan-xml freeswitch-mod-sofia freeswitch-mod-event-socket \
+    freeswitch-mod-conference freeswitch-mod-db freeswitch-mod-hash \
+    freeswitch-mod-voicemail freeswitch-mod-expr freeswitch-mod-valet-parking \
+    freeswitch-mod-httapi freeswitch-mod-json-cdr freeswitch-mod-local-stream \
+    freeswitch-mod-tone-stream postgresql-16
 
-# Configuración Base de Datos
+# Configuración Base de Datos y ESL
 ESL_PASS=$(openssl rand -base64 16)
 DB_PASS="TitanPass2024!"
+
+echo -e "${BLUE}[4/7] Configurando Event Socket Layer (ESL)...${NC}"
+cat <<EOF > /etc/freeswitch/autoload_configs/event_socket.conf.xml
+<configuration name="event_socket.conf" description="Socket Client">
+  <settings>
+    <param name="listen-ip" value="0.0.0.0"/>
+    <param name="listen-port" value="8021"/>
+    <param name="password" value="$ESL_PASS"/>
+  </settings>
+</configuration>
+EOF
+
 sudo -u postgres psql -c "CREATE USER cuberbox_admin WITH PASSWORD '$DB_PASS';" || true
 sudo -u postgres psql -c "CREATE DATABASE cuberbox_db OWNER cuberbox_admin;" || true
 
@@ -118,7 +153,8 @@ package main
 import "fmt"
 func main() { fmt.Println("Cuberbox Pro Go Backend v4.7.9 - Operational") }
 EOF
-cd /opt/cuberbox && go build -o bin/cuberbox_backend main.go
+cd /opt/cuberbox && go build -o /usr/local/bin/cuberbox-connector main.go
+chmod +x /usr/local/bin/cuberbox-connector
 
 # 9. Finalización y Optimización del Kernel
 echo -e "${BLUE}[7/7] Sintonizando parámetros del Kernel para VoIP...${NC}"

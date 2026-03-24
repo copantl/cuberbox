@@ -118,8 +118,9 @@ const Instructions: React.FC = () => {
                       <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 2: Configuración de Repositorios</p>
                       <p className="text-xs text-slate-500 mb-4 font-bold uppercase tracking-wider">Conectamos el servidor con las fuentes oficiales de software. Reemplace [TOKEN] con su clave de SignalWire.</p>
                       <code className="text-emerald-400 text-[11px] font-mono block leading-relaxed bg-black/40 p-4 rounded-xl">
-                        wget --http-user=signalwire --http-password=[TOKEN] -O - https://assignments.signalwire.com/reference/gpg/signalwire_pub.gpg | gpg --dearmor -o /usr/share/keyrings/signalwire-freeswitch-repo.gpg<br/>
-                        echo "deb [signed-by=/usr/share/keyrings/signalwire-freeswitch-repo.gpg] https://signalwire:[TOKEN]@assignments.signalwire.com/reference/debian/$(lsb_release -sc) release main" | tee /etc/apt/sources.list.d/freeswitch.list &gt; /dev/null<br/>
+                        wget --http-user=signalwire --http-password=[TOKEN] -O /usr/share/keyrings/signalwire-freeswitch-repo.gpg https://freeswitch.signalwire.com/repo/deb/debian-release/signalwire-freeswitch-repo.gpg<br/>
+                        echo "machine freeswitch.signalwire.com login signalwire password [TOKEN]" > /etc/apt/auth.conf.d/freeswitch.conf<br/>
+                        echo "deb [signed-by=/usr/share/keyrings/signalwire-freeswitch-repo.gpg] https://freeswitch.signalwire.com/repo/deb/debian-release/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/freeswitch.list<br/>
                         wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-archive-keyring.gpg<br/>
                         echo "deb [signed-by=/usr/share/keyrings/postgresql-archive-keyring.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list &gt; /dev/null
                       </code>

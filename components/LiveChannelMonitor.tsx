@@ -127,7 +127,7 @@ export const LiveChannelMonitor: React.FC = () => {
       .enter()
       .append('g')
       .style('cursor', 'pointer')
-      .on('click', (event, d) => handleListen(d))
+      .on('click', (event, d: Channel) => handleListen(d))
       .call(d3.drag<SVGGElement, Channel>()
         .on('start', dragstarted)
         .on('drag', dragged)
@@ -136,26 +136,26 @@ export const LiveChannelMonitor: React.FC = () => {
     // Bubble circle
     node.append('circle')
       .attr('r', 50)
-      .attr('fill', d => d.direction === 'inbound' ? '#10b981' : '#3b82f6')
+      .attr('fill', (d: Channel) => d.direction === 'inbound' ? '#10b981' : '#3b82f6')
       .attr('fill-opacity', 0.15)
-      .attr('stroke', d => d.direction === 'inbound' ? '#10b981' : '#3b82f6')
+      .attr('stroke', (d: Channel) => d.direction === 'inbound' ? '#10b981' : '#3b82f6')
       .attr('stroke-width', 2)
-      .attr('class', d => activeSpy?.uuid === d.uuid ? 'animate-ping' : 'animate-pulse');
+      .attr('class', (d: Channel) => activeSpy?.uuid === d.uuid ? 'animate-ping' : 'animate-pulse');
 
     // Inner circle
     node.append('circle')
       .attr('r', 40)
       .attr('fill', 'white')
       .attr('fill-opacity', 0.9)
-      .attr('stroke', d => activeSpy?.uuid === d.uuid ? (activeSpy.mode === 'barge' ? '#9333ea' : '#ef4444') : '#e2e8f0')
-      .attr('stroke-width', d => activeSpy?.uuid === d.uuid ? 3 : 1);
+      .attr('stroke', (d: Channel) => activeSpy?.uuid === d.uuid ? (activeSpy.mode === 'barge' ? '#9333ea' : '#ef4444') : '#e2e8f0')
+      .attr('stroke-width', (d: Channel) => activeSpy?.uuid === d.uuid ? 3 : 1);
 
     // Headphones icon for active spy
-    node.filter(d => activeSpy?.uuid === d.uuid)
+    node.filter((d: Channel) => activeSpy?.uuid === d.uuid)
       .append('path')
       .attr('d', 'M3 12c0-4.97 4.03-9 9-9s9 4.03 9 9M3 12v5c0 1.1.9 2 2 2h2v-7H3zm18 0v5c0 1.1-.9 2-2 2h-2v-7h4z')
       .attr('fill', 'none')
-      .attr('stroke', d => activeSpy?.mode === 'barge' ? '#9333ea' : '#ef4444')
+      .attr('stroke', (d: Channel) => activeSpy?.mode === 'barge' ? '#9333ea' : '#ef4444')
       .attr('stroke-width', 2)
       .attr('transform', 'translate(-12, -35) scale(1)');
 
@@ -166,7 +166,7 @@ export const LiveChannelMonitor: React.FC = () => {
       .attr('font-size', '10px')
       .attr('font-weight', 'bold')
       .attr('fill', '#1e293b')
-      .text(d => d.cid_name || 'Unknown');
+      .text((d: Channel) => d.cid_name || 'Unknown');
 
     // Number text
     node.append('text')
@@ -174,17 +174,17 @@ export const LiveChannelMonitor: React.FC = () => {
       .attr('dy', 10)
       .attr('font-size', '9px')
       .attr('fill', '#64748b')
-      .text(d => d.cid_num);
+      .text((d: Channel) => d.cid_num);
 
     // Icon indicator
     node.append('circle')
       .attr('cx', 0)
       .attr('cy', 25)
       .attr('r', 8)
-      .attr('fill', d => d.direction === 'inbound' ? '#10b981' : '#3b82f6');
+      .attr('fill', (d: Channel) => d.direction === 'inbound' ? '#10b981' : '#3b82f6');
 
     function ticked() {
-      node.attr('transform', d => `translate(${d.x},${d.y})`);
+      node.attr('transform', (d: Channel) => `translate(${d.x},${d.y})`);
     }
 
     function dragstarted(event: any, d: any) {

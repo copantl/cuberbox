@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Play, Download, FileAudio, Calendar, Search, RefreshCw, MessageSquare, BrainCircuit, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { GoogleGenAI } from "@google/genai";
 
 interface Recording {
   id: string | number;
@@ -53,15 +54,70 @@ export const RecordingsManager: React.FC = () => {
     setTranscribingId(rec.id);
     setTranscription(null);
     try {
-      const response = await fetch('/api/recordings/transcribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ date: rec.date, filename: rec.name })
+      // 1. Fetch the audio file
+      const audioUrl = `/api/recordings/${rec.date}/${rec.name}`;
+      const audioResponse = await fetch(audioUrl);
+      
+      if (!audioResponse.ok) {
+        // If file not found (likely in mock mode), provide mock transcription
+        setTranscription({
+          transcription: "Esta es una transcripción de prueba generada por la IA (Modo Simulado). En un entorno real con FreeSwitch, el audio se procesaría mediante Gemini para extraer el texto completo de la conversación entre el agente y el cliente.",
+          summary: "Resumen ejecutivo: El cliente muestra interés en el producto pero solicita una rebaja en el precio final."
+        });
+        return;
+      }
+
+      const audioBlob = await audioResponse.blob();
+      
+      // 2. Convert blob to base64
+      const reader = new FileReader();
+      const base64Promise = new Promise<string>((resolve) => {
+        reader.onloadend = () => {
+          const base64String = (reader.result as string).split(',')[1];
+          resolve(base64String);
+        };
+        reader.readAsDataURL(audioBlob);
       });
-      const data = await response.json();
-      setTranscription(data);
+      const base64Audio = await base64Promise;
+
+      // 3. Call Gemini
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const response = await ai.models.generateContent({
+        model: "gemini-2.0-flash-exp",
+        contents: [
+          {
+            parts: [
+              {
+                inlineData: {
+                  mimeType: "audio/wav",
+                  data: base64Audio
+                }
+              },
+              { text: "Transcribe esta llamada telefónica y proporciona un breve resumen de los puntos clave. Responde en formato JSON con los campos 'transcription' y 'summary'." }
+            ]
+          }
+        ],
+        config: {
+          responseMimeType: "application/json"
+        }
+      });
+
+      const resultText = response.text;
+      try {
+        const parsed = JSON.parse(resultText);
+        setTranscription(parsed);
+      } catch (e) {
+        setTranscription({
+          transcription: resultText,
+          summary: "Resumen no disponible en formato estructurado."
+        });
+      }
     } catch (error) {
       console.error('Error transcribing:', error);
+      setTranscription({
+        transcription: "Error al procesar la transcripción. Verifique la conexión con el motor de IA.",
+        summary: "Error de procesamiento."
+      });
     } finally {
       setTranscribingId(null);
     }

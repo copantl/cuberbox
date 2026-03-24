@@ -45,27 +45,51 @@ fi
 OS_VER=$(lsb_release -sc)
 echo -e "${GREEN}[SYSTEM] Detectado Debian: ${OS_VER}${NC}"
 
-# 4. Configuración de Repositorios SignalWire
-echo -e "${BLUE}[1/5] Configurando repositorio oficial de FreeSwitch 1.10...${NC}"
-# Usamos el token directamente en la URL para evitar errores de autenticación 404/401
-wget --http-user=signalwire --http-password=$SW_TOKEN -O - https://assignments.signalwire.com/reference/gpg/signalwire_pub.gpg | gpg --dearmor -o /usr/share/keyrings/signalwire-freeswitch-repo.gpg
-echo "deb [signed-by=/usr/share/keyrings/signalwire-freeswitch-repo.gpg] https://signalwire:$SW_TOKEN@assignments.signalwire.com/reference/debian/$(lsb_release -sc) release main" | tee /etc/apt/sources.list.d/freeswitch.list > /dev/null
+# 4. Instalación de Dependencias de Sistema (Requerido para Repos)
+echo -e "${BLUE}[1/5] Preparando herramientas de sistema...${NC}"
+apt-get update && apt-get install -y gnupg gnupg2 wget lsb-release curl ca-certificates
 
-# 5. Instalación de Dependencias (Manual PieceByte)
-echo -e "${BLUE}[2/5] Instalando dependencias de sistema y librerías de medios...${NC}"
+# 5. Configuración de Repositorios SignalWire (FreeSwitch 1.10)
+echo -e "${BLUE}[2/5] Configurando repositorio oficial de FreeSwitch 1.10...${NC}"
+# Limpiar configuraciones previas
+rm -f /etc/apt/sources.list.d/freeswitch.list
+rm -f /etc/apt/auth.conf.d/freeswitch.conf
+
+# Descargar llave GPG (Usando curl para mayor compatibilidad con auth)
+curl -u signalwire:$SW_TOKEN -o /usr/share/keyrings/signalwire-freeswitch-repo.gpg https://freeswitch.signalwire.com/repo/deb/debian-release/signalwire-freeswitch-repo.gpg
+
+# Configurar autenticación para APT
+echo "machine freeswitch.signalwire.com login signalwire password $SW_TOKEN" > /etc/apt/auth.conf.d/freeswitch.conf
+chmod 600 /etc/apt/auth.conf.d/freeswitch.conf
+
+# Agregar repositorio
+echo "deb [signed-by=/usr/share/keyrings/signalwire-freeswitch-repo.gpg] https://freeswitch.signalwire.com/repo/deb/debian-release/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/freeswitch.list
+
+# 6. Instalación de Dependencias (Manual PieceByte)
+echo -e "${BLUE}[3/5] Instalando dependencias de sistema y librerías de medios...${NC}"
 apt-get update && apt-get install -y \
-    gnupg2 wget lsb-release curl software-properties-common \
+    software-properties-common \
     build-essential cmake automake autoconf libtool libtool-bin \
-    pkg-config libssl-dev zlib1g-dev libdb-dev libncurses5-dev \
+    pkg-config libssl-dev zlib1g-dev libdb-dev libncurses-dev \
     libsqlite3-dev libcurl4-openssl-dev libpcre3-dev libspeex-dev \
     libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev \
     libopus-dev libsndfile1-dev libshout3-dev libmpg123-dev \
-    libavformat-dev libswscale-dev libavresample-dev python3-dev \
-    libks-dev signalwire-client-c-dev
+    libavformat-dev libswscale-dev libswresample-dev python3-dev \
+    libks-dev libsignalwire-client-c-dev libyuv-dev libvpx-dev
 
-# 6. Instalación de FreeSwitch Core y Módulos ESL/Verto
-echo -e "${BLUE}[3/5] Descargando e instalando FreeSwitch Engine...${NC}"
-apt-get install -y freeswitch-all freeswitch-mod-esl freeswitch-mod-verto
+# 7. Instalación de FreeSwitch Core y Módulos Pro
+echo -e "${BLUE}[4/5] Descargando e instalando FreeSwitch Engine...${NC}"
+apt-get install -y freeswitch-all \
+    freeswitch-mod-esl freeswitch-mod-verto freeswitch-mod-rtc \
+    freeswitch-mod-av freeswitch-mod-opus freeswitch-mod-shout \
+    freeswitch-mod-sndfile freeswitch-mod-native-file freeswitch-mod-lua \
+    freeswitch-mod-python3 freeswitch-mod-pgsql freeswitch-mod-vpx \
+    freeswitch-mod-h26x freeswitch-mod-commands freeswitch-mod-dptools \
+    freeswitch-mod-dialplan-xml freeswitch-mod-sofia freeswitch-mod-event-socket \
+    freeswitch-mod-conference freeswitch-mod-db freeswitch-mod-hash \
+    freeswitch-mod-voicemail freeswitch-mod-expr freeswitch-mod-valet-parking \
+    freeswitch-mod-httapi freeswitch-mod-json-cdr freeswitch-mod-local-stream \
+    freeswitch-mod-tone-stream
 
 # 7. Aprovisionamiento ESL y Seguridad (Puerto 8021)
 echo -e "${BLUE}[4/5] Configurando Event Socket Layer (ESL)...${NC}"

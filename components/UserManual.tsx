@@ -300,104 +300,64 @@ const MANUAL_DATABASE: ManualEntry[] = [
     ]
   },
   {
-    id: 'manual-compilacion-detallada',
-    title: 'Manual de Compilación Avanzado',
-    icon: Cpu,
-    category: 'INFRAESTRUCTURA',
-    summary: 'Guía técnica exhaustiva para compilar FreeSwitch 1.10 y todas sus dependencias críticas desde el código fuente.',
-    functionality: 'Este manual cubre la obtención, configuración y compilación de libks2, signalwire-client-c2, sofia-sip, spandsp y el núcleo de FreeSwitch.',
-    usage: 'Recomendado para entornos donde se requiere control total sobre los binarios y optimización específica de hardware.',
+    id: 'manual-installation-nexus',
+    title: 'Instalación Automática (Nexus Pro)',
+    icon: Zap,
+    category: 'ADMINISTRACIÓN',
+    summary: 'Despliegue ultra-rápido de Cuberbox Pro mediante el script de orquestación inteligente.',
+    functionality: 'El script install_pro.sh automatiza la configuración de repositorios, instalación de binarios de FreeSwitch 1.10, PostgreSQL 16, Go 1.22, y el stack de Alta Disponibilidad (Keepalived/HAProxy). Detecta automáticamente la versión de Debian (12/13) y aplica optimizaciones de kernel para VoIP.',
+    usage: 'Este es el método recomendado para servidores de producción. Requiere un Token de SignalWire (PAT) válido.',
     steps: [
-      {
-        title: '1. Preparación del Sistema y Dependencias',
-        desc: 'Antes de compilar, necesitamos un sistema Debian 12 limpio con todas las herramientas de desarrollo esenciales.',
-        code: 'apt-get update && apt-get install -y \\\n  git build-essential cmake automake autoconf libtool libtool-bin \\\n  pkg-config libssl-dev zlib1g-dev libdb-dev libncurses5-dev \\\n  libsqlite3-dev libcurl4-openssl-dev libpcre3-dev libspeex-dev \\\n  libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev libopus-dev \\\n  libsndfile1-dev libshout3-dev libmpg123-dev python3-dev uuid-dev \\\n  libjpeg-dev libtiff-dev libpq-dev libavformat-dev libswscale-dev \\\n  libavresample-dev libyaml-dev libexpat1-dev libgdbm-dev libvpx-dev \\\n  libx264-dev libbroadvoice-dev libcodec2-dev libg7221-dev libilbc-dev \\\n  libopenjp2-7-dev'
+      { 
+        title: 'Paso 1: Preparación y Permisos', 
+        desc: 'Asegúrese de estar en una sesión de ROOT y otorgue permisos de ejecución al instalador.',
+        code: 'chmod +x setup/install_pro.sh'
       },
-      {
-        title: '2. Compilación de libks2',
-        desc: 'Librería de soporte fundamental para la arquitectura de SignalWire.',
-        code: 'cd /usr/src\ngit clone https://github.com/signalwire/libks.git\ncd libks\ncmake . -DCMAKE_INSTALL_PREFIX=/usr\nmake -j$(nproc)\nmake install\nldconfig'
+      { 
+        title: 'Paso 2: Ejecución del Instalador', 
+        desc: 'Inicie el script. Se le solicitará el Dominio para SSL, el Token de SignalWire, la IP Virtual (VIP) y el Rol del nodo (MASTER/SLAVE).',
+        code: 'sudo ./setup/install_pro.sh'
       },
-      {
-        title: '3. Compilación de signalwire-client-c2',
-        desc: 'Cliente C necesario para la comunicación con APIs de SignalWire y módulos modernos.',
-        code: 'cd /usr/src\ngit clone https://github.com/signalwire/signalwire-c.git\ncd signalwire-c\ncmake . -DCMAKE_INSTALL_PREFIX=/usr\nmake -j$(nproc)\nmake install\nldconfig'
+      { 
+        title: 'Paso 3: Verificación de Servicios', 
+        desc: 'Al finalizar, el script mostrará un resumen con las credenciales de ESL y el estado de los servicios. Verifique que todo esté en orden.',
+        code: 'systemctl status freeswitch postgresql keepalived haproxy'
       },
-      {
-        title: '4. Compilación de sofia-sip',
-        desc: 'El stack SIP de FreeSwitch. En la versión 1.10 debe compilarse por separado.',
-        code: 'cd /usr/src\ngit clone https://github.com/freeswitch/sofia-sip.git\ncd sofia-sip\n./bootstrap.sh\n./configure --prefix=/usr\nmake -j$(nproc)\nmake install\nldconfig'
-      },
-      {
-        title: '5. Compilación de spandsp',
-        desc: 'Librería para el procesamiento de señales digitales (DSP), necesaria para mod_fax y otros.',
-        code: 'cd /usr/src\ngit clone https://github.com/freeswitch/spandsp.git\ncd spandsp\n./bootstrap.sh\n./configure --prefix=/usr\nmake -j$(nproc)\nmake install\nldconfig'
-      },
-      {
-        title: '6. Compilación de FreeSwitch 1.10',
-        desc: 'Configuración final y compilación del núcleo de telefonía.',
-        code: 'cd /usr/src\ngit clone https://github.com/signalwire/freeswitch.git -b v1.10 freeswitch\ncd freeswitch\n./bootstrap.sh -j\n\n# Personalización de módulos\n# Edite "modules.conf" para habilitar mod_av, mod_opus, etc.\n# nano modules.conf\n\n./configure --enable-core-pgsql-support\nmake -j$(nproc)\nmake install\nmake cd-sounds-install\nmake cd-moh-install'
-      },
-      {
-        title: '7. Post-Instalación y Permisos',
-        desc: 'Configuración de seguridad y enlaces simbólicos.',
-        code: 'groupadd freeswitch\nuseradd -r -g freeswitch -s /bin/false -d /usr/local/freeswitch freeswitch\nchown -R freeswitch:freeswitch /usr/local/freeswitch\nchmod -R g+w /usr/local/freeswitch\n\nln -s /usr/local/freeswitch/bin/freeswitch /usr/bin/freeswitch\nln -s /usr/local/freeswitch/bin/fs_cli /usr/bin/fs_cli'
+      { 
+        title: 'Paso 4: Acceso al Panel', 
+        desc: 'Abra su navegador e ingrese a la IP Virtual o el Dominio configurado para acceder a la interfaz de administración.',
+        code: 'https://tu-dominio-o-vip.com'
       }
     ]
   },
   {
-    id: 'manual-installation-nexus',
-    title: 'Guía de Instalación Manual',
-    icon: TerminalSquare,
-    category: 'ADMINISTRACIÓN',
-    summary: 'Procedimiento paso a paso para el despliegue de la infraestructura Nexus desde cero.',
-    functionality: 'Esta guía detalla la secuencia técnica necesaria para compilar FreeSwitch 1.10 desde fuentes, instalar PostgreSQL 16 y configurar el stack de alta disponibilidad en servidores Debian 12/13.',
-    usage: 'Esta guía es para técnicos senior. La compilación puede tardar entre 10 y 20 minutos dependiendo del hardware. No interrumpa el proceso de "make".',
+    id: 'manual-compilacion-detallada',
+    title: 'Compilación desde Fuentes (Debian 12)',
+    icon: Cpu,
+    category: 'INFRAESTRUCTURA',
+    summary: 'Guía técnica para compilar FreeSwitch 1.10 y dependencias críticas en Debian 12 Bookworm.',
+    functionality: 'Cubre la compilación manual de libks, signalwire-c, sofia-sip, spandsp y FreeSwitch 1.10 con soporte para PostgreSQL.',
+    usage: 'Use este método solo si necesita personalizaciones extremas o si los binarios oficiales no están disponibles para su arquitectura.',
     steps: [
-      { 
-        title: 'Paso 1: Dependencias, Node.js y Go', 
-        desc: 'Instalamos las herramientas de compilación y los lenguajes necesarios para el backend y el frontend.',
-        code: '# 1. Herramientas base y dependencias de compilación\napt-get update && apt-get install -y gnupg2 wget lsb-release curl build-essential cmake automake autoconf libtool libtool-bin pkg-config libssl-dev zlib1g-dev libdb-dev libncurses5-dev libsqlite3-dev libcurl4-openssl-dev libpcre3-dev libspeex-dev libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev libopus-dev libsndfile1-dev libshout3-dev libmpg123-dev python3-dev git haproxy keepalived yasm libjpeg-dev libtiff-dev libpq-dev libavformat-dev libswscale-dev libavresample-dev libyaml-dev libexpat1-dev libgdbm-dev libvpx-dev libx264-dev libbroadvoice-dev libcodec2-dev libg7221-dev libilbc-dev libopenjp2-7-dev uuid-dev\n\n# 2. Instalar Node.js 20 (LTS)\ncurl -fsSL https://deb.nodesource.com/setup_20.x | bash -\napt-get install -y nodejs\n\n# 3. Instalar Go 1.22\nwget https://go.dev/dl/go1.22.1.linux-amd64.tar.gz\ntar -C /usr/local -xzf go1.22.1.linux-amd64.tar.gz\nexport PATH=$PATH:/usr/local/go/bin\necho "export PATH=\\$PATH:/usr/local/go/bin" >> ~/.bashrc'
-      },
-      { 
-        title: 'Paso 2: Compilar Librerías de Soporte (libks2 y signalwire-client-c2)', 
-        desc: 'Para una instalación profesional, compilamos las librerías críticas de SignalWire (libks2 y signalwire-client-c2). Estas son el cimiento para el soporte de WebRTC y comunicación segura en FreeSwitch 1.10.',
-        code: 'cd /usr/src\n\n# 1. Compilar libks2 (Librería de soporte fundamental)\ngit clone https://github.com/signalwire/libks.git\ncd libks\ncmake . -DCMAKE_INSTALL_PREFIX=/usr\nmake -j$(nproc)\nmake install\nldconfig\ncd ..\n\n# 2. Compilar signalwire-client-c2 (Cliente C de SignalWire)\ngit clone https://github.com/signalwire/signalwire-c.git\ncd signalwire-c\ncmake . -DCMAKE_INSTALL_PREFIX=/usr\nmake -j$(nproc)\nmake install\nldconfig\ncd ..'
-      },
-      { 
-        title: 'Paso 3: Compilación de FreeSwitch 1.10', 
-        desc: 'Descargamos el código fuente, preparamos los módulos y compilamos el núcleo con soporte nativo para PostgreSQL.',
-        code: 'cd /usr/src\ngit clone https://github.com/signalwire/freeswitch.git -b v1.10 freeswitch\ncd freeswitch\n./bootstrap.sh -j\n\n# Habilitar módulos necesarios en modules.conf si es necesario\n# sed -i "s/#applications\/mod_av/applications\/mod_av/" modules.conf\n\n./configure --enable-core-pgsql-support\nmake -j$(nproc)\nmake install\nmake cd-sounds-install\nmake cd-moh-install\n\n# Crear usuario del sistema y ajustar permisos\ngroupadd freeswitch\nuseradd -r -g freeswitch -s /bin/false -d /usr/local/freeswitch freeswitch\nchown -R freeswitch:freeswitch /usr/local/freeswitch\nchmod -R g+w /usr/local/freeswitch\n\n# Enlaces simbólicos globales\nln -s /usr/local/freeswitch/bin/freeswitch /usr/bin/freeswitch\nln -s /usr/local/freeswitch/bin/fs_cli /usr/bin/fs_cli'
-      },
-      { 
-        title: 'Paso 4: Configurar PostgreSQL 16', 
-        desc: 'Instalamos y configuramos la base de datos para el almacenamiento de llamadas y configuración.',
-        code: 'wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-archive-keyring.gpg\necho "deb [signed-by=/usr/share/keyrings/postgresql-archive-keyring.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list > /dev/null\napt-get update && apt-get install -y postgresql-16\n\nsudo -u postgres psql -c "CREATE USER cuberbox_admin WITH PASSWORD \'TitanPass2024!\';" \nsudo -u postgres psql -c "CREATE DATABASE cuberbox_db OWNER cuberbox_admin;"'
-      },
-      { 
-        title: 'Paso 5: Seguridad SSL (El Candado)', 
-        desc: 'Para que las llamadas por navegador funcionen, necesitamos certificados de seguridad. Esto encripta la voz para que nadie pueda escucharla externamente.',
-        code: 'mkdir -p /usr/local/freeswitch/tls\nopenssl req -x509 -nodes -days 3650 -newkey rsa:4096 -keyout /usr/local/freeswitch/tls/wss.key -out /usr/local/freeswitch/tls/wss.crt -subj "/C=US/ST=Tech/L=Cloud/O=Cuberbox/CN=sip.tu-dominio.com"\ncat /usr/local/freeswitch/tls/wss.crt /usr/local/freeswitch/tls/wss.key > /usr/local/freeswitch/tls/wss.pem\nchown -R freeswitch:freeswitch /usr/local/freeswitch/tls'
-      },
-      { 
-        title: 'Paso 6: Alta Disponibilidad (El Respaldo)', 
-        desc: 'Configuramos un sistema que vigila el servidor. Si algo falla, el sistema de respaldo toma el control automáticamente sin que usted lo note.',
-        code: 'mkdir -p /etc/keepalived\ncat <<EOF > /etc/keepalived/keepalived.conf\nvrrp_instance VI_1 {\n    state MASTER\n    interface eth0\n    virtual_router_id 51\n    priority 150\n    advert_int 1\n    authentication {\n        auth_type PASS\n        auth_pass nexus_ha_key\n    }\n    virtual_ipaddress {\n        192.168.1.100\n    }\n}\nEOF'
+      {
+        title: '1. Dependencias de Sistema',
+        desc: 'Instale las herramientas de desarrollo y librerías de medios actuales para Debian 12.',
+        code: 'apt-get update && apt-get install -y \\\n  git build-essential cmake automake autoconf libtool libtool-bin \\\n  pkg-config libssl-dev zlib1g-dev libdb-dev libncurses-dev \\\n  libsqlite3-dev libcurl4-openssl-dev libpcre3-dev libspeex-dev \\\n  libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev libopus-dev \\\n  libsndfile1-dev libshout3-dev libmpg123-dev python3-dev uuid-dev \\\n  libjpeg-dev libtiff-dev libpq-dev libavformat-dev libswscale-dev \\\n  libswresample-dev libyaml-dev libexpat1-dev libgdbm-dev libvpx-dev \\\n  libx264-dev libyuv-dev'
       },
       {
-        title: 'Paso 7: Obtener el Aplicativo de GitHub',
-        desc: 'Descargamos la última versión estable del código fuente desde el repositorio oficial.',
-        code: 'cd /opt\ngit clone https://github.com/tu-usuario/cuberbox.git\ncd cuberbox'
+        title: '2. Librerías SignalWire (libks & signalwire-c)',
+        desc: 'Compilación de las bases de comunicación moderna.',
+        code: 'cd /usr/src\ngit clone https://github.com/signalwire/libks.git && cd libks && cmake . -DCMAKE_INSTALL_PREFIX=/usr && make -j$(nproc) && make install && ldconfig\ncd /usr/src\ngit clone https://github.com/signalwire/signalwire-c.git && cd signalwire-c && cmake . -DCMAKE_INSTALL_PREFIX=/usr && make -j$(nproc) && make install && ldconfig'
       },
       {
-        title: 'Paso 8: Instalación del Aplicativo Web (Puerto 3000)',
-        desc: 'Para que la interfaz sea accesible, debemos levantar el servidor Node.js. Esto habilitará el puerto 3000 que usted reportó como cerrado.',
-        code: '# 1. Instalar dependencias\nnpm install\n\n# 2. Construir el sitio\nnpm run build\n\n# 3. Crear servicio para el Web Server\ncat <<EOF > /etc/systemd/system/cuberbox-web.service\n[Unit]\nDescription=Cuberbox Web Interface\nAfter=network.target\n\n[Service]\nType=simple\nWorkingDirectory=/opt/cuberbox\nExecStart=/usr/bin/npm run dev\nRestart=always\nEnvironment=NODE_ENV=production\n\n[Install]\nWantedBy=multi-user.target\nEOF\n\n# 4. Activar y verificar\nsystemctl enable --now cuberbox-web\nsystemctl status cuberbox-web'
+        title: '3. Sofia-SIP & SpanDSP',
+        desc: 'Componentes esenciales para señalización y procesamiento de audio.',
+        code: 'cd /usr/src\ngit clone https://github.com/freeswitch/sofia-sip.git && cd sofia-sip && ./bootstrap.sh && ./configure --prefix=/usr && make -j$(nproc) && make install && ldconfig\ncd /usr/src\ngit clone https://github.com/freeswitch/spandsp.git && cd spandsp && ./bootstrap.sh && ./configure --prefix=/usr && make -j$(nproc) && make install && ldconfig'
       },
       {
-        title: 'Paso 9: Verificación de Puertos',
-        desc: 'Una vez activados ambos servicios, verifique que los puertos 3000 (Web) y 8021 (ESL) estén en estado LISTEN.',
-        code: 'netstat -tulpn | grep -E "3000|8021"'
+        title: '4. FreeSwitch 1.10 Core',
+        desc: 'Compilación del núcleo con soporte PostgreSQL.',
+        code: 'cd /usr/src\ngit clone https://github.com/signalwire/freeswitch.git -b v1.10 freeswitch\ncd freeswitch\n./bootstrap.sh -j\n# Habilitar mod_av, mod_opus, mod_pgsql en modules.conf\n./configure --enable-core-pgsql-support\nmake -j$(nproc) && make install && make cd-sounds-install && make cd-moh-install'
       }
     ]
   },
@@ -428,7 +388,7 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { 
         title: 'Paso 4: Solución al Error "Pull Access Denied"', 
         desc: 'Si recibe un error al descargar "signalwire/freeswitch", es porque la imagen oficial ahora es privada. La solución profesional es construir su propia imagen desde los fuentes.',
-        code: '# 1. Crear el archivo Dockerfile.freeswitch\ncat <<EOF > Dockerfile.freeswitch\nFROM debian:12\n\nRUN apt-get update && apt-get install -y \\\n    git build-essential cmake automake autoconf libtool libtool-bin pkg-config \\\n    libssl-dev zlib1g-dev libdb-dev libncurses5-dev libsqlite3-dev libcurl4-openssl-dev \\\n    libpcre3-dev libspeex-dev libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev \\\n    libopus-dev libsndfile1-dev libshout3-dev libmpg123-dev python3-dev uuid-dev\n\n# Compilar libks2 y signalwire-client-c2 desde fuentes\nRUN cd /usr/src && git clone https://github.com/signalwire/libks.git && cd libks && cmake . -DCMAKE_INSTALL_PREFIX=/usr && make -j$(nproc) && make install && ldconfig && \\\n    cd /usr/src && git clone https://github.com/signalwire/signalwire-c.git && cd signalwire-c && cmake . -DCMAKE_INSTALL_PREFIX=/usr && make -j$(nproc) && make install && ldconfig\n\nRUN cd /usr/src && git clone https://github.com/signalwire/freeswitch.git -b v1.10 freeswitch && \\\n    cd freeswitch && ./bootstrap.sh -j && ./configure --enable-core-pgsql-support && \\\n    make -j$(nproc) && make install && make cd-sounds-install && make cd-moh-install\n\nENTRYPOINT ["/usr/local/freeswitch/bin/freeswitch", "-nf"]\nEOF\n\n# 2. Actualizar su docker-compose.yml\n# Cambie "image: signalwire/freeswitch" por:\n# build: \n#   context: .\n#   dockerfile: Dockerfile.freeswitch'
+        code: '# 1. Crear el archivo Dockerfile.freeswitch\ncat <<EOF > Dockerfile.freeswitch\nFROM debian:12\n\nRUN apt-get update && apt-get install -y \\\n    git build-essential cmake automake autoconf libtool libtool-bin pkg-config \\\n    libssl-dev zlib1g-dev libdb-dev libncurses-dev libsqlite3-dev libcurl4-openssl-dev \\\n    libpcre3-dev libspeex-dev libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev \\\n    libopus-dev libsndfile1-dev libshout3-dev libmpg123-dev python3-dev uuid-dev \\\n    libavformat-dev libswscale-dev libswresample-dev libyuv-dev libvpx-dev\n\n# Compilar libks y signalwire-c desde fuentes\nRUN cd /usr/src && git clone https://github.com/signalwire/libks.git && cd libks && cmake . -DCMAKE_INSTALL_PREFIX=/usr && make -j$(nproc) && make install && ldconfig && \\\n    cd /usr/src && git clone https://github.com/signalwire/signalwire-c.git && cd signalwire-c && cmake . -DCMAKE_INSTALL_PREFIX=/usr && make -j$(nproc) && make install && ldconfig\n\nRUN cd /usr/src && git clone https://github.com/signalwire/freeswitch.git -b v1.10 freeswitch && \\\n    cd freeswitch && ./bootstrap.sh -j && ./configure --enable-core-pgsql-support && \\\n    make -j$(nproc) && make install && make cd-sounds-install && make cd-moh-install\n\nENTRYPOINT ["/usr/local/freeswitch/bin/freeswitch", "-nf"]\nEOF\n\n# 2. Actualizar su docker-compose.yml\n# Cambie "image: signalwire/freeswitch" por:\n# build: \n#   context: .\n#   dockerfile: Dockerfile.freeswitch'
       },
       { 
         title: 'Paso 5: Levantar el Stack', 

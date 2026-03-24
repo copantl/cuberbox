@@ -5,12 +5,8 @@ import { fileURLToPath } from "url";
 import fs from "fs";
 import esl from 'modesl';
 
-import { GoogleGenAI } from "@google/genai";
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 async function startServer() {
   const app = express();
@@ -75,42 +71,8 @@ async function startServer() {
   });
 
   app.post("/api/recordings/transcribe", async (req, res) => {
-    const { date, filename } = req.body;
-    const isMockMode = process.env.MOCK_ESL === 'true';
-
-    if (isMockMode) {
-      return res.json({
-        transcription: "Esta es una transcripción de prueba generada por la IA. En un entorno real, el audio se procesaría mediante Gemini para extraer el texto completo de la conversación entre el agente y el cliente.",
-        summary: "Resumen ejecutivo: El cliente muestra interés en el producto pero solicita una rebaja en el precio final."
-      });
-    }
-
-    try {
-      const filePath = path.join("/opt/cuberbox/recordings", date, filename);
-      if (!fs.existsSync(filePath)) {
-        return res.status(404).json({ error: "Archivo no encontrado" });
-      }
-
-      // Read file and convert to base64
-      const audioData = fs.readFileSync(filePath).toString("base64");
-
-      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-      const result = await model.generateContent([
-        {
-          inlineData: {
-            mimeType: "audio/wav",
-            data: audioData
-          }
-        },
-        { text: "Transcribe esta llamada telefónica y proporciona un breve resumen de los puntos clave." },
-      ]);
-
-      const response = await result.response;
-      res.json({ transcription: response.text() });
-    } catch (err) {
-      console.error("Transcription error:", err);
-      res.status(500).json({ error: "Error en la transcripción", details: err });
-    }
+    // This endpoint is deprecated. Transcription should be handled on the frontend using @google/genai.
+    res.status(410).json({ error: "Endpoint deprecated. Use frontend Gemini integration." });
   });
 
   // Generic ESL Command API
@@ -149,6 +111,50 @@ async function startServer() {
 
   app.get("/api/telephony/audit-logs", (req, res) => {
     res.json(auditLogs);
+  });
+
+  app.get("/api/telephony/channels", (req, res) => {
+    const eslHost = process.env.ESL_HOST || '127.0.0.1';
+    const eslPort = parseInt(process.env.ESL_PORT || '8021');
+    const eslPassword = process.env.ESL_PASSWORD || 'ClueCon';
+    const isMockMode = process.env.MOCK_ESL === 'true';
+
+    if (isMockMode) {
+      // Mock data for bubbles
+      return res.json([
+        { uuid: '1', direction: 'inbound', state: 'CS_EXECUTE', cid_name: 'Juan Perez', cid_num: '5551234567', dest: '1001', presence_id: '1001@default' },
+        { uuid: '2', direction: 'outbound', state: 'CS_EXECUTE', cid_name: 'Maria Gomez', cid_num: '5559876543', dest: '1002', presence_id: '1002@default' },
+        { uuid: '3', direction: 'inbound', state: 'CS_EXECUTE', cid_name: 'Carlos Ruiz', cid_num: '5550001111', dest: '1003', presence_id: '1003@default' },
+        { uuid: '4', direction: 'inbound', state: 'CS_EXECUTE', cid_name: 'Ana Belen', cid_num: '5552223333', dest: '1004', presence_id: '1004@default' },
+      ]);
+    }
+
+    const conn = new esl.Connection(eslHost, eslPort, eslPassword, () => {
+      conn.api('show channels as json', (response) => {
+        try {
+          const body = response.getBody();
+          const data = JSON.parse(body);
+          const channels = (data.rows || []).map((row: any) => ({
+            uuid: row.uuid,
+            direction: row.direction,
+            state: row.state,
+            cid_name: row.cid_name,
+            cid_num: row.cid_num,
+            dest: row.dest,
+            presence_id: row.presence_id
+          }));
+          res.json(channels);
+        } catch (e) {
+          res.status(500).json({ error: "Error parseando canales", details: e });
+        } finally {
+          conn.disconnect();
+        }
+      });
+    });
+
+    conn.on('error', (err: any) => {
+      res.status(500).json({ error: "Error de conexión ESL", details: err });
+    });
   });
 
   app.post("/api/telephony/eavesdrop", (req, res) => {

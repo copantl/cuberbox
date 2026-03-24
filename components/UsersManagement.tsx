@@ -9,6 +9,7 @@ import {
 import { User, UserRole, UserGroup } from '../types';
 import { MOCK_USERS_LIST, MOCK_USER_GROUPS, MOCK_USER } from '../constants';
 import { useToast } from '../ToastContext';
+import { ConfirmModal } from './ConfirmModal';
 import MFAConfigurator from './MFAConfigurator';
 import AccessControl from './AccessControl';
 
@@ -19,6 +20,8 @@ const UsersManagement: React.FC<{ currentUser?: User }> = ({ currentUser = MOCK_
   const [activeTab, setActiveTab] = useState<'ALL' | UserRole>('ALL');
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [userToDelete, setUserToDelete] = useState<string | null>(null);
   const [editingUser, setEditingUser] = useState<(Partial<User> & { password?: string, confirmPassword?: string, notifyOnSave?: boolean }) | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isPorting, setIsPorting] = useState(false);
@@ -156,9 +159,16 @@ const UsersManagement: React.FC<{ currentUser?: User }> = ({ currentUser = MOCK_
   };
 
   const handleDelete = (id: string) => {
-    if (confirm('Atención: ¿Deseas eliminar permanentemente a este usuario?')) {
-      setUsers(users.filter(u => u.id !== id));
+    setUserToDelete(id);
+    setIsConfirmOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (userToDelete) {
+      setUsers(users.filter(u => u.id !== userToDelete));
       toast('Usuario eliminado de la base de datos.', 'warning');
+      setUserToDelete(null);
+      setIsConfirmOpen(false);
     }
   };
 
@@ -338,7 +348,7 @@ const UsersManagement: React.FC<{ currentUser?: User }> = ({ currentUser = MOCK_
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div className="space-y-3">
                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Nombre Completo</label>
-                        <input type="text" value={editingUser.fullName} onChange={(e) => setEditingUser({...editingUser, fullName: e.target.value})} className="w-full bg-slate-950 border-2 border-slate-800 rounded-3xl px-8 py-5 text-sm text-white font-bold outline-none focus:border-blue-500 transition-all shadow-inner font-bold" />
+                        <input type="text" value={editingUser.fullName} onChange={(e) => setEditingUser({...editingUser, fullName: e.target.value})} className="w-full bg-slate-950 border-2 border-slate-800 rounded-3xl px-8 py-5 text-sm text-white font-bold outline-none focus:border-blue-500 transition-all shadow-inner" />
                       </div>
                       <div className="space-y-3">
                         <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Correo Electrónico</label>
@@ -457,6 +467,17 @@ const UsersManagement: React.FC<{ currentUser?: User }> = ({ currentUser = MOCK_
           </div>
         </div>
       )}
+
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        onClose={() => setIsConfirmOpen(false)}
+        onConfirm={confirmDelete}
+        title="Eliminar Usuario"
+        message="¿Estás seguro de que deseas eliminar permanentemente a este usuario? Esta acción no se puede deshacer."
+        confirmText="Eliminar"
+        cancelText="Cancelar"
+        type="danger"
+      />
     </div>
   );
 };
