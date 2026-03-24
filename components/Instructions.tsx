@@ -85,7 +85,7 @@ const Instructions: React.FC = () => {
              <CodeBlock 
                 title="Super-Script Nexus (Recomendado)"
                 icon={TerminalSquare}
-                code={`wget -O install.sh https://raw.githubusercontent.com/copantl/cuberbox-pro/main/setup/install.sh && chmod +x install.sh && sudo ./install.sh`}
+                code={`wget -O install.sh ${typeof window !== 'undefined' ? window.location.origin : ''}/setup/install.sh && chmod +x install.sh && sudo ./install.sh`}
              />
              <div className="p-8 bg-slate-900 border border-slate-800 rounded-[36px] flex items-start space-x-6 shadow-inner">
                 <AlertCircle size={24} className="text-blue-500 mt-1 shrink-0" />
@@ -112,7 +112,7 @@ const Instructions: React.FC = () => {
                    <div className="p-8 bg-slate-950 rounded-3xl border border-slate-800">
                       <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 1: Preparación del Servidor</p>
                       <p className="text-xs text-slate-500 mb-4 font-bold uppercase tracking-wider">Primero, instalamos las herramientas básicas y librerías que el sistema necesita para funcionar correctamente.</p>
-                      <code className="text-emerald-400 text-[11px] font-mono block leading-relaxed bg-black/40 p-4 rounded-xl">apt-get update && apt-get install -y gnupg2 wget lsb-release curl build-essential cmake automake autoconf libtool libtool-bin pkg-config libssl-dev zlib1g-dev libdb-dev libncurses5-dev libsqlite3-dev libcurl4-openssl-dev libpcre3-dev libspeex-dev libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev libopus-dev libsndfile1-dev libshout3-dev libmpg123-dev python3-dev git golang-go haproxy keepalived</code>
+                      <code className="text-emerald-400 text-[11px] font-mono block leading-relaxed bg-black/40 p-4 rounded-xl">apt-get update && apt-get install -y gnupg2 wget lsb-release curl build-essential cmake automake autoconf libtool libtool-bin pkg-config libssl-dev zlib1g-dev libdb-dev libncurses-dev libsqlite3-dev libcurl4-openssl-dev libpcre3-dev libspeex-dev libspeexdsp-dev libldns-dev libedit-dev liblua5.2-dev libopus-dev libsndfile1-dev libshout3-dev libmpg123-dev python3-dev git golang-go haproxy keepalived uuid-dev</code>
                    </div>
                    <div className="p-8 bg-slate-950 rounded-3xl border border-slate-800">
                       <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 2: Configuración de Repositorios</p>

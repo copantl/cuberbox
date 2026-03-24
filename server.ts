@@ -13,6 +13,9 @@ async function startServer() {
   const PORT = 3000;
 
   app.use(express.json());
+  
+  // Serve setup scripts directly
+  app.use('/setup', express.static(path.join(__dirname, 'setup')));
 
   // API routes
   app.get("/api/health", (req, res) => {
