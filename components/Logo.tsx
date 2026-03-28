@@ -14,59 +14,58 @@ const Logo: React.FC<LogoProps> = ({ className = "w-12 h-12", showText = false }
           viewBox="0 0 100 100"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full drop-shadow-[0_0_20px_rgba(59,130,246,0.6)] group-hover/logo:scale-105 transition-transform duration-500"
+          className="w-full h-full group-hover/logo:scale-105 transition-transform duration-700 ease-out"
         >
-          {/* Sombra de profundidad (Base) */}
+          {/* Outer Hexagon - Thin Stroke */}
           <path
-            d="M50 90L10 65V35L50 10L90 35V65L50 90Z"
-            fill="black"
-            fillOpacity="0.4"
+            d="M50 5L90 28V72L50 95L10 72V28L50 5Z"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinejoin="round"
+            className="text-blue-500/30"
           />
           
-          {/* Cara Izquierda - High Contrast Blue */}
+          {/* Inner Cube Structure - Elegant Lines */}
           <path
-            d="M50 85V48L15 30V67L50 85Z"
-            fill="#1d4ed8"
-          />
-          <path
-            d="M50 85V48L15 30V67L50 85Z"
-            fill="url(#leftGradient)"
-          />
-          
-          {/* Cara Derecha - Deep Royal Blue */}
-          <path
-            d="M50 85V48L85 30V67L50 85Z"
-            fill="#1e40af"
-          />
-          <path
-            d="M50 85V48L85 30V67L50 85Z"
-            fill="url(#rightGradient)"
+            d="M50 50L90 28M50 50L10 28M50 50V95"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            className="text-blue-500/50"
           />
 
-          {/* Cara Superior - Ice White / Silver */}
+          {/* Core Cube - Solid with subtle gradient */}
           <path
-            d="M50 48L15 30L50 12L85 30L50 48Z"
-            fill="#eff6ff"
+            d="M50 50L75 36V64L50 78V50Z"
+            fill="url(#coreGradientRight)"
+          />
+          <path
+            d="M50 50L25 36V64L50 78V50Z"
+            fill="url(#coreGradientLeft)"
+          />
+          <path
+            d="M50 22L25 36L50 50L75 36L50 22Z"
+            fill="white"
+            fillOpacity="0.9"
           />
 
-          {/* Detalles de Circuitos Internos (Neural Core) */}
-          <circle cx="32" cy="58" r="4" fill="white" fillOpacity="0.8" />
-          <circle cx="68" cy="58" r="4" fill="white" fillOpacity="0.8" />
-          <path d="M50 48V85" stroke="white" strokeOpacity="0.2" strokeWidth="1" />
+          {/* Glow points */}
+          <circle cx="50" cy="50" r="1" fill="white" className="animate-pulse" />
           
           <defs>
-            <linearGradient id="leftGradient" x1="50" y1="48" x2="15" y2="67" gradientUnits="userSpaceOnUse">
+            <linearGradient id="coreGradientLeft" x1="50" y1="50" x2="25" y2="64" gradientUnits="userSpaceOnUse">
               <stop stopColor="#3b82f6" />
-              <stop offset="1" stopColor="#1e40af" />
-            </linearGradient>
-            <linearGradient id="rightGradient" x1="50" y1="48" x2="85" y2="67" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#2563eb" />
               <stop offset="1" stopColor="#1d4ed8" />
+            </linearGradient>
+            <linearGradient id="coreGradientRight" x1="50" y1="50" x2="75" y2="64" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#2563eb" />
+              <stop offset="1" stopColor="#1e40af" />
             </linearGradient>
           </defs>
         </svg>
-        {/* Halo de producción activo */}
-        <div className="absolute -inset-1 bg-blue-500/20 rounded-full blur-xl opacity-0 group-hover/logo:opacity-100 transition-opacity"></div>
+        
+        {/* Subtle background glow */}
+        <div className="absolute inset-0 bg-blue-500/10 rounded-full blur-2xl -z-10 group-hover/logo:bg-blue-500/20 transition-colors duration-700"></div>
       </div>
       {showText && (
         <div className="flex flex-col">

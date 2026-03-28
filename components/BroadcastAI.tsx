@@ -21,6 +21,7 @@ import {
   ResponsiveContainer, AreaChart, Area, Cell, PieChart as RePieChart, Pie 
 } from 'recharts';
 import { useToast } from '../ToastContext';
+import ConfirmDialog from './ConfirmDialog';
 
 /** Interfaz para los campos que la IA debe extraer de la conversación */
 interface ExtractionField {
@@ -135,6 +136,17 @@ const BroadcastAI: React.FC = () => {
   // --- Estados de Validación de Datos ---
   const [isValidating, setIsValidating] = useState(false);
   const [validationResults, setValidationResults] = useState<ValidationSummary | null>(null);
+  const [confirmAction, setConfirmAction] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
+  });
 
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -285,14 +297,19 @@ const BroadcastAI: React.FC = () => {
 
   const handleDeleteCampaign = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (confirm('¿Estás seguro de eliminar esta campaña de Broadcast? Esta acción es irreversible.')) {
-      const newList = campaigns.filter(c => c.id !== id);
-      setCampaigns(newList);
-      if (selectedBc.id === id && newList.length > 0) {
-        setSelectedBc(newList[0]);
+    setConfirmAction({
+      isOpen: true,
+      title: 'Eliminar Campaña',
+      message: '¿Estás seguro de eliminar esta campaña de Broadcast? Esta acción es irreversible.',
+      onConfirm: () => {
+        const newList = campaigns.filter(c => c.id !== id);
+        setCampaigns(newList);
+        if (selectedBc.id === id && newList.length > 0) {
+          setSelectedBc(newList[0]);
+        }
+        toast('Campaña eliminada del pipeline.', 'warning', 'Recurso Removido');
       }
-      toast('Campaña eliminada del pipeline.', 'warning', 'Recurso Removido');
-    }
+    });
   };
 
   const toggleCampaignStatus = (id: string) => {
@@ -929,6 +946,17 @@ const BroadcastAI: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={confirmAction.isOpen}
+        title={confirmAction.title}
+        message={confirmAction.message}
+        onConfirm={() => {
+          confirmAction.onConfirm();
+          setConfirmAction(prev => ({ ...prev, isOpen: false }));
+        }}
+        onCancel={() => setConfirmAction(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 };

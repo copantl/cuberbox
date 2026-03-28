@@ -8,12 +8,21 @@ import { UserProfile } from '../types';
 import { MOCK_USER_PROFILES } from '../constants';
 import { useToast } from '../ToastContext';
 
+import ConfirmDialog from './ConfirmDialog';
+
 const UserProfilesManagement: React.FC = () => {
   const { toast } = useToast();
   const [profiles, setProfiles] = useState<UserProfile[]>(MOCK_USER_PROFILES);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProfile, setEditingProfile] = useState<Partial<UserProfile> | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Confirmation state
+  const [confirmAction, setConfirmAction] = useState<{
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  } | null>(null);
 
   const handleOpenModal = (profile?: UserProfile) => {
     if (profile) {
@@ -69,10 +78,15 @@ const UserProfilesManagement: React.FC = () => {
       toast('Debe existir al menos un perfil en el sistema.', 'error');
       return;
     }
-    if (confirm('¿Estás seguro de eliminar este perfil? Los usuarios vinculados deberán ser reasignados.')) {
-      setProfiles(profiles.filter(p => p.id !== id));
-      toast('Perfil eliminado del sistema.', 'warning');
-    }
+    setConfirmAction({
+      title: 'Eliminar Perfil',
+      message: '¿Estás seguro de eliminar este perfil? Los usuarios vinculados deberán ser reasignados.',
+      onConfirm: () => {
+        setProfiles(profiles.filter(p => p.id !== id));
+        toast('Perfil eliminado del sistema.', 'warning');
+        setConfirmAction(null);
+      }
+    });
   };
 
   const togglePermission = (key: keyof UserProfile['permissions']) => {
@@ -277,6 +291,14 @@ const UserProfilesManagement: React.FC = () => {
           </div>
         </div>
       )}
+      {/* MODAL DE CONFIRMACIÓN REUTILIZABLE */}
+      <ConfirmDialog 
+        isOpen={!!confirmAction}
+        title={confirmAction?.title || ''}
+        message={confirmAction?.message || ''}
+        onConfirm={() => confirmAction?.onConfirm()}
+        onCancel={() => setConfirmAction(null)}
+      />
     </div>
   );
 };

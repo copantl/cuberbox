@@ -3,16 +3,23 @@ import React from 'react';
 import { ShieldAlert, Lock, ArrowLeft, ShieldX, Info } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
+import { UserRole } from '../types';
+
 interface AccessControlProps {
   userLevel: number;
   minLevel: number;
+  allowedRoles?: UserRole[];
+  userRole?: UserRole;
   children: React.ReactNode;
 }
 
-const AccessControl: React.FC<AccessControlProps> = ({ userLevel, minLevel, children }) => {
+const AccessControl: React.FC<AccessControlProps> = ({ userLevel, minLevel, allowedRoles, userRole, children }) => {
   const navigate = useNavigate();
 
-  if (userLevel < minLevel) {
+  const isRoleAllowed = !allowedRoles || (userRole && allowedRoles.includes(userRole));
+  const isLevelAllowed = userLevel >= minLevel;
+
+  if (!isLevelAllowed || !isRoleAllowed) {
     return (
       <div className="h-full flex flex-col items-center justify-center p-10 animate-in fade-in zoom-in-95 duration-500">
         <div className="glass p-16 rounded-[64px] border-2 border-rose-500/30 bg-rose-600/5 shadow-[0_0_100px_rgba(244,63,94,0.15)] max-w-2xl w-full text-center space-y-10 relative overflow-hidden group">

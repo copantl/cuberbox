@@ -143,7 +143,11 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
     setActiveTab('AI_ASSIST');
 
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY;
+      if (!apiKey) {
+        throw new Error("Gemini API Key not found in environment.");
+      }
+      const ai = new GoogleGenAI({ apiKey });
       const prompt = `Actúa como un coach de ventas experto para un agente de call center. 
       Lead: ${currentLead.name} de ${currentLead.city}. 
       Contexto de la llamada: ${context}. 
@@ -155,14 +159,16 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
         contents: prompt,
       });
 
-      setAiSuggestion(response.text || "No se pudo generar una sugerencia.");
+      const text = response.text;
+      setAiSuggestion(text || "No se pudo generar una sugerencia.");
       // Simular cambio de sentimiento basado en el texto (lógica simplificada para demo)
       if (context.toLowerCase().includes('precio') || context.toLowerCase().includes('caro')) setSentiment('NEGATIVE');
       else if (context.toLowerCase().includes('gracias') || context.toLowerCase().includes('interesado')) setSentiment('POSITIVE');
       
       toast('Neural Copilot: Nueva sugerencia táctica.', 'info', 'AI Assistant');
-    } catch (error) {
-      toast('Error al consultar el cerebro IA.', 'error');
+    } catch (error: any) {
+      console.error("AI Assistant Error:", error);
+      toast(error.message || 'Error al consultar el cerebro IA.', 'error');
     } finally {
       setIsAiThinking(false);
     }

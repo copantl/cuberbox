@@ -9,6 +9,8 @@ import {
 import { PauseCode } from '../types';
 import { PAUSE_CODES } from '../constants';
 
+import ConfirmDialog from './ConfirmDialog';
+
 const PauseCodesManagement: React.FC = () => {
   const [codes, setCodes] = useState<PauseCode[]>(PAUSE_CODES);
   const [isEditing, setIsEditing] = useState<string | null>(null);
@@ -19,14 +21,26 @@ const PauseCodesManagement: React.FC = () => {
     color: '#3b82f6'
   });
 
+  // Confirmation state
+  const [confirmAction, setConfirmAction] = useState<{
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  } | null>(null);
+
   const handleToggleActive = (id: string) => {
     setCodes(codes.map(c => c.id === id ? { ...c, isActive: !c.isActive } : c));
   };
 
   const handleDelete = (id: string) => {
-    if (confirm('¿Estás seguro de eliminar este código de pausa?')) {
-      setCodes(codes.filter(c => c.id !== id));
-    }
+    setConfirmAction({
+      title: 'Eliminar Código de Pausa',
+      message: '¿Estás seguro de eliminar este código de pausa?',
+      onConfirm: () => {
+        setCodes(codes.filter(c => c.id !== id));
+        setConfirmAction(null);
+      }
+    });
   };
 
   const handleAdd = () => {
@@ -182,6 +196,14 @@ const PauseCodesManagement: React.FC = () => {
            </div>
         </div>
       </div>
+      {/* MODAL DE CONFIRMACIÓN REUTILIZABLE */}
+      <ConfirmDialog 
+        isOpen={!!confirmAction}
+        title={confirmAction?.title || ''}
+        message={confirmAction?.message || ''}
+        onConfirm={() => confirmAction?.onConfirm()}
+        onCancel={() => setConfirmAction(null)}
+      />
     </div>
   );
 };

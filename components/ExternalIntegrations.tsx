@@ -7,6 +7,7 @@ import {
   CheckCircle2, AlertCircle, Phone
 } from 'lucide-react';
 import { useToast } from '../ToastContext';
+import ConfirmDialog from './ConfirmDialog';
 
 interface GatewayConfig {
   id: string;
@@ -34,6 +35,17 @@ const ExternalIntegrations: React.FC = () => {
   const [isGatewayModalOpen, setIsGatewayModalOpen] = useState(false);
   const [editingGateway, setEditingGateway] = useState<Partial<GatewayConfig> | null>(null);
   const [isSavingGateway, setIsSavingGateway] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
+  });
 
   const categories = [
     { id: 'CRM', label: 'CRM & Salesforce', icon: Globe, color: 'text-purple-400' },
@@ -91,10 +103,15 @@ const ExternalIntegrations: React.FC = () => {
   };
 
   const handleDeleteGateway = (id: string) => {
-    if (confirm('¿Eliminar este gateway? Las rutas vinculadas dejarán de funcionar.')) {
-      setGateways(prev => prev.filter(g => g.id !== id));
-      toast('Gateway removido del inventario.', 'warning');
-    }
+    setConfirmAction({
+      isOpen: true,
+      title: 'Eliminar Gateway',
+      message: '¿Eliminar este gateway? Las rutas vinculadas dejarán de funcionar.',
+      onConfirm: () => {
+        setGateways(prev => prev.filter(g => g.id !== id));
+        toast('Gateway removido del inventario.', 'warning');
+      }
+    });
   };
 
   return (
@@ -523,6 +540,17 @@ const ExternalIntegrations: React.FC = () => {
            </div>
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={confirmAction.isOpen}
+        title={confirmAction.title}
+        message={confirmAction.message}
+        onConfirm={() => {
+          confirmAction.onConfirm();
+          setConfirmAction(prev => ({ ...prev, isOpen: false }));
+        }}
+        onCancel={() => setConfirmAction(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 };

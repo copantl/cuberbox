@@ -1,5 +1,5 @@
 
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { 
   Search, Plus, UserPlus, Filter, MoreVertical, Shield, Mail, Phone, 
   Trash2, Edit2, X, Save, ShieldCheck, User as UserIcon, Lock, 
@@ -29,6 +29,39 @@ const UsersManagement: React.FC<{ currentUser?: User }> = ({ currentUser = MOCK_
   
   // MFA States
   const [mfaUser, setMfaUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch('/api/users');
+        if (response.ok) {
+          const data = await response.json();
+          // Map DB fields to frontend User type if necessary
+          const mappedUsers = data.map((u: any) => ({
+            id: u.id,
+            username: u.username,
+            fullName: u.full_name,
+            email: u.email,
+            extension: u.extension || '',
+            role: u.role as UserRole,
+            userLevel: u.role === 'ADMIN' ? 9 : u.role === 'MANAGER' ? 5 : 1,
+            status: 'offline',
+            mfaEnabled: u.mfa_enabled,
+            is_active: u.is_active
+          }));
+          setUsers(mappedUsers);
+        }
+      } catch (error) {
+        console.error('Error fetching users:', error);
+        toast('Error al conectar con el servidor local.', 'error');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const filteredUsers = useMemo(() => {
     return users.filter(user => {
@@ -251,7 +284,24 @@ const UsersManagement: React.FC<{ currentUser?: User }> = ({ currentUser = MOCK_
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-        {filteredUsers.map((user) => {
+        {isLoading ? (
+          Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="glass p-8 rounded-[40px] border border-slate-700/40 animate-pulse flex flex-col h-[350px]">
+              <div className="flex justify-between items-start mb-8">
+                <div className="w-20 h-20 rounded-[24px] bg-slate-800/50"></div>
+                <div className="w-12 h-6 bg-slate-800/50 rounded-full"></div>
+              </div>
+              <div className="space-y-3">
+                <div className="h-6 bg-slate-800/50 rounded-lg w-3/4"></div>
+                <div className="h-4 bg-slate-800/50 rounded-lg w-1/2"></div>
+              </div>
+              <div className="mt-auto space-y-4 pt-8 border-t border-slate-800/50">
+                <div className="h-4 bg-slate-800/50 rounded-lg w-full"></div>
+                <div className="h-4 bg-slate-800/50 rounded-lg w-2/3"></div>
+              </div>
+            </div>
+          ))
+        ) : filteredUsers.map((user) => {
           const group = MOCK_USER_GROUPS.find(g => g.id === user.groupId);
           return (
             <div key={user.id} className="glass p-8 rounded-[40px] border border-slate-700/40 hover:border-blue-500/40 transition-all group relative overflow-hidden flex flex-col shadow-xl">
@@ -470,13 +520,13 @@ const UsersManagement: React.FC<{ currentUser?: User }> = ({ currentUser = MOCK_
 
       <ConfirmModal
         isOpen={isConfirmOpen}
-        onClose={() => setIsConfirmOpen(false)}
+        onCancel={() => setIsConfirmOpen(false)}
         onConfirm={confirmDelete}
         title="Eliminar Usuario"
         message="¿Estás seguro de que deseas eliminar permanentemente a este usuario? Esta acción no se puede deshacer."
         confirmText="Eliminar"
         cancelText="Cancelar"
-        type="danger"
+        variant="danger"
       />
     </div>
   );

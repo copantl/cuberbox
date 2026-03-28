@@ -79,6 +79,134 @@ const MANUAL_DATABASE: ManualEntry[] = [
     ]
   },
   {
+    id: 'local-deployment-debian12',
+    title: 'Despliegue Local (Debian 12)',
+    icon: HardDrive,
+    category: 'INFRAESTRUCTURA',
+    summary: 'Guía para instalar el sistema en servidores físicos o virtuales usando Proxmox.',
+    functionality: 'Permite el control total del hardware y la privacidad de los datos al operar en infraestructura propia (On-Premise). Optimizado para Debian 12 Bookworm.',
+    usage: 'Siga estos pasos para preparar el sistema operativo y las dependencias críticas en su servidor local.',
+    steps: [
+      { 
+        title: 'Paso 1: Preparación de Debian 12', 
+        desc: 'Instale Debian 12 (Netinstall). Asegúrese de tener acceso SSH y privilegios de sudo.',
+        code: 'apt update && apt upgrade -y\napt install -y curl git build-essential'
+      },
+      { 
+        title: 'Paso 2: Base de Datos PostgreSQL 16', 
+        desc: 'Instale y configure PostgreSQL. Cree el usuario y la base de datos para la aplicación.',
+        code: 'apt install -y postgresql-16\nsudo -u postgres psql -c "CREATE USER cuberbox_admin WITH PASSWORD \'TuPassword\';" \nsudo -u postgres psql -c "CREATE DATABASE cuberbox_db OWNER cuberbox_admin;"'
+      },
+      { 
+        title: 'Paso 3: Entorno Node.js y App', 
+        desc: 'Instale Node.js 20+ y clone el repositorio. Instale las dependencias de npm.',
+        code: 'curl -fsSL https://deb.nodesource.com/setup_20.x | bash -\napt install -y nodejs\ngit clone https://github.com/tu-repo/cuberbox.git\ncd cuberbox && npm install'
+      },
+      { 
+        title: 'Paso 4: Persistencia con Systemd', 
+        desc: 'Cree un servicio para que la app inicie automáticamente con el servidor.',
+        code: 'cat <<EOF > /etc/systemd/system/cuberbox.service\n[Unit]\nDescription=Cuberbox App\nAfter=network.target\n\n[Service]\nType=simple\nWorkingDirectory=/opt/cuberbox\nExecStart=/usr/bin/npm run dev -- --host 0.0.0.0\nRestart=always\n\n[Install]\nWantedBy=multi-user.target\nEOF\nsystemctl enable --now cuberbox'
+      }
+    ]
+  },
+  {
+    id: 'whatsapp-api-setup',
+    title: 'Configuración WhatsApp Business',
+    icon: MessageSquare,
+    category: 'ADMINISTRACIÓN',
+    summary: 'Pasos para conectar la API oficial de Meta y configurar Webhooks.',
+    functionality: 'Habilita la recepción y envío de mensajes reales a través de la plataforma de WhatsApp Business Cloud API.',
+    usage: 'Requiere una cuenta en Meta for Developers y un número de teléfono verificado.',
+    steps: [
+      { title: 'Paso 1: Credenciales de Meta', desc: 'Obtenga su WHATSAPP_ACCESS_TOKEN y WHATSAPP_PHONE_NUMBER_ID desde el panel de Meta for Developers.' },
+      { 
+        title: 'Paso 2: Configuración de Webhook', 
+        desc: 'Configure la URL de callback en Meta: https://tu-ip-o-dominio/api/webhook/whatsapp. Use el Verify Token configurado en su .env.',
+        code: 'WHATSAPP_VERIFY_TOKEN=cuberbox_token_2024'
+      },
+      { title: 'Paso 3: Variables de Entorno', desc: 'Añada las credenciales a su archivo .env local para que el servidor pueda autenticarse con Meta.' },
+      { title: 'Paso 4: Verificación de Conexión', desc: 'Envíe un mensaje de prueba desde la interfaz de WhatsApp de la app. Si el estado cambia a "Entregado", la conexión es exitosa.' }
+    ]
+  },
+  {
+    id: 'tiktok-api-setup',
+    title: 'Configuración TikTok Business',
+    icon: MessageSquare,
+    category: 'ADMINISTRACIÓN',
+    summary: 'Pasos para conectar la API de TikTok Business y configurar Webhooks.',
+    functionality: 'Habilita la recepción y envío de mensajes de seguidores de TikTok directamente desde la plataforma.',
+    usage: 'Requiere una cuenta de desarrollador en TikTok for Business y una App configurada.',
+    steps: [
+      { title: 'Paso 1: Credenciales de TikTok', desc: 'Obtenga su TIKTOK_CLIENT_KEY, TIKTOK_CLIENT_SECRET y TIKTOK_ACCESS_TOKEN desde el portal de desarrolladores de TikTok.' },
+      { 
+        title: 'Paso 2: Configuración de Webhook', 
+        desc: 'Configure la URL de callback en TikTok: https://tu-ip-o-dominio/api/webhook/tiktok. Use el Verify Token configurado en su .env.',
+        code: 'TIKTOK_VERIFY_TOKEN=cuberbox_tiktok_token_2024'
+      },
+      { title: 'Paso 3: Variables de Entorno', desc: 'Añada las credenciales a su archivo .env local para que el servidor pueda autenticarse con TikTok.' },
+      { title: 'Paso 4: Verificación de Conexión', desc: 'Envíe un mensaje de prueba desde la interfaz de TikTok de la app. Si el estado cambia a "Entregado", la conexión es exitosa.' }
+    ]
+  },
+  {
+    id: 'facebook-messenger-setup',
+    title: 'Configuración Facebook Messenger',
+    icon: MessageSquare,
+    category: 'ADMINISTRACIÓN',
+    summary: 'Conecte su página de Facebook para recibir mensajes en la bandeja unificada.',
+    functionality: 'Permite la gestión de chats de Messenger mediante la API de Meta Graph.',
+    usage: 'Requiere una página de Facebook y una App en Meta for Developers con el producto Messenger configurado.',
+    steps: [
+      { title: 'Paso 1: App en Meta', desc: 'Cree una App en Meta for Developers y agregue el producto "Messenger".' },
+      { title: 'Paso 2: Token de Acceso', desc: 'Genere un Page Access Token para la página que desea conectar.' },
+      { 
+        title: 'Paso 3: Webhook de Messenger', 
+        desc: 'Configure el Webhook apuntando a /api/webhook/facebook y suscríbase al campo "messages".',
+        code: 'META_VERIFY_TOKEN=cuberbox_meta_token_2024'
+      }
+    ]
+  },
+  {
+    id: 'instagram-direct-setup',
+    title: 'Configuración Instagram Direct',
+    icon: Globe,
+    category: 'ADMINISTRACIÓN',
+    summary: 'Gestione los mensajes directos de su cuenta de Instagram Business.',
+    functionality: 'Integración con Instagram Graph API para mensajería bidireccional.',
+    usage: 'La cuenta de Instagram debe estar vinculada a una página de Facebook y ser de tipo "Business" o "Creator".',
+    steps: [
+      { title: 'Paso 1: Vincular Cuentas', desc: 'Asegúrese de que su cuenta de Instagram esté vinculada a su página de Facebook.' },
+      { title: 'Paso 2: Permisos de Mensajes', desc: 'En la configuración de Instagram, habilite el "Acceso a mensajes" para herramientas de terceros.' },
+      { 
+        title: 'Paso 3: Webhook de Instagram', 
+        desc: 'Configure el Webhook apuntando a /api/webhook/instagram y suscríbase al campo "messages".',
+        code: 'META_VERIFY_TOKEN=cuberbox_meta_token_2024'
+      }
+    ]
+  },
+  {
+    id: 'multi-node-freeswitch',
+    title: 'Clúster Multi-Nodo FreeSwitch',
+    icon: Network,
+    category: 'INFRAESTRUCTURA',
+    summary: 'Configuración de múltiples servidores de telefonía distribuidos.',
+    functionality: 'Permite escalar la capacidad de llamadas y asegurar la redundancia geográfica conectando varios servidores FreeSwitch a una sola interfaz.',
+    usage: 'Utilice la tabla telephony_nodes para registrar sus servidores remotos y monitorear su salud.',
+    steps: [
+      { 
+        title: 'Paso 1: Habilitar Event Socket', 
+        desc: 'En cada nodo FreeSwitch, permita conexiones externas en el archivo event_socket.conf.xml.',
+        code: '<param name="listen-ip" value="0.0.0.0"/>\n<param name="listen-port" value="8021"/>'
+      },
+      { title: 'Paso 2: Firewall y Puertos', desc: 'Abra el puerto 8021 (TCP) en el firewall de cada nodo, permitiendo solo la IP de su servidor principal de Debian.' },
+      { 
+        title: 'Paso 3: Registro de Nodos', 
+        desc: 'Use el endpoint /api/telephony/nodes para añadir la IP y contraseña de cada servidor al clúster.',
+        code: 'INSERT INTO telephony_nodes (name, ip, password) VALUES (\'Nodo Miami\', \'192.168.1.60\', \'ClueCon\');'
+      },
+      { title: 'Paso 4: Monitoreo de Salud', desc: 'Revise el "Cluster Monitor" para ver el estado ONLINE/OFFLINE de cada nodo en tiempo real.' }
+    ]
+  },
+  {
     id: 'reports-analytics',
     title: 'Reportes & Business Intelligence',
     icon: BarChart3,
@@ -105,7 +233,8 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { title: 'Paso 1: Creación de Perfiles', desc: 'Defina qué botones y menús puede ver un usuario. Un agente no debería ver reportes de costos, por ejemplo.' },
       { title: 'Paso 2: Alta de Usuarios', desc: 'Asigne una extensión única y una contraseña robusta. Vincule al usuario con un grupo de supervisión.' },
       { title: 'Paso 3: Configuración de MFA', desc: 'Active el código de seguridad por aplicación (Google Authenticator) para proteger las cuentas de administrador.' },
-      { title: 'Paso 4: Auditoría de Logs', desc: 'Revise quién entró al sistema, desde qué IP y qué cambios realizó en la configuración.' }
+      { title: 'Paso 4: Importación y Exportación', desc: 'Use los botones de "Importar" y "Exportar" para gestionar bases de usuarios masivas en formato JSON, facilitando la migración entre clústeres.' },
+      { title: 'Paso 5: Auditoría de Logs', desc: 'Revise quién entró al sistema, desde qué IP y qué cambios realizó en la configuración.' }
     ]
   },
   {
@@ -166,6 +295,21 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { title: 'Paso 2: Entrenamiento de Intenciones', desc: 'Dígale al bot qué hacer si el cliente dice "Sí", "No", "No puedo" o "Llamen más tarde".' },
       { title: 'Paso 3: Selección de Voz Neural', desc: 'Elija entre voces masculinas o femeninas con acentos locales para generar confianza en el cliente.' },
       { title: 'Paso 4: Lanzamiento y Escalado', desc: 'Inicie la campaña. El sistema detectará automáticamente cuántos canales de telefonía tiene disponibles para no saturar su troncal.' }
+    ]
+  },
+  {
+    id: 'manual-dialer-callbacks',
+    title: 'Marcación Manual & Callbacks',
+    icon: PhoneIcon,
+    category: 'OPERACIONES',
+    summary: 'Control de llamadas directas y programación de seguimientos personalizados.',
+    functionality: 'Permite a los agentes realizar llamadas a números específicos fuera de la cola predictiva y programar recordatorios automáticos (Callbacks) que el sistema inyectará en la terminal en la fecha y hora acordada con el cliente.',
+    usage: 'Utilice la marcación manual para gestiones especiales y el agendamiento de callbacks para asegurar el cierre de ventas diferidas.',
+    steps: [
+      { title: 'Paso 1: Acceso al Dialer Manual', desc: 'En la pantalla de agente, localice el panel de "Marcación Manual". Ingrese el número con el prefijo correspondiente.' },
+      { title: 'Paso 2: Ejecución de Llamada', desc: 'Haga clic en el botón de llamar. El sistema utilizará la troncal configurada para establecer la comunicación mediante ESL.' },
+      { title: 'Paso 3: Programación de Callback', desc: 'Si el cliente solicita ser llamado después, haga clic en "Agendar Callback". Seleccione la fecha, hora y el tipo (Privado o Público).' },
+      { title: 'Paso 4: Gestión de Agenda', desc: 'El sistema le notificará cuando un callback esté vencido. Podrá ver su lista de compromisos pendientes en el panel lateral.' }
     ]
   },
   {
@@ -285,18 +429,33 @@ const MANUAL_DATABASE: ManualEntry[] = [
     ]
   },
   {
+    id: 'telephony-config-nexus',
+    title: 'Configuración de Telefonía (SIP/DID)',
+    icon: PhoneIncoming,
+    category: 'INFRAESTRUCTURA',
+    summary: 'Gestión de troncales SIP, numeración DID y rutas de entrada/salida.',
+    functionality: 'Permite la interconexión con carriers externos mediante el protocolo SIP. Gestiona la autenticación de troncales, la asignación de DIDs a campañas o IVRs, y la configuración de codecs de audio.',
+    usage: 'Configure sus troncales para permitir el flujo de llamadas hacia la red pública (PSTN).',
+    steps: [
+      { title: 'Paso 1: Registro de Troncal SIP', desc: 'Ingrese los datos de su proveedor (Host, Usuario, Password). El sistema intentará registrarse automáticamente con el motor FreeSwitch.' },
+      { title: 'Paso 2: Alta de DIDs', desc: 'Registre los números de teléfono adquiridos. Puede asignarlos directamente a una campaña entrante o a un flujo de IVR.' },
+      { title: 'Paso 3: Configuración de Rutas', desc: 'Defina las reglas de marcado (Dialplan). Por ejemplo, anteponer un prefijo para llamadas internacionales o bloquear ciertos destinos.' },
+      { title: 'Paso 4: Monitoreo de Registro', desc: 'Verifique en el panel que la troncal aparezca como "Registered". Si falla, revise sus credenciales y el firewall (Puerto 5060).' }
+    ]
+  },
+  {
     id: 'ai-studio-gemini',
-    title: 'AI Studio & Coaching',
+    title: 'AI Studio & Gemini Pro',
     icon: Bot,
     category: 'AI & NEURAL',
-    summary: 'Integración de Gemini 3 Pro para análisis semántico y asistencia en vivo.',
-    functionality: 'Utiliza modelos LLM para auditar el 100% de las grabaciones, detectar sentimientos, extraer compromisos de pago y sugerir respuestas al agente en el Hub Omnicanal.',
-    usage: 'Configure su asistente virtual para que aprenda sobre su negocio y ayude a sus agentes a cerrar más ventas.',
+    summary: 'Integración de Gemini 3 Pro para asistencia en vivo y análisis semántico.',
+    functionality: 'Utiliza modelos LLM de Google para asistir a los agentes en tiempo real, auditar grabaciones y detectar sentimientos. Requiere una GEMINI_API_KEY válida configurada en el entorno.',
+    usage: 'Active el asistente en la pantalla del agente para que este pueda realizar consultas sobre el script o dudas del cliente.',
     steps: [
-      { title: 'Paso 1: Definir la Personalidad de la IA', desc: 'En el AI Studio, escriba las instrucciones del sistema. Dígale a la IA quién es (ej: "Eres un experto en ventas inmobiliarias") y qué debe buscar en las llamadas.' },
-      { title: 'Paso 2: Configurar Reglas de Evaluación', desc: 'Indique qué criterios debe calificar la IA: ¿El agente saludó correctamente? ¿Mencionó el precio? ¿Fue amable?' },
-      { title: 'Paso 3: Revisión de Sentimientos', desc: 'Acceda al panel de analítica para ver el "clima" de sus llamadas. La IA marcará en rojo las conversaciones donde el cliente se notó molesto para que usted pueda intervenir.' },
-      { title: 'Paso 4: Uso de Sugerencias en Vivo', desc: 'Active la asistencia para agentes. Mientras chatean por WhatsApp, la IA les sugerirá la mejor respuesta basada en el historial de la conversación.' }
+      { title: 'Paso 1: Configuración de API Key', desc: 'Asegúrese de que la variable GEMINI_API_KEY esté presente en su archivo .env o configuración de servidor.' },
+      { title: 'Paso 2: Prompting de Sistema', desc: 'Defina las instrucciones base para la IA. Esto determina el tono y el conocimiento experto del asistente.' },
+      { title: 'Paso 3: Consulta en Vivo', desc: 'El agente puede escribir dudas en el panel lateral. La IA responderá basándose en el contexto de la campaña y el manual del producto.' },
+      { title: 'Paso 4: Análisis de Sentimiento', desc: 'El sistema procesa el texto de la interacción para alertar sobre clientes insatisfechos o oportunidades de cierre perdidas.' }
     ]
   },
   {

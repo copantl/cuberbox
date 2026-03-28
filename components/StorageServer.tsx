@@ -14,6 +14,7 @@ import {
 import { StorageNode, RecordingAsset, BackupJob } from '../types';
 import { MOCK_STORAGE_NODES, MOCK_RECORDINGS, MOCK_BACKUP_JOBS } from '../constants';
 import { useToast } from '../ToastContext';
+import ConfirmDialog from './ConfirmDialog';
 
 const StorageServer: React.FC = () => {
   const { toast } = useToast();
@@ -22,6 +23,17 @@ const StorageServer: React.FC = () => {
   const [selectedRec, setSelectedRec] = useState<RecordingAsset | null>(null);
   const [isBackingUp, setIsBackingUp] = useState(false);
   const [isPurging, setIsPurging] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
+  });
 
   const storageData = [
     { name: 'Alpha Node', val: 65, color: '#3b82f6' },
@@ -38,12 +50,17 @@ const StorageServer: React.FC = () => {
   };
 
   const handlePurge = async () => {
-    if (confirm('¿Ejecutar purga de audios con más de 90 días? Se liberarán aproximadamente 450 GB.')) {
-      setIsPurging(true);
-      await new Promise(r => setTimeout(r, 1500));
-      setIsPurging(false);
-      toast('Purga optimizada completada.', 'warning');
-    }
+    setConfirmAction({
+      isOpen: true,
+      title: 'Confirmar Purga de Audios',
+      message: '¿Ejecutar purga de audios con más de 90 días? Se liberarán aproximadamente 450 GB.',
+      onConfirm: async () => {
+        setIsPurging(true);
+        await new Promise(r => setTimeout(r, 1500));
+        setIsPurging(false);
+        toast('Purga optimizada completada.', 'warning');
+      }
+    });
   };
 
   const filteredRecordings = useMemo(() => 
@@ -479,6 +496,17 @@ const StorageServer: React.FC = () => {
            </div>
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={confirmAction.isOpen}
+        title={confirmAction.title}
+        message={confirmAction.message}
+        onConfirm={() => {
+          confirmAction.onConfirm();
+          setConfirmAction(prev => ({ ...prev, isOpen: false }));
+        }}
+        onCancel={() => setConfirmAction(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 };

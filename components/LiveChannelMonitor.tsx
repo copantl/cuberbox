@@ -107,8 +107,8 @@ export const LiveChannelMonitor: React.FC = () => {
   useEffect(() => {
     if (!svgRef.current || channels.length === 0) return;
 
-    const width = svgRef.current.clientWidth;
-    const height = 500;
+    const width = svgRef.current.clientWidth || 800;
+    const height = 550;
     const svg = d3.select(svgRef.current)
       .attr('width', width)
       .attr('height', height);
@@ -136,52 +136,67 @@ export const LiveChannelMonitor: React.FC = () => {
     // Bubble circle
     node.append('circle')
       .attr('r', 50)
-      .attr('fill', (d: Channel) => d.direction === 'inbound' ? '#10b981' : '#3b82f6')
-      .attr('fill-opacity', 0.15)
-      .attr('stroke', (d: Channel) => d.direction === 'inbound' ? '#10b981' : '#3b82f6')
-      .attr('stroke-width', 2)
-      .attr('class', (d: Channel) => activeSpy?.uuid === d.uuid ? 'animate-ping' : 'animate-pulse');
+      .attr('fill', (d: Channel) => d.direction === 'inbound' ? '#10b981' : 'var(--accent-primary)')
+      .attr('fill-opacity', 0.05)
+      .attr('stroke', (d: Channel) => d.direction === 'inbound' ? '#10b981' : 'var(--accent-primary)')
+      .attr('stroke-width', 1)
+      .attr('stroke-dasharray', '4,4')
+      .attr('class', (d: Channel) => activeSpy?.uuid === d.uuid ? 'animate-ping' : 'animate-[spin_10s_linear_infinite]');
 
-    // Inner circle
+    // Inner circle - The "Hardware" look
     node.append('circle')
-      .attr('r', 40)
-      .attr('fill', 'white')
-      .attr('fill-opacity', 0.9)
-      .attr('stroke', (d: Channel) => activeSpy?.uuid === d.uuid ? (activeSpy.mode === 'barge' ? '#9333ea' : '#ef4444') : '#e2e8f0')
-      .attr('stroke-width', (d: Channel) => activeSpy?.uuid === d.uuid ? 3 : 1);
+      .attr('r', 42)
+      .attr('fill', 'var(--bg-sidebar)')
+      .attr('stroke', (d: Channel) => {
+        if (activeSpy?.uuid === d.uuid) {
+          if (activeSpy.mode === 'barge') return '#9333ea';
+          if (activeSpy.mode === 'whisper') return 'var(--accent-primary)';
+          return '#f43f5e'; // listen
+        }
+        return 'var(--border-main)';
+      })
+      .attr('stroke-width', 2);
 
-    // Headphones icon for active spy
+    // Glow effect for active
     node.filter((d: Channel) => activeSpy?.uuid === d.uuid)
-      .append('path')
-      .attr('d', 'M3 12c0-4.97 4.03-9 9-9s9 4.03 9 9M3 12v5c0 1.1.9 2 2 2h2v-7H3zm18 0v5c0 1.1-.9 2-2 2h-2v-7h4z')
+      .append('circle')
+      .attr('r', 42)
       .attr('fill', 'none')
-      .attr('stroke', (d: Channel) => activeSpy?.mode === 'barge' ? '#9333ea' : '#ef4444')
-      .attr('stroke-width', 2)
-      .attr('transform', 'translate(-12, -35) scale(1)');
+      .attr('stroke', (d: Channel) => {
+        if (activeSpy?.mode === 'barge') return '#9333ea';
+        if (activeSpy?.mode === 'whisper') return 'var(--accent-primary)';
+        return '#f43f5e'; // listen
+      })
+      .attr('stroke-width', 4)
+      .attr('filter', 'blur(8px)')
+      .attr('opacity', 0.5);
 
     // Name text
     node.append('text')
       .attr('text-anchor', 'middle')
       .attr('dy', -5)
       .attr('font-size', '10px')
-      .attr('font-weight', 'bold')
-      .attr('fill', '#1e293b')
+      .attr('font-weight', '900')
+      .attr('fill', 'var(--text-primary)')
+      .attr('class', 'uppercase tracking-tighter')
       .text((d: Channel) => d.cid_name || 'Unknown');
 
     // Number text
     node.append('text')
       .attr('text-anchor', 'middle')
-      .attr('dy', 10)
-      .attr('font-size', '9px')
-      .attr('fill', '#64748b')
+      .attr('dy', 12)
+      .attr('font-size', '8px')
+      .attr('fill', 'var(--text-secondary)')
+      .attr('font-family', 'monospace')
       .text((d: Channel) => d.cid_num);
 
-    // Icon indicator
+    // Direction indicator dot
     node.append('circle')
       .attr('cx', 0)
-      .attr('cy', 25)
-      .attr('r', 8)
-      .attr('fill', (d: Channel) => d.direction === 'inbound' ? '#10b981' : '#3b82f6');
+      .attr('cy', 28)
+      .attr('r', 3)
+      .attr('fill', (d: Channel) => d.direction === 'inbound' ? '#10b981' : 'var(--accent-primary)')
+      .attr('class', 'animate-pulse');
 
     function ticked() {
       node.attr('transform', (d: Channel) => `translate(${d.x},${d.y})`);
@@ -208,77 +223,109 @@ export const LiveChannelMonitor: React.FC = () => {
   }, [channels, activeSpy]);
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white rounded-2xl shadow-sm border border-black/5 p-6">
-        <div className="flex items-center justify-between mb-6">
+    <div className="space-y-6 animate-in fade-in duration-700">
+      <div className="bg-bg-card backdrop-blur-xl rounded-3xl border border-border-main p-8 shadow-2xl relative overflow-hidden">
+        {/* Decorative background glow */}
+        <div className="absolute -top-24 -right-24 w-64 h-64 bg-accent-primary/10 rounded-full blur-3xl pointer-events-none"></div>
+        
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4 relative z-10">
           <div>
-            <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
-              <Activity className="w-5 h-5 text-blue-600" />
-              Monitor de Canales Vivos
+            <h2 className="text-2xl font-black tracking-tighter text-text-primary uppercase flex items-center gap-3">
+              <div className="p-2 bg-accent-primary/20 rounded-lg border border-accent-primary/30">
+                <Activity className="w-5 h-5 text-accent-primary" />
+              </div>
+              Monitor de Burbujas
             </h2>
-            <p className="text-sm text-gray-500">Visualización en tiempo real de llamadas activas. Haz clic en una burbuja para escuchar.</p>
+            <p className="text-[10px] font-bold text-text-secondary uppercase tracking-[0.2em] mt-1">Real-time Neural Channel Visualization</p>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 bg-slate-100 p-1.5 rounded-xl border border-black/5">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Tu Extensión:</span>
+          
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-3 bg-white/5 px-4 py-2 rounded-2xl border border-border-main">
+              <span className="text-[9px] font-black text-text-secondary uppercase tracking-widest">Extensión:</span>
               <input 
                 type="text" 
                 value={supervisorExt}
                 onChange={(e) => setSupervisorExt(e.target.value)}
-                className="w-16 bg-white border border-black/10 rounded-lg px-2 py-1 text-xs font-bold text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                className="w-16 bg-transparent border-none p-0 text-xs font-black text-accent-primary focus:outline-none focus:ring-0 uppercase"
               />
             </div>
-            <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest">
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                <span className="text-emerald-600">Entrante</span>
+            
+            <div className="flex items-center gap-6 px-4 py-2 bg-white/5 border border-border-main rounded-2xl">
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
+                <span className="text-[9px] font-black text-text-secondary uppercase tracking-widest">Inbound</span>
               </div>
-              <div className="flex items-center gap-1.5">
-                <div className="w-2 h-2 rounded-full bg-blue-500" />
-                <span className="text-blue-600">Saliente</span>
+              <div className="flex items-center gap-2">
+                <div className="w-1.5 h-1.5 rounded-full bg-accent-primary shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
+                <span className="text-[9px] font-black text-text-secondary uppercase tracking-widest">Outbound</span>
               </div>
             </div>
-            <button 
-              onClick={() => {
-                setShowHistory(!showHistory);
-                if (!showHistory) fetchAuditLogs();
-              }}
-              className={`p-2 rounded-xl transition-colors flex items-center gap-2 ${showHistory ? 'bg-blue-600 text-white' : 'hover:bg-gray-100 text-gray-600'}`}
-            >
-              <History className="w-5 h-5" />
-              <span className="text-xs font-bold uppercase tracking-widest px-1">Historial</span>
-            </button>
-            <button 
-              onClick={fetchChannels}
-              className="p-2 hover:bg-gray-100 rounded-xl transition-colors text-gray-600"
-            >
-              <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
-            </button>
+
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => {
+                  setShowHistory(!showHistory);
+                  if (!showHistory) fetchAuditLogs();
+                }}
+                className={`h-10 px-4 rounded-2xl transition-all flex items-center gap-2 border font-black text-[10px] uppercase tracking-widest ${
+                  showHistory 
+                    ? 'bg-accent-primary border-accent-primary text-white shadow-[0_0_15px_rgba(var(--accent-primary-rgb),0.4)]' 
+                    : 'bg-white/5 border-border-main text-text-secondary hover:text-text-primary hover:bg-white/10'
+                }`}
+              >
+                <History className="w-4 h-4" />
+                Audit Log
+              </button>
+              
+              <button 
+                onClick={fetchChannels}
+                className="w-10 h-10 flex items-center justify-center bg-white/5 border border-border-main rounded-2xl hover:bg-white/10 transition-all text-text-secondary hover:text-text-primary"
+              >
+                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-6">
-          <div className="flex-1 relative bg-slate-50 rounded-2xl border border-dashed border-slate-200 overflow-hidden min-h-[500px]">
+        <div className="flex flex-col lg:flex-row gap-8 relative z-10">
+          <div className="flex-1 relative bg-black/40 rounded-3xl border border-border-main overflow-hidden min-h-[550px] shadow-inner">
+            {/* Grid background */}
+            <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '24px 24px' }}></div>
+            
             {channels.length === 0 && !loading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 space-y-4">
-                <Users className="w-12 h-12 opacity-20" />
-                <p className="text-xs uppercase tracking-widest font-black">No hay llamadas activas en este momento</p>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-text-secondary space-y-6">
+                <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center border border-border-main">
+                  <Users className="w-8 h-8 opacity-20" />
+                </div>
+                <p className="text-[10px] uppercase tracking-[0.4em] font-black opacity-40">No active neural channels detected</p>
               </div>
             )}
-            <svg ref={svgRef} className="w-full h-[500px] cursor-move" />
+            
+            <svg ref={svgRef} className="w-full h-[550px] cursor-move" />
             
             <AnimatePresence>
               {activeSpy && (
                 <motion.div 
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  className={`absolute top-4 left-1/2 -translate-x-1/2 ${activeSpy.mode === 'barge' ? 'bg-purple-600' : activeSpy.mode === 'whisper' ? 'bg-blue-600' : 'bg-red-600'} text-white px-4 py-2 rounded-full shadow-xl flex items-center gap-2 z-50`}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className={`absolute top-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3 z-50 border ${
+                    activeSpy.mode === 'barge' 
+                      ? 'bg-purple-600/90 border-purple-400/50 shadow-purple-600/20' 
+                      : activeSpy.mode === 'whisper' 
+                      ? 'bg-accent-primary/90 border-accent-secondary/50 shadow-accent-primary/20' 
+                      : 'bg-rose-600/90 border-rose-400/50 shadow-rose-600/20'
+                  } backdrop-blur-md`}
                 >
-                  {activeSpy.mode === 'barge' ? <Mic className="w-4 h-4 animate-bounce" /> : activeSpy.mode === 'whisper' ? <MessageSquare className="w-4 h-4 animate-bounce" /> : <Headphones className="w-4 h-4 animate-bounce" />}
-                  <span className="text-xs font-bold uppercase tracking-widest">
-                    {activeSpy.mode === 'barge' ? 'Intervención Activa (Barge)' : activeSpy.mode === 'whisper' ? 'Susurro al Agente (Whisper)' : 'Escuchando Llamada Activa...'}
-                  </span>
+                  <div className="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
+                    {activeSpy.mode === 'barge' ? <Mic className="w-4 h-4 animate-pulse" /> : activeSpy.mode === 'whisper' ? <MessageSquare className="w-4 h-4 animate-pulse" /> : <Headphones className="w-4 h-4 animate-pulse" />}
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-white">
+                      {activeSpy.mode === 'barge' ? 'Intervención Activa' : activeSpy.mode === 'whisper' ? 'Susurro al Agente' : 'Escucha Activa'}
+                    </span>
+                    <span className="text-[8px] font-bold text-white/60 uppercase tracking-tighter">Nexus Protocol Secured</span>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>
@@ -287,45 +334,61 @@ export const LiveChannelMonitor: React.FC = () => {
           <AnimatePresence>
             {showHistory && (
               <motion.div 
-                initial={{ opacity: 0, x: 20, width: 0 }}
-                animate={{ opacity: 1, x: 0, width: 350 }}
-                exit={{ opacity: 0, x: 20, width: 0 }}
-                className="bg-slate-50 rounded-2xl border border-slate-200 overflow-hidden flex flex-col"
+                initial={{ opacity: 0, x: 40, width: 0 }}
+                animate={{ opacity: 1, x: 0, width: 380 }}
+                exit={{ opacity: 0, x: 40, width: 0 }}
+                className="bg-bg-card rounded-3xl border border-border-main overflow-hidden flex flex-col backdrop-blur-md shadow-2xl"
               >
-                <div className="p-4 border-b border-slate-200 bg-white flex items-center justify-between">
-                  <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                    <History className="w-3 h-3" />
-                    Auditoría de Sesiones
-                  </h3>
-                  <button onClick={() => setShowHistory(false)} className="text-slate-400 hover:text-slate-600">
+                <div className="p-6 border-b border-border-main bg-white/5 flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <h3 className="text-[10px] font-black text-text-primary uppercase tracking-widest flex items-center gap-2">
+                      <History className="w-3 h-3 text-accent-primary" />
+                      Auditoría de Sesiones
+                    </h3>
+                    <span className="text-[8px] font-bold text-text-secondary uppercase tracking-tighter mt-0.5">Forense Audit Log</span>
+                  </div>
+                  <button onClick={() => setShowHistory(false)} className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-white/5 text-text-secondary transition-colors">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
-                <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                
+                <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-hide">
                   {auditLogs.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center text-slate-300 space-y-2 py-10">
-                      <Clock className="w-8 h-8 opacity-20" />
-                      <p className="text-[10px] font-bold uppercase tracking-widest">Sin registros hoy</p>
+                    <div className="h-full flex flex-col items-center justify-center text-text-secondary space-y-4 py-20">
+                      <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center border border-border-main">
+                        <Clock className="w-5 h-5 opacity-20" />
+                      </div>
+                      <p className="text-[9px] font-black uppercase tracking-[0.3em] opacity-40">No records found</p>
                     </div>
                   ) : (
                     auditLogs.map((log) => (
-                      <div key={log.id} className="bg-white p-3 rounded-xl border border-black/5 shadow-sm">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className={`text-[8px] font-black px-1.5 py-0.5 rounded uppercase tracking-tighter ${log.mode === 'barge' ? 'bg-purple-100 text-purple-600' : log.mode === 'whisper' ? 'bg-blue-100 text-blue-600' : 'bg-red-100 text-red-600'}`}>
+                      <div key={log.id} className="bg-white/5 p-4 rounded-2xl border border-border-main group hover:bg-white/10 transition-all duration-300">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className={`text-[8px] font-black px-2 py-1 rounded-md uppercase tracking-widest ${
+                            log.mode === 'barge' ? 'bg-purple-500/20 text-purple-400' : 
+                            log.mode === 'whisper' ? 'bg-accent-primary/20 text-accent-primary' : 
+                            'bg-rose-500/20 text-rose-400'
+                          }`}>
                             {log.mode}
                           </span>
-                          <span className="text-[9px] text-slate-400 font-mono">
+                          <span className="text-[9px] text-text-secondary font-mono font-bold">
                             {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                           </span>
                         </div>
-                        <div className="space-y-1">
-                          <p className="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                            <UserCheck className="w-3 h-3 text-slate-400" />
-                            {log.customerName}
-                          </p>
-                          <p className="text-[10px] text-slate-500 font-medium">
-                            Ext. Supervisor: <span className="text-blue-600 font-bold">{log.supervisorExtension}</span>
-                          </p>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center border border-border-main text-text-secondary">
+                              <UserCheck className="w-4 h-4" />
+                            </div>
+                            <div className="flex flex-col">
+                              <p className="text-[11px] font-black text-text-primary uppercase tracking-tight">{log.customerName}</p>
+                              <p className="text-[9px] text-text-secondary font-mono">{log.customerNumber}</p>
+                            </div>
+                          </div>
+                          <div className="pt-2 border-t border-border-main flex items-center justify-between">
+                            <span className="text-[8px] font-black text-text-secondary uppercase tracking-widest">Supervisor Node:</span>
+                            <span className="text-[10px] font-black text-accent-primary font-mono">{log.supervisorExtension}</span>
+                          </div>
                         </div>
                       </div>
                     ))
@@ -336,122 +399,105 @@ export const LiveChannelMonitor: React.FC = () => {
           </AnimatePresence>
         </div>
 
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-600 text-white rounded-lg">
-                <Activity className="w-4 h-4" />
-              </div>
-              <div>
-                <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Total Canales</p>
-                <p className="text-xl font-bold text-blue-900">{channels.length}</p>
-              </div>
-            </div>
-          </div>
-          <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-100">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-emerald-600 text-white rounded-lg">
-                <PhoneIncoming className="w-4 h-4" />
-              </div>
-              <div>
-                <p className="text-[10px] font-black text-emerald-400 uppercase tracking-widest">Entrantes</p>
-                <p className="text-xl font-bold text-emerald-900">{channels.filter(c => c.direction === 'inbound').length}</p>
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 relative z-10">
+          {[
+            { label: 'Total Canales', value: channels.length, icon: Activity, color: 'accent-primary' },
+            { label: 'Entrantes', value: channels.filter(c => c.direction === 'inbound').length, icon: PhoneIncoming, color: 'emerald-500' },
+            { label: 'Salientes', value: channels.filter(c => c.direction === 'outbound').length, icon: PhoneOutgoing, color: 'accent-secondary' }
+          ].map((stat, idx) => (
+            <div key={idx} className="p-6 bg-white/5 rounded-3xl border border-border-main group hover:bg-white/10 transition-all duration-500">
+              <div className="flex items-center gap-4">
+                <div className={`p-3 bg-${stat.color}/20 text-${stat.color} rounded-2xl border border-${stat.color}/20 group-hover:scale-110 transition-transform duration-500`}>
+                  <stat.icon className="w-5 h-5" />
+                </div>
+                <div>
+                  <p className="text-[9px] font-black text-text-secondary uppercase tracking-[0.3em]">{stat.label}</p>
+                  <p className="text-2xl font-black text-text-primary tracking-tighter mt-1">{stat.value}</p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-500 text-white rounded-lg">
-                <PhoneOutgoing className="w-4 h-4" />
-              </div>
-              <div>
-                <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Salientes</p>
-                <p className="text-xl font-bold text-blue-900">{channels.filter(c => c.direction === 'outbound').length}</p>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
       {/* Spy Confirmation Modal */}
       <AnimatePresence>
         {showSpyModal && selectedChannel && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[100] p-4">
             <motion.div 
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-black/5"
+              className="bg-bg-sidebar rounded-[2.5rem] shadow-2xl max-w-md w-full overflow-hidden border border-border-main"
             >
-              <div className="p-8 text-center">
-                <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Headphones className="w-10 h-10 text-red-600" />
+              <div className="p-10 text-center relative">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-accent-primary to-transparent opacity-50"></div>
+                
+                <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-8 border border-border-main relative group">
+                  <div className="absolute inset-0 bg-accent-primary/10 rounded-full blur-xl group-hover:bg-accent-primary/20 transition-colors"></div>
+                  <Headphones className="w-10 h-10 text-accent-primary relative z-10" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">¿Cómo deseas intervenir?</h3>
-                <p className="text-gray-500 text-sm mb-6">
-                  Selecciona el modo de auditoría para la llamada de <span className="font-bold text-gray-900">{selectedChannel.cid_name}</span>.
+                
+                <h3 className="text-2xl font-black text-text-primary uppercase tracking-tighter mb-2">Intervención Neural</h3>
+                <p className="text-text-secondary text-[10px] font-bold uppercase tracking-widest mb-8">
+                  Selecciona el protocolo para <span className="text-accent-primary">{selectedChannel.cid_name}</span>
                 </p>
 
-                <div className="grid grid-cols-1 gap-3 mb-8">
-                  <button 
-                    onClick={() => setSelectedMode('listen')}
-                    className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${selectedMode === 'listen' ? 'border-red-600 bg-red-50' : 'border-gray-100 hover:border-gray-200'}`}
-                  >
-                    <div className={`p-2 rounded-lg ${selectedMode === 'listen' ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-400'}`}>
-                      <Headphones className="w-5 h-5" />
-                    </div>
-                    <div className="text-left">
-                      <p className="text-sm font-bold text-gray-900">Solo Escucha</p>
-                      <p className="text-[10px] text-gray-500 uppercase tracking-widest">Modo Silencioso</p>
-                    </div>
-                  </button>
-
-                  <button 
-                    onClick={() => setSelectedMode('whisper')}
-                    className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${selectedMode === 'whisper' ? 'border-blue-600 bg-blue-50' : 'border-gray-100 hover:border-gray-200'}`}
-                  >
-                    <div className={`p-2 rounded-lg ${selectedMode === 'whisper' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-400'}`}>
-                      <MessageSquare className="w-5 h-5" />
-                    </div>
-                    <div className="text-left">
-                      <p className="text-sm font-bold text-gray-900">Susurro (Whisper)</p>
-                      <p className="text-[10px] text-gray-500 uppercase tracking-widest">Solo el agente te escucha</p>
-                    </div>
-                  </button>
-
-                  <button 
-                    onClick={() => setSelectedMode('barge')}
-                    className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${selectedMode === 'barge' ? 'border-purple-600 bg-purple-50' : 'border-gray-100 hover:border-gray-200'}`}
-                  >
-                    <div className={`p-2 rounded-lg ${selectedMode === 'barge' ? 'bg-purple-600 text-white' : 'bg-gray-100 text-gray-400'}`}>
-                      <Mic className="w-5 h-5" />
-                    </div>
-                    <div className="text-left">
-                      <p className="text-sm font-bold text-gray-900">Intervención (Barge)</p>
-                      <p className="text-[10px] text-gray-500 uppercase tracking-widest">Ambos te escuchan</p>
-                    </div>
-                  </button>
+                <div className="grid grid-cols-1 gap-3 mb-10">
+                  {[
+                    { id: 'listen', label: 'Solo Escucha', sub: 'Modo Silencioso Indetectable', icon: Headphones, color: 'rose' },
+                    { id: 'whisper', label: 'Susurro (Whisper)', sub: 'Solo el agente recibe audio', icon: 'accent-primary', color: 'accent-primary' },
+                    { id: 'barge', label: 'Intervención (Barge)', sub: 'Conferencia Tripartita Activa', icon: Mic, color: 'purple' }
+                  ].map((mode) => (
+                    <button 
+                      key={mode.id}
+                      onClick={() => setSelectedMode(mode.id as SpyMode)}
+                      className={`flex items-center gap-4 p-5 rounded-3xl border-2 transition-all duration-300 ${
+                        selectedMode === mode.id 
+                          ? `border-${mode.color === 'accent-primary' ? 'accent-primary' : mode.color + '-500'}/50 bg-${mode.color === 'accent-primary' ? 'accent-primary' : mode.color + '-500'}/10` 
+                          : 'border-border-main bg-white/5 hover:bg-white/10'
+                      }`}
+                    >
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${
+                        selectedMode === mode.id 
+                          ? `bg-${mode.color === 'accent-primary' ? 'accent-primary' : mode.color + '-600'} text-white shadow-[0_0_15px_rgba(var(--${mode.color === 'accent-primary' ? 'accent-primary' : mode.color + '-rgb'}),0.4)]` 
+                          : 'bg-white/5 text-text-secondary'
+                      }`}>
+                        {typeof mode.icon === 'string' ? <MessageSquare className="w-6 h-6" /> : <mode.icon className="w-6 h-6" />}
+                      </div>
+                      <div className="text-left">
+                        <p className={`text-sm font-black uppercase tracking-tight ${selectedMode === mode.id ? 'text-text-primary' : 'text-text-secondary'}`}>
+                          {mode.label}
+                        </p>
+                        <p className="text-[9px] text-text-secondary/60 font-bold uppercase tracking-widest">{mode.sub}</p>
+                      </div>
+                    </button>
+                  ))}
                 </div>
 
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-4">
                   <button 
                     onClick={confirmListen}
-                    className={`w-full py-4 text-white rounded-2xl font-bold uppercase tracking-widest transition-all shadow-lg flex items-center justify-center gap-2 ${selectedMode === 'barge' ? 'bg-purple-600 hover:bg-purple-700 shadow-purple-600/20' : selectedMode === 'whisper' ? 'bg-blue-600 hover:bg-blue-700 shadow-blue-600/20' : 'bg-red-600 hover:bg-red-700 shadow-red-600/20'}`}
+                    className={`w-full py-5 text-white rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] transition-all shadow-2xl flex items-center justify-center gap-3 ${
+                      selectedMode === 'barge' ? 'bg-purple-600 hover:bg-purple-700 shadow-purple-600/20' : 
+                      selectedMode === 'whisper' ? 'bg-accent-primary hover:bg-accent-secondary shadow-accent-primary/20' : 
+                      'bg-rose-600 hover:bg-rose-700 shadow-rose-600/20'
+                    }`}
                   >
                     <ShieldCheck className="w-5 h-5" />
-                    Iniciar {selectedMode === 'barge' ? 'Intervención' : selectedMode === 'whisper' ? 'Susurro' : 'Escucha'}
+                    Ejecutar Protocolo
                   </button>
                   <button 
                     onClick={() => setShowSpyModal(false)}
-                    className="w-full py-4 bg-gray-100 text-gray-600 rounded-2xl font-bold uppercase tracking-widest hover:bg-gray-200 transition-all"
+                    className="w-full py-4 text-text-secondary font-black uppercase tracking-[0.2em] text-[10px] hover:text-text-primary transition-colors"
                   >
-                    Cancelar
+                    Abortar Operación
                   </button>
                 </div>
               </div>
-              <div className="bg-gray-50 px-8 py-4 border-t border-black/5">
-                <p className="text-[10px] text-gray-400 text-center uppercase tracking-widest font-bold">
-                  Nexus Security Protocol v4.2 - Auditoría Activa
+              <div className="bg-white/5 px-10 py-5 border-t border-border-main">
+                <p className="text-[9px] text-text-secondary text-center uppercase tracking-[0.3em] font-black">
+                  Nexus Security Protocol v4.7.9 - Authority Level 9
                 </p>
               </div>
             </motion.div>

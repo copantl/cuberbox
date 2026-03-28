@@ -7,6 +7,7 @@ import {
 import { SMTPServer } from '../types';
 import { MOCK_SMTP_SERVERS } from '../constants';
 import { useToast } from '../ToastContext';
+import ConfirmDialog from './ConfirmDialog';
 
 const SMTPServerManagement: React.FC = () => {
   const { toast } = useToast();
@@ -16,6 +17,17 @@ const SMTPServerManagement: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
   const [showPass, setShowPass] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
+  });
 
   const handleOpenModal = (server?: SMTPServer) => {
     if (server) {
@@ -79,10 +91,15 @@ const SMTPServerManagement: React.FC = () => {
   };
 
   const handleDelete = (id: string) => {
-    if (confirm('¿Eliminar este servidor de relevo? Los envíos vinculados a esta cuenta fallarán.')) {
-      setServers(servers.filter(s => s.id !== id));
-      toast('Servidor removido de la infraestructura.', 'warning');
-    }
+    setConfirmAction({
+      isOpen: true,
+      title: 'Eliminar Relevo SMTP',
+      message: '¿Eliminar este servidor de relevo? Los envíos vinculados a esta cuenta fallarán.',
+      onConfirm: () => {
+        setServers(servers.filter(s => s.id !== id));
+        toast('Servidor removido de la infraestructura.', 'warning');
+      }
+    });
   };
 
   return (
@@ -303,6 +320,17 @@ const SMTPServerManagement: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={confirmAction.isOpen}
+        title={confirmAction.title}
+        message={confirmAction.message}
+        onConfirm={() => {
+          confirmAction.onConfirm();
+          setConfirmAction(prev => ({ ...prev, isOpen: false }));
+        }}
+        onCancel={() => setConfirmAction(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 };

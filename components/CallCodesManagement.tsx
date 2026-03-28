@@ -8,6 +8,8 @@ import { CallCode } from '../types';
 import { MOCK_CALL_CODES } from '../constants';
 import { useToast } from '../ToastContext';
 
+import ConfirmDialog from './ConfirmDialog';
+
 const CallCodesManagement: React.FC = () => {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -16,6 +18,13 @@ const CallCodesManagement: React.FC = () => {
   const [editingCode, setEditingCode] = useState<Partial<CallCode> | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isPorting, setIsPorting] = useState(false);
+  
+  // Confirmation state
+  const [confirmAction, setConfirmAction] = useState<{
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  } | null>(null);
 
   const handleExportCodes = async () => {
     setIsPorting(true);
@@ -103,10 +112,15 @@ const CallCodesManagement: React.FC = () => {
   };
 
   const handleDelete = (id: string) => {
-    if (confirm('¿Deseas eliminar este código? Las campañas vinculadas perderán esta opción de tipificación.')) {
-      setCodes(codes.filter(c => c.id !== id));
-      toast('Código eliminado del sistema.', 'warning');
-    }
+    setConfirmAction({
+      title: 'Eliminar Código',
+      message: '¿Deseas eliminar este código? Las campañas vinculadas perderán esta opción de tipificación.',
+      onConfirm: () => {
+        setCodes(codes.filter(c => c.id !== id));
+        toast('Código eliminado del sistema.', 'warning');
+        setConfirmAction(null);
+      }
+    });
   };
 
   const getColorClass = (color: string) => {
@@ -322,6 +336,14 @@ const CallCodesManagement: React.FC = () => {
           </div>
         </div>
       )}
+      {/* MODAL DE CONFIRMACIÓN REUTILIZABLE */}
+      <ConfirmDialog 
+        isOpen={!!confirmAction}
+        title={confirmAction?.title || ''}
+        message={confirmAction?.message || ''}
+        onConfirm={() => confirmAction?.onConfirm()}
+        onCancel={() => setConfirmAction(null)}
+      />
     </div>
   );
 };

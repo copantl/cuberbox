@@ -16,7 +16,7 @@ After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=$(pwd)
+WorkingDirectory=/opt/cuberbox
 ExecStart=$(which npm) run dev -- --host 0.0.0.0
 Restart=always
 Environment=NODE_ENV=production
@@ -33,7 +33,7 @@ After=network.target freeswitch.service
 
 [Service]
 Type=simple
-WorkingDirectory=$(pwd)
+WorkingDirectory=/opt/cuberbox
 ExecStart=/usr/local/bin/cuberbox-connector
 Restart=always
 

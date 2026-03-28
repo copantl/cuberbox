@@ -3,12 +3,12 @@ import {
   Database, Server, Cpu, Plus, Trash2, Edit2, ShieldCheck, 
   RefreshCw, Globe, Key, Activity, ArrowRight, Zap, Info,
   CheckCircle2, AlertCircle, Layers, Network, Terminal, X, Save,
-  // Fix: Added missing Phone icon import
   Phone
 } from 'lucide-react';
 import { DBNode, ClusterNode } from '../types';
 import { MOCK_DB_NODES } from '../constants';
 import { useToast } from '../ToastContext';
+import ConfirmDialog from './ConfirmDialog';
 
 const ClusterConfig: React.FC = () => {
   const { toast } = useToast();
@@ -17,6 +17,17 @@ const ClusterConfig: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingNode, setEditingNode] = useState<Partial<DBNode> | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
+  });
 
   const handleOpenModal = (node?: DBNode) => {
     if (node) {
@@ -61,10 +72,15 @@ const ClusterConfig: React.FC = () => {
       toast('No se puede eliminar el nodo Maestro directamente. Realiza un Failover primero.', 'error', 'Cluster Safety');
       return;
     }
-    if (confirm('¿Eliminar permanentemente este nodo del plano de control?')) {
-      setDbNodes(prev => prev.filter(n => n.id !== id));
-      toast('Nodo removido del inventario.', 'warning');
-    }
+    setConfirmAction({
+      isOpen: true,
+      title: 'Eliminar Nodo del Clúster',
+      message: '¿Eliminar permanentemente este nodo del plano de control?',
+      onConfirm: () => {
+        setDbNodes(prev => prev.filter(n => n.id !== id));
+        toast('Nodo removido del inventario.', 'warning');
+      }
+    });
   };
 
   return (
@@ -251,6 +267,17 @@ const ClusterConfig: React.FC = () => {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        isOpen={confirmAction.isOpen}
+        title={confirmAction.title}
+        message={confirmAction.message}
+        onConfirm={() => {
+          confirmAction.onConfirm();
+          setConfirmAction(prev => ({ ...prev, isOpen: false }));
+        }}
+        onCancel={() => setConfirmAction(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 };

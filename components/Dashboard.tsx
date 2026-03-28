@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, Cell, PieChart, Pie, Legend
@@ -8,9 +8,12 @@ import {
   Users, Clock, Activity, Zap, TrendingUp, RefreshCw, Target, Timer, 
   AlertCircle, BarChart3, TrendingDown, PhoneCall, ShieldCheck, 
   Bot, Heart, Radio, Signal, Layers, PieChart as PieChartIcon,
-  Smartphone, Database, Cpu, Search, History
+  Smartphone, Database, Cpu, Search, History, MessageSquare,
+  Share2, Facebook, Instagram, Smartphone as TikTokIcon
 } from 'lucide-react';
 import { useToast } from '../ToastContext';
+import { useAuth } from '../AuthContext';
+import { UserRole } from '../types';
 import Logo from './Logo';
 
 // Mock Data para Telemetría de Volumen
@@ -52,24 +55,99 @@ const colorMap: Record<string, { bg: string, text: string, border: string }> = {
 const StatCard = ({ title, value, icon: Icon, trend, color, subtitle }: any) => {
   const styles = colorMap[color] || colorMap.blue;
   return (
-    <div className="glass-card p-10 rounded-[56px] flex flex-col justify-between shadow-2xl relative overflow-hidden group">
-      <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-700">
-        <Icon size={120} />
+    <div className="bg-bg-card p-8 rounded-3xl flex flex-col justify-between border border-border-main relative overflow-hidden group hover:border-accent-primary/20 transition-all duration-500 shadow-2xl">
+      <div className="absolute top-0 right-0 p-6 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity duration-700 pointer-events-none">
+        <Icon size={100} />
       </div>
-      <div className="flex items-center justify-between mb-8 relative z-10">
-        <div className={`p-4 rounded-2xl ${styles.bg} ${styles.text} group-hover:scale-110 transition-transform border ${styles.border}`}>
-          <Icon size={28} />
+      
+      <div className="flex items-center justify-between mb-6 relative z-10">
+        <div className={`p-3 rounded-xl ${styles.bg} ${styles.text} group-hover:scale-110 transition-transform border ${styles.border}`}>
+          <Icon size={20} />
         </div>
-        <div className={`flex items-center text-[10px] font-black tracking-widest ${trend.startsWith('+') || trend === 'OK' ? 'text-emerald-400' : 'text-rose-400'}`}>
-          {trend.startsWith('+') ? <TrendingUp size={12} className="mr-1" /> : trend.startsWith('-') ? <TrendingDown size={12} className="mr-1" /> : <ShieldCheck size={12} className="mr-1" />}
+        <div className={`flex items-center text-[9px] font-mono font-bold tracking-widest ${trend.startsWith('+') || trend === 'OK' ? 'text-emerald-500' : 'text-rose-500'}`}>
+          {trend.startsWith('+') ? <TrendingUp size={10} className="mr-1" /> : trend.startsWith('-') ? <TrendingDown size={10} className="mr-1" /> : <ShieldCheck size={10} className="mr-1" />}
           {trend}
         </div>
       </div>
+
       <div className="relative z-10">
-        <h3 className="text-slate-500 text-[10px] font-black uppercase tracking-[0.3em]">{title}</h3>
-        <div className="flex items-baseline space-x-3 mt-1">
-          <p className="text-5xl font-black text-white tracking-tighter">{value}</p>
-          <span className="text-[10px] text-slate-600 font-bold uppercase tracking-widest">{subtitle}</span>
+        <div className="flex items-center space-x-2 mb-1">
+          <div className="w-1 h-1 rounded-full bg-text-secondary/20" />
+          <h3 className="text-text-secondary text-[9px] font-black uppercase tracking-[0.25em]">{title}</h3>
+        </div>
+        <div className="flex items-baseline space-x-2">
+          <p className="text-4xl font-mono font-bold text-text-primary tracking-tighter">{value}</p>
+          <span className="text-[8px] text-text-secondary/60 font-bold uppercase tracking-widest">{subtitle}</span>
+        </div>
+      </div>
+
+      {/* Decorative corner element */}
+      <div className="absolute bottom-0 right-0 w-8 h-8 opacity-10">
+        <div className="absolute bottom-2 right-2 w-4 h-[1px] bg-text-primary" />
+        <div className="absolute bottom-2 right-2 w-[1px] h-4 bg-text-primary" />
+      </div>
+    </div>
+  );
+};
+
+const LiveActivityFeed = () => {
+  const [activities, setActivities] = useState([
+    { id: 1, type: 'call', user: 'Agent 402', action: 'Inbound Call Connected', time: '12:40:01', status: 'active' },
+    { id: 2, type: 'system', user: 'Sofia AI', action: 'Sentiment Analysis: Positive', time: '12:39:55', status: 'info' },
+    { id: 3, type: 'alert', user: 'Cluster 05', action: 'Auto-scaling: New Node Provisioned', time: '12:39:42', status: 'warning' },
+    { id: 4, type: 'message', user: 'Omni-Bot', action: 'WhatsApp Lead Captured', time: '12:39:30', status: 'success' },
+    { id: 5, type: 'call', user: 'Agent 118', action: 'Outbound Sale Confirmed', time: '12:39:15', status: 'success' },
+  ]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const newActivity = {
+        id: Date.now(),
+        type: ['call', 'system', 'alert', 'message'][Math.floor(Math.random() * 4)],
+        user: `Node-${Math.floor(Math.random() * 999)}`,
+        action: ['Packet Routing Optimized', 'DB Query Latency: 4ms', 'Session Handover Complete', 'SIP Trunk Heartbeat'][Math.floor(Math.random() * 4)],
+        time: new Date().toLocaleTimeString('en-GB'),
+        status: ['active', 'info', 'success', 'warning'][Math.floor(Math.random() * 4)]
+      };
+      setActivities(prev => [newActivity, ...prev.slice(0, 4)]);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="bg-bg-card border border-border-main rounded-3xl p-6 h-full flex flex-col">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center space-x-3">
+          <div className="w-2 h-2 rounded-full bg-accent-primary animate-pulse" />
+          <h3 className="text-[10px] font-black text-text-primary uppercase tracking-widest">Live System Telemetry</h3>
+        </div>
+        <div className="text-[9px] font-mono text-text-secondary/50">REALTIME_STREAM_01</div>
+      </div>
+      <div className="space-y-3 flex-1 overflow-hidden">
+        {activities.map((act) => (
+          <div key={act.id} className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-border-main hover:bg-white/[0.08] transition-colors group">
+            <div className="flex items-center space-x-3">
+              <div className={`w-1 h-8 rounded-full ${
+                act.status === 'active' ? 'bg-accent-primary' : 
+                act.status === 'success' ? 'bg-emerald-500' : 
+                act.status === 'warning' ? 'bg-amber-500' : 'bg-text-secondary/30'
+              }`} />
+              <div>
+                <p className="text-[10px] font-bold text-text-primary uppercase tracking-tight">{act.user}</p>
+                <p className="text-[9px] text-text-secondary font-medium truncate max-w-[150px]">{act.action}</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-[9px] font-mono text-text-secondary/70">{act.time}</p>
+              <p className="text-[7px] font-black text-accent-primary/50 uppercase tracking-widest group-hover:text-accent-primary transition-colors">TRACE_OK</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-6 pt-4 border-t border-border-main flex items-center justify-between">
+        <span className="text-[8px] font-bold text-text-secondary uppercase tracking-widest">Buffer Status: 98%</span>
+        <div className="flex space-x-1">
+          {[1,2,3,4,5].map(i => <div key={i} className="w-1 h-3 bg-accent-primary/20 rounded-full" />)}
         </div>
       </div>
     </div>
@@ -78,8 +156,68 @@ const StatCard = ({ title, value, icon: Icon, trend, color, subtitle }: any) => 
 
 const Dashboard: React.FC = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isSyncing, setIsSyncing] = useState(false);
   const [isAuditing, setIsAuditing] = useState(false);
+  const [dbStatus, setDbStatus] = useState<'connected' | 'disconnected'>('disconnected');
+  const [stats, setStats] = useState({ users: 0, campaigns: 0, messages: 0 });
+  const [campaignStats, setCampaignStats] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const [dbRes, usersRes, campaignsRes, messagesRes] = await Promise.all([
+          fetch('/api/db/status'),
+          fetch('/api/users'),
+          fetch('/api/campaigns'),
+          fetch('/api/omnichannel/messages')
+        ]);
+
+        if (dbRes.ok) {
+          const dbData = await dbRes.json();
+          setDbStatus(dbData.status === 'connected' ? 'connected' : 'disconnected');
+        }
+
+        if (usersRes.ok) {
+          const usersData = await usersRes.json();
+          setStats(prev => ({ ...prev, users: usersData.length }));
+        }
+
+        if (campaignsRes.ok) {
+          const campaignsData = await campaignsRes.json();
+          setStats(prev => ({ ...prev, campaigns: campaignsData.length }));
+        }
+
+        if (messagesRes.ok) {
+          const messagesData = await messagesRes.json();
+          setStats(prev => ({ ...prev, messages: messagesData.length }));
+          
+          // Process campaign stats
+          const campaignMap: Record<string, number> = {};
+          messagesData.forEach((m: any) => {
+            if (m.campaign_id) {
+              campaignMap[m.campaign_id] = (campaignMap[m.campaign_id] || 0) + 1;
+            }
+          });
+          
+          const processed = Object.entries(campaignMap).map(([name, value]) => ({
+            name: name.replace('camp_', '').replace(/_/g, ' '),
+            value,
+            color: name.includes('florida') ? '#3b82f6' : name.includes('brickell') ? '#f43f5e' : '#10b981'
+          }));
+          setCampaignStats(processed);
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard stats:', error);
+      }
+    };
+
+    fetchStats();
+    const interval = setInterval(fetchStats, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const isSocialMediaManager = user?.role === UserRole.SOCIAL_MEDIA_MANAGER;
 
   const handleRefresh = () => {
     setIsSyncing(true);
@@ -101,229 +239,230 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="space-y-10 pb-20 animate-in fade-in duration-1000">
+    <div className="space-y-8 pb-20 animate-in fade-in duration-1000">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-6">
           <div className="relative group">
-            <Logo className="w-12 h-12 group-hover:rotate-12 transition-transform duration-700" />
-            <div className="absolute -bottom-1 -right-1 bg-blue-600 w-4 h-4 rounded-full border-2 border-[#020617] animate-pulse"></div>
+            <div className="w-14 h-14 rounded-2xl bg-accent-primary flex items-center justify-center text-white shadow-[0_0_30px_rgba(37,99,235,0.3)] group-hover:rotate-6 transition-transform duration-500">
+              <Zap size={28} fill="currentColor" />
+            </div>
+            <div className="absolute -bottom-1 -right-1 bg-emerald-500 w-4 h-4 rounded-full border-4 border-bg-sidebar animate-pulse"></div>
           </div>
           <div>
-            <h2 className="text-4xl font-black text-white tracking-tighter uppercase flex items-center">
+            <h2 className="text-3xl font-black text-text-primary tracking-tighter uppercase flex items-center">
               Nexus Intelligence Center
             </h2>
-            <p className="text-slate-400 text-sm font-medium mt-1 uppercase tracking-widest opacity-60">Control Maestro • Clúster 10.0.0.5 Operacional</p>
+            <div className="flex items-center space-x-3 mt-1">
+              <span className="text-text-secondary text-[9px] font-bold uppercase tracking-[0.2em]">Master Control</span>
+              <div className="w-1 h-1 rounded-full bg-text-secondary/20" />
+              <span className="text-accent-primary text-[9px] font-mono font-bold uppercase tracking-widest">Cluster Node: 10.0.0.5</span>
+            </div>
           </div>
         </div>
         <div className="flex items-center space-x-4">
-          <div className="bg-slate-900 border border-slate-800 px-6 py-2.5 rounded-full flex items-center space-x-4">
-             <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">PostgreSQL 16 Link</span>
+          <div className="bg-white/5 border border-border-main px-6 py-3 rounded-2xl flex items-center space-x-6">
+             <div className="flex items-center space-x-3">
+                <div className={`w-1.5 h-1.5 rounded-full ${dbStatus === 'connected' ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' : 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]'}`}></div>
+                <span className="text-[9px] font-black text-text-secondary uppercase tracking-widest">
+                  {dbStatus === 'connected' ? 'PostgreSQL 16 Link' : 'Simulation Mode'}
+                </span>
              </div>
-             <div className="h-4 w-px bg-slate-800"></div>
-             <div className="flex items-center space-x-2">
-                <Signal size={14} className="text-blue-500" />
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Sofia Core v1.10</span>
+             <div className="h-4 w-[1px] bg-border-main"></div>
+             <div className="flex items-center space-x-3">
+                <Signal size={14} className="text-accent-primary" />
+                <span className="text-[9px] font-black text-text-secondary uppercase tracking-widest">Sofia Core v1.10</span>
              </div>
           </div>
           <button 
             onClick={handleRefresh}
-            className="p-5 bg-slate-900 border border-slate-800 hover:border-blue-500/50 text-blue-400 rounded-3xl transition-all shadow-xl active:scale-95 group"
+            className="p-4 bg-white/5 border border-border-main hover:bg-white/10 hover:border-accent-primary/30 text-accent-primary rounded-2xl transition-all active:scale-95 group"
           >
-            <RefreshCw size={24} className={isSyncing ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-1000'} />
+            <RefreshCw size={20} className={isSyncing ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-1000'} />
           </button>
         </div>
       </div>
 
       {/* Primary KPI Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        <StatCard title="Productividad Global" value="94.2%" icon={Zap} trend="+2.4%" color="blue" subtitle="Target 90%" />
-        <StatCard title="Predictive Drop Rate" value="1.8%" icon={AlertCircle} trend="OK" color="emerald" subtitle="Limit 3.0%" />
-        <StatCard title="Ocupación de Planta" value="88.1%" icon={Users} trend="+1.5%" color="purple" subtitle="High Density" />
-        <StatCard title="Talk Time Promedio" value="72.5%" icon={Target} trend="+5.1%" color="amber" subtitle="Efficiency Peak" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {isSocialMediaManager ? (
+          <>
+            <StatCard title="Total Messages" value={stats.messages} icon={MessageSquare} trend="+12.4%" color="blue" subtitle="Omnichannel Hub" />
+            <StatCard title="Active Campaigns" value={stats.campaigns} icon={Target} trend="OK" color="emerald" subtitle="Database Sync" />
+            <StatCard title="Engagement Rate" value="24.8%" icon={Zap} trend="+2.1%" color="purple" subtitle="Social Media" />
+            <StatCard title="Response SLA" value="1.4m" icon={Timer} trend="-15s" color="amber" subtitle="Efficiency" />
+          </>
+        ) : (
+          <>
+            <StatCard title="Active Users" value={stats.users} icon={Users} trend="OK" color="blue" subtitle="Database Sync" />
+            <StatCard title="Active Campaigns" value={stats.campaigns} icon={Target} trend="OK" color="emerald" subtitle="Database Sync" />
+            <StatCard title="Floor Occupancy" value="88.1%" icon={Activity} trend="+1.5%" color="purple" subtitle="High Density" />
+            <StatCard title="Avg Talk Time" value="72.5%" icon={TrendingUp} trend="+5.1%" color="amber" subtitle="Efficiency Peak" />
+          </>
+        )}
       </div>
 
-      {/* Secondary Metrics Row */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        <div className="p-8 glass rounded-[48px] border border-slate-800 flex items-center space-x-6 hover:border-blue-500/20 transition-all shadow-xl">
-           <div className="p-3 bg-blue-600/10 rounded-2xl text-blue-400"><Database size={24} /></div>
-           <div>
-              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Leads en Hopper</p>
-              <p className="text-2xl font-black text-white font-mono">14,240</p>
-           </div>
-        </div>
-        <div className="p-8 glass rounded-[48px] border border-slate-800 flex items-center space-x-6 hover:border-emerald-500/20 transition-all shadow-xl">
-           <div className="p-3 bg-emerald-600/10 rounded-2xl text-emerald-400"><Bot size={24} /></div>
-           <div>
-              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">AI Audit Coverage</p>
-              <p className="text-2xl font-black text-white font-mono">100%</p>
-           </div>
-        </div>
-        <div className="p-8 glass rounded-[48px] border border-slate-800 flex items-center space-x-6 hover:border-rose-500/20 transition-all shadow-xl">
-           <div className="p-3 bg-rose-600/10 rounded-2xl text-rose-400"><Cpu size={24} /></div>
-           <div>
-              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Cluster CPU Load</p>
-              <p className="text-2xl font-black text-white font-mono">12%</p>
-           </div>
-        </div>
-        <div className="p-8 glass rounded-[48px] border border-slate-800 flex items-center space-x-6 hover:border-indigo-500/20 transition-all shadow-xl">
-           <div className="p-3 bg-indigo-600/10 rounded-2xl text-indigo-400"><Signal size={24} /></div>
-           <div>
-              <p className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Call Pacing Ratio</p>
-              <p className="text-2xl font-black text-white font-mono">4.5x</p>
-           </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-12 gap-8">
-        {/* Gráfico Principal: Live Volume Analytics */}
-        <div className="col-span-12 lg:col-span-8 glass p-12 rounded-[64px] border border-slate-700/50 shadow-2xl relative overflow-hidden flex flex-col">
-           <div className="flex items-center justify-between mb-12">
-              <div className="flex items-center space-x-6">
-                 <div className="p-4 bg-blue-600/10 rounded-2xl text-blue-400 border border-blue-500/20"><Activity size={28} /></div>
+      <div className="grid grid-cols-12 gap-6">
+        {/* Main Chart: Live Volume Analytics */}
+        <div className="col-span-12 lg:col-span-8 bg-bg-card p-10 rounded-3xl border border-border-main shadow-2xl relative overflow-hidden flex flex-col">
+           <div className="flex items-center justify-between mb-10">
+              <div className="flex items-center space-x-5">
+                 <div className="p-3 bg-accent-primary/10 rounded-xl text-accent-primary border border-accent-primary/20"><Activity size={24} /></div>
                  <div>
-                    <h3 className="text-2xl font-black text-white uppercase tracking-tight">Live Throughput Telemetry</h3>
-                    <p className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.4em] mt-1">Llamadas concurrentes vs Agentes logueados (24h)</p>
+                    <h3 className="text-xl font-black text-text-primary uppercase tracking-tight">
+                      {isSocialMediaManager ? 'Omnichannel Traffic Flow' : 'Live Throughput Telemetry'}
+                    </h3>
+                    <p className="text-[9px] text-text-secondary font-bold uppercase tracking-[0.3em] mt-1">
+                      {isSocialMediaManager ? 'Inbound vs Outbound (24h)' : 'Concurrent Calls vs Active Agents (24h)'}
+                    </p>
                  </div>
               </div>
-              <div className="flex bg-slate-950 p-1.5 rounded-2xl border border-slate-800 shadow-inner">
-                 <button className="px-4 py-2 rounded-xl bg-blue-600 text-white text-[10px] font-black uppercase tracking-widest shadow-lg">Global</button>
-                 <button className="px-4 py-2 rounded-xl text-slate-500 hover:text-slate-300 text-[10px] font-black uppercase tracking-widest transition-all">Node A</button>
+              <div className="flex bg-white/5 p-1 rounded-xl border border-border-main">
+                 <button className="px-4 py-1.5 rounded-lg bg-accent-primary text-white text-[9px] font-black uppercase tracking-widest shadow-lg">Global</button>
+                 <button className="px-4 py-1.5 rounded-lg text-text-secondary hover:text-text-primary text-[9px] font-black uppercase tracking-widest transition-all">Node A</button>
               </div>
            </div>
 
-           <div className="flex-1 h-[450px] w-full">
+           <div className="flex-1 h-[400px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                  <AreaChart data={liveVolumeData}>
                     <defs>
                        <linearGradient id="colorCalls" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                          <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                          <stop offset="5%" stopColor="var(--accent-primary)" stopOpacity={0.2}/>
+                          <stop offset="95%" stopColor="var(--accent-primary)" stopOpacity={0}/>
                        </linearGradient>
                        <linearGradient id="colorAgents" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                          <stop offset="5%" stopColor="#10b981" stopOpacity={0.2}/>
                           <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
                        </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-                    <XAxis dataKey="time" stroke="#475569" fontSize={10} axisLine={false} tickLine={false} />
-                    <YAxis stroke="#475569" fontSize={10} axisLine={false} tickLine={false} />
-                    <Tooltip contentStyle={{backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '16px'}} />
-                    <Area type="monotone" dataKey="calls" stroke="#3b82f6" strokeWidth={4} fillOpacity={1} fill="url(#colorCalls)" />
-                    <Area type="monotone" dataKey="agents" stroke="#10b981" strokeWidth={4} fillOpacity={1} fill="url(#colorAgents)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--border-main)" vertical={false} />
+                    <XAxis dataKey="time" stroke="var(--text-secondary)" fontSize={9} axisLine={false} tickLine={false} />
+                    <YAxis stroke="var(--text-secondary)" fontSize={9} axisLine={false} tickLine={false} />
+                    <Tooltip 
+                      contentStyle={{backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-main)', borderRadius: '12px'}}
+                      itemStyle={{fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', color: 'var(--text-primary)'}}
+                    />
+                    <Area type="monotone" dataKey="calls" name={isSocialMediaManager ? 'Inbound' : 'Calls'} stroke="var(--accent-primary)" strokeWidth={3} fillOpacity={1} fill="url(#colorCalls)" />
+                    <Area type="monotone" dataKey="agents" name={isSocialMediaManager ? 'Outbound' : 'Agents'} stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorAgents)" />
                  </AreaChart>
               </ResponsiveContainer>
            </div>
         </div>
 
-        {/* Panel Derecho: Status Mix Dona Chart */}
-        <div className="col-span-12 lg:col-span-4 glass p-10 rounded-[64px] border border-slate-700/50 shadow-2xl flex flex-col relative overflow-hidden">
-           <div className="flex items-center space-x-5 mb-10">
-              <div className="p-3 bg-indigo-600/10 rounded-2xl text-indigo-400 border border-indigo-500/20"><Users size={24} /></div>
-              <h3 className="text-xl font-black text-white uppercase tracking-tight">Agent Status Mix</h3>
+        {/* Live Feed Panel */}
+        <div className="col-span-12 lg:col-span-4">
+          <LiveActivityFeed />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-12 gap-6">
+        {/* Status Mix Dona Chart */}
+        <div className="col-span-12 lg:col-span-4 bg-bg-card p-10 rounded-3xl border border-border-main shadow-2xl flex flex-col relative overflow-hidden">
+           <div className="flex items-center space-x-4 mb-10">
+              <div className="p-3 bg-accent-primary/10 rounded-xl text-accent-primary border border-accent-primary/20">
+                {isSocialMediaManager ? <Target size={20} /> : <Users size={20} />}
+              </div>
+              <h3 className="text-lg font-black text-text-primary uppercase tracking-tight">
+                {isSocialMediaManager ? 'Campaign Distribution' : 'Agent Status Mix'}
+              </h3>
            </div>
            
-           <div className="flex-1 h-[300px] relative">
+           <div className="flex-1 h-[280px] relative">
               <ResponsiveContainer width="100%" height="100%">
                  <PieChart>
-                    <Pie data={agentMixData} innerRadius={80} outerRadius={110} paddingAngle={8} dataKey="value">
-                       {agentMixData.map((entry, index) => <Cell key={index} fill={entry.color} />)}
+                    <Pie data={isSocialMediaManager ? campaignStats : agentMixData} innerRadius={70} outerRadius={95} paddingAngle={10} dataKey="value">
+                       {(isSocialMediaManager ? campaignStats : agentMixData).map((entry, index) => <Cell key={index} fill={entry.color} />)}
                     </Pie>
-                    <Tooltip contentStyle={{backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '24px'}} />
+                    <Tooltip contentStyle={{backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-main)', borderRadius: '12px'}} />
                  </PieChart>
               </ResponsiveContainer>
               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                 <span className="text-4xl font-black text-white leading-none">52</span>
-                 <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1">Total Pool</span>
+                 <span className="text-3xl font-mono font-bold text-text-primary leading-none">
+                   {isSocialMediaManager ? campaignStats.reduce((acc, curr) => acc + curr.value, 0) : '52'}
+                 </span>
+                 <span className="text-[8px] font-black text-text-secondary uppercase tracking-widest mt-1">
+                   {isSocialMediaManager ? 'Total Messages' : 'Total Pool'}
+                 </span>
               </div>
            </div>
 
-           <div className="grid grid-cols-2 gap-4 mt-8">
-              {agentMixData.map((d, i) => (
-                <div key={i} className="p-4 bg-slate-950/60 rounded-3xl border border-slate-800 space-y-1">
+           <div className="grid grid-cols-2 gap-3 mt-6">
+              {(isSocialMediaManager ? campaignStats : agentMixData).map((d, i) => (
+                <div key={i} className="p-3 bg-white/5 rounded-2xl border border-border-main space-y-1">
                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 rounded-full" style={{backgroundColor: d.color}}></div>
-                      <span className="text-[8px] font-black text-slate-600 uppercase tracking-widest truncate">{d.name}</span>
+                      <div className="w-1.5 h-1.5 rounded-full" style={{backgroundColor: d.color}}></div>
+                      <span className="text-[8px] font-black text-text-secondary uppercase tracking-widest truncate">{d.name}</span>
                    </div>
-                   <p className="text-xl font-black text-white font-mono">{d.value}</p>
+                   <p className="text-lg font-mono font-bold text-text-primary">{d.value}</p>
                 </div>
               ))}
            </div>
         </div>
-      </div>
 
-      <div className="grid grid-cols-12 gap-8">
-         {/* Disposiciones BarChart */}
-         <div className="col-span-12 lg:col-span-4 glass p-10 rounded-[64px] border border-slate-700/50 shadow-2xl flex flex-col">
-            <div className="flex items-center space-x-5 mb-12">
-               <div className="p-3 bg-emerald-600/10 rounded-2xl text-emerald-400 border border-emerald-500/20"><PieChartIcon size={24} /></div>
-               <h3 className="text-xl font-black text-white uppercase tracking-tight">Call Results (Dispo)</h3>
-            </div>
-            <div className="flex-1 h-[350px]">
-               <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={dispositionData} layout="vertical">
-                     <XAxis type="number" hide />
-                     <YAxis dataKey="name" type="category" stroke="#475569" fontSize={9} width={100} axisLine={false} tickLine={false} tick={{fontWeight: 800, textTransform: 'uppercase'}} />
-                     <Tooltip cursor={{fill: 'rgba(255,255,255,0.03)'}} contentStyle={{backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '16px'}} />
-                     <Bar dataKey="value" radius={[0, 10, 10, 0]} barSize={25}>
-                        {dispositionData.map((entry, index) => <Cell key={index} fill={entry.color} />)}
-                     </Bar>
-                  </BarChart>
-               </ResponsiveContainer>
-            </div>
-         </div>
+        {/* Disposiciones BarChart */}
+        <div className="col-span-12 lg:col-span-4 bg-bg-card p-10 rounded-3xl border border-border-main shadow-2xl flex flex-col">
+          <div className="flex items-center space-x-4 mb-10">
+              <div className="p-3 bg-emerald-600/10 rounded-xl text-emerald-400 border border-emerald-500/20"><PieChartIcon size={20} /></div>
+              <h3 className="text-lg font-black text-text-primary uppercase tracking-tight">Call Results (Dispo)</h3>
+          </div>
+          <div className="flex-1 h-[320px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={dispositionData} layout="vertical" margin={{ left: -20 }}>
+                    <XAxis type="number" hide />
+                    <YAxis dataKey="name" type="category" stroke="var(--text-secondary)" fontSize={8} width={100} axisLine={false} tickLine={false} tick={{fontWeight: 800, textTransform: 'uppercase'}} />
+                    <Tooltip cursor={{fill: 'rgba(255,255,255,0.02)'}} contentStyle={{backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-main)', borderRadius: '12px'}} />
+                    <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={18}>
+                      {dispositionData.map((entry, index) => <Cell key={index} fill={entry.color} />)}
+                    </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+          </div>
+        </div>
 
-         {/* Fuga de Tiempo (Existing module improved) */}
-         <div className="col-span-12 lg:col-span-8 flex flex-col space-y-8">
-            <div className="glass p-12 rounded-[64px] border border-rose-500/20 bg-rose-500/5 shadow-2xl flex-1 flex flex-col">
-               <div className="flex items-center justify-between mb-10">
-                  <div className="flex items-center space-x-6">
-                    <div className="p-4 rounded-2xl bg-rose-500/10 text-rose-500 animate-pulse border border-rose-500/20">
-                       <AlertCircle size={28} />
-                    </div>
-                    <div>
-                       <h3 className="text-xl font-black text-white uppercase tracking-tight">Anomaly Detection (Time Leaks)</h3>
-                       <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-1">Desvíos críticos detectados por el motor v4.7.9</p>
-                    </div>
+        {/* Anomaly Detection */}
+        <div className="col-span-12 lg:col-span-4 bg-bg-card p-10 rounded-3xl border border-rose-500/10 shadow-2xl flex flex-col">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-rose-500/10 rounded-xl text-rose-500 border border-rose-500/20">
+                <AlertCircle size={20} />
+              </div>
+              <h3 className="text-lg font-black text-text-primary uppercase tracking-tight">Time Leaks</h3>
+            </div>
+            <div className="px-3 py-1 bg-rose-500/10 text-rose-500 border border-rose-500/20 rounded-full text-[7px] font-black uppercase tracking-widest">Critical</div>
+          </div>
+          <div className="space-y-3 flex-1">
+            {[
+              { agent: 'Maria G.', reason: 'Wrap-up Q4', leak: '14m', status: 'CRITICAL' },
+              { agent: 'Juan P.', reason: 'Technical Pause', leak: '08m', status: 'WARN' },
+              { agent: 'Sergio T.', reason: 'Silence Detect', leak: '04m', status: 'INFO' },
+              { agent: 'Carla M.', reason: 'Ready Wait', leak: '12m', status: 'CRITICAL' },
+            ].map((leak, i) => (
+              <div key={i} className="p-3 bg-white/5 border border-border-main rounded-2xl flex items-center justify-between group hover:border-rose-500/20 transition-all">
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 rounded-lg bg-bg-sidebar border border-border-main flex items-center justify-center text-[8px] font-black text-text-secondary">
+                    {leak.agent.split(' ').map(n=>n[0]).join('')}
                   </div>
-                  <div className="px-5 py-2 bg-rose-500 text-white rounded-full text-[9px] font-black uppercase tracking-widest shadow-xl shadow-rose-600/30">Action Required</div>
-               </div>
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {[
-                    { agent: 'Maria Gonzalez', reason: 'Exceso de Wrap-up Q4', leak: '14m 22s', status: 'CRITICAL' },
-                    { agent: 'Juan Perez', reason: 'Pausa técnica no validada', leak: '08m 10s', status: 'WARN' },
-                    { agent: 'Sergio Téllez (GTR)', reason: 'Monitor Session Silence', leak: '04m 55s', status: 'INFO' },
-                    { agent: 'Carla Mendez', reason: 'Ready sin marcación (Wait)', leak: '12m 00s', status: 'CRITICAL' },
-                  ].map((leak, i) => (
-                    <div key={i} className="p-6 bg-slate-950/80 border border-slate-900 rounded-[32px] flex items-center justify-between group hover:border-rose-500/40 transition-all shadow-inner">
-                       <div className="flex items-center space-x-5">
-                          <div className={`w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center text-[10px] font-black ${leak.status === 'CRITICAL' ? 'text-rose-500 border-rose-500/20' : 'text-slate-500'} group-hover:scale-110 transition-transform`}>
-                             {leak.agent.split(' ').map(n=>n[0]).join('')}
-                          </div>
-                          <div>
-                             <p className="text-sm font-black text-white uppercase tracking-tight">{leak.agent}</p>
-                             <p className="text-[9px] text-slate-600 font-bold uppercase mt-1 italic">{leak.reason}</p>
-                          </div>
-                       </div>
-                       <div className="text-right">
-                          <p className={`text-lg font-black font-mono ${leak.status === 'CRITICAL' ? 'text-rose-500 animate-pulse' : 'text-amber-500'}`}>+{leak.leak}</p>
-                          <div className={`text-[7px] font-black uppercase tracking-widest mt-1 ${leak.status === 'CRITICAL' ? 'text-rose-600' : 'text-slate-600'}`}>{leak.status}</div>
-                       </div>
-                    </div>
-                  ))}
-               </div>
-               <button 
-                onClick={handleLaunchAudit}
-                disabled={isAuditing}
-                className="mt-10 w-full py-5 bg-slate-900 border border-slate-800 text-slate-500 hover:text-white hover:bg-slate-800 rounded-[28px] text-[10px] font-black uppercase tracking-widest transition-all hover:border-blue-500/50 shadow-2xl flex items-center justify-center space-x-3 group active:scale-95 disabled:opacity-50"
-               >
-                  {isAuditing ? <RefreshCw className="animate-spin mr-2" size={16} /> : <History size={16} className="group-hover:rotate-12 transition-transform" />}
-                  <span>{isAuditing ? 'Procesando Auditoría Capas de Tiempo...' : 'Lanzar Auditoría Temporal Completa'}</span>
-               </button>
-            </div>
-         </div>
+                  <div>
+                    <p className="text-[10px] font-bold text-text-primary uppercase tracking-tight">{leak.agent}</p>
+                    <p className="text-[8px] text-text-secondary font-bold uppercase tracking-widest">{leak.reason}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className={`text-sm font-mono font-bold ${leak.status === 'CRITICAL' ? 'text-rose-500' : 'text-amber-500'}`}>+{leak.leak}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <button 
+            onClick={handleLaunchAudit}
+            disabled={isAuditing}
+            className="mt-6 w-full py-4 bg-white/5 border border-border-main text-text-secondary hover:text-text-primary hover:bg-white/10 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center space-x-2 group disabled:opacity-50"
+          >
+            {isAuditing ? <RefreshCw className="animate-spin" size={12} /> : <History size={12} />}
+            <span>{isAuditing ? 'Auditing...' : 'Full Temporal Audit'}</span>
+          </button>
+        </div>
       </div>
     </div>
   );

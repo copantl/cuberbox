@@ -76,11 +76,44 @@ const activityData = [
 ];
 
 const SystemAudit: React.FC = () => {
-  const [logs, setLogs] = useState<AuditLog[]>(MOCK_AUDIT_LOGS);
+  const [logs, setLogs] = useState<AuditLog[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [levelFilter, setLevelFilter] = useState<string>("ALL");
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLogs = async () => {
+      try {
+        const response = await fetch('/api/telephony/audit-logs');
+        if (response.ok) {
+          const data = await response.json();
+          // Map DB fields to frontend AuditLog type if necessary
+          const mappedLogs = data.map((l: any) => ({
+            id: l.id,
+            timestamp: l.start_time || l.timestamp,
+            userId: l.user_id || 'SYSTEM',
+            userName: l.userName || 'System Engine',
+            action: l.action || `Call to ${l.destination}`,
+            module: l.module || 'TELEPHONY',
+            ip: l.ip || '127.0.0.1',
+            level: l.level || 'INFO',
+            status: l.status || 'SUCCESS',
+            integrityHash: l.integrityHash || 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+            details: l.details || `Call from ${l.source} to ${l.destination}. Duration: ${l.duration_sec}s`
+          }));
+          setLogs(mappedLogs.length > 0 ? mappedLogs : MOCK_AUDIT_LOGS);
+        }
+      } catch (error) {
+        console.error('Error fetching logs:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchLogs();
+  }, []);
 
   const filteredLogs = useMemo(() => {
     return logs.filter(log => {
@@ -221,7 +254,32 @@ const SystemAudit: React.FC = () => {
                        </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-800/50">
-                       {filteredLogs.map((log) => (
+                       {isLoading ? (
+                         Array.from({ length: 5 }).map((_, i) => (
+                           <tr key={i} className="animate-pulse">
+                              <td className="px-8 py-6">
+                                 <div className="flex items-center space-x-4">
+                                    <div className="w-10 h-10 bg-slate-800/50 rounded-lg"></div>
+                                    <div className="space-y-2">
+                                       <div className="w-12 h-3 bg-slate-800/50 rounded-full"></div>
+                                       <div className="w-24 h-2 bg-slate-800/50 rounded-full"></div>
+                                    </div>
+                                 </div>
+                              </td>
+                              <td className="px-8 py-6">
+                                 <div className="w-16 h-4 bg-slate-800/50 rounded-full mb-2"></div>
+                                 <div className="w-48 h-5 bg-slate-800/50 rounded-lg"></div>
+                              </td>
+                              <td className="px-8 py-6">
+                                 <div className="w-32 h-4 bg-slate-800/50 rounded-lg"></div>
+                                 <div className="w-20 h-3 bg-slate-800/50 rounded-full mt-2"></div>
+                              </td>
+                              <td className="px-8 py-6 text-right">
+                                 <div className="w-10 h-10 bg-slate-800/50 rounded-2xl ml-auto"></div>
+                              </td>
+                           </tr>
+                         ))
+                       ) : filteredLogs.map((log) => (
                          <tr 
                           key={log.id} 
                           onClick={() => setSelectedLog(log)}

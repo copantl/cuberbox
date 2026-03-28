@@ -6,12 +6,12 @@ import {
   LayoutGrid, Filter, Settings, ShieldCheck,
   Zap, Bot, Smartphone, Globe, Plus, Trash2, Clock,
   CheckCircle2, RefreshCw, Layers, MessageSquare, 
-  X, Network, Share2, ChevronRight, ExternalLink, 
+  X, Network, Share2, ChevronRight, ChevronDown, ExternalLink, 
   Shield, Wand2, Sparkles, User, Hash, Facebook, Instagram,
   BrainCircuit, TrendingUp, TrendingDown, Brain as BrainIcon,
   Quote, Headphones, UserCheck, Eye, EyeOff, Radio, AlertCircle,
-  // Fix: Added missing Activity icon import
-  Activity
+  // Fix: Added missing Activity and Target icon imports
+  Activity, Target
 } from 'lucide-react';
 import { WhatsAppConversation, WhatsAppMessage, ChannelType, InteractionStatus } from '../types';
 import { useToast } from '../ToastContext';
@@ -26,6 +26,7 @@ const MOCK_INTERACTIONS: WhatsAppConversation[] = [
     contactName: 'Alexander Pierce',
     sentiment: 'POSITIVE',
     lastActivity: '14:02',
+    campaignId: 'camp_florida_2024',
     messages: [
       { id: 'm_1', text: 'Hola, vi su anuncio en TikTok sobre el proyecto en Florida.', sender: 'CUSTOMER', timestamp: '14:02' },
       { id: 'm_2', text: '¡Hola Alexander! Con gusto te ayudo. ¿Qué unidad te interesó?', sender: 'AGENT', timestamp: '14:05' },
@@ -39,6 +40,7 @@ const MOCK_INTERACTIONS: WhatsAppConversation[] = [
     contactName: 'Elena Gilbert',
     sentiment: 'NEUTRAL',
     lastActivity: '09:45',
+    campaignId: 'camp_brickell_luxury',
     messages: [
       { id: 'm_4', text: '¿Podrían enviarme el brochure actualizado? Vi el video de la mansión en Brickell.', sender: 'CUSTOMER', timestamp: '09:45' },
     ]
@@ -51,6 +53,7 @@ const MOCK_INTERACTIONS: WhatsAppConversation[] = [
     contactName: 'John Wick',
     sentiment: 'NEGATIVE',
     lastActivity: 'Ayer',
+    campaignId: 'camp_retention_q1',
     messages: [
       { id: 'm_5', text: 'Nadie me ha llamado para mi cita de ayer. Pésimo seguimiento.', sender: 'CUSTOMER', timestamp: 'Ayer' },
     ]
@@ -62,6 +65,7 @@ const MOCK_INTERACTIONS: WhatsAppConversation[] = [
     contactName: 'Selina Kyle',
     sentiment: 'POSITIVE',
     lastActivity: '10:15',
+    campaignId: 'camp_diamond_prelaunch',
     messages: [
       { id: 'm_6', text: 'Me encanta el diseño de las cocinas en el proyecto Diamond. ¿Precio base?', sender: 'CUSTOMER', timestamp: '10:15' },
     ]
@@ -72,9 +76,11 @@ const WhatsAppModule: React.FC = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<'MY_CHATS' | 'QUEUE' | 'SUPERVISOR'>('MY_CHATS');
   const [activeChannel, setActiveChannel] = useState<ChannelType | 'ALL'>('ALL');
+  const [campaignFilter, setCampaignFilter] = useState<string>('ALL');
   const [conversations, setConversations] = useState<WhatsAppConversation[]>(MOCK_INTERACTIONS);
   const [activeConvId, setActiveConvId] = useState<string | null>(MOCK_INTERACTIONS[0].id);
   const [inputText, setInputText] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   const [isAiThinking, setIsAiThinking] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
   const [isSupervisorMode, setIsSupervisorMode] = useState(false);
@@ -84,26 +90,122 @@ const WhatsAppModule: React.FC = () => {
     conversations.find(c => c.id === activeConvId)
   , [conversations, activeConvId]);
 
+  const campaigns = useMemo(() => {
+    const set = new Set<string>();
+    conversations.forEach(c => {
+      if (c.campaignId) set.add(c.campaignId);
+    });
+    return Array.from(set);
+  }, [conversations]);
+
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [activeConv?.messages]);
 
-  const handleSendMessage = () => {
-    if (!inputText.trim() || !activeConvId) return;
-    const newMessage: WhatsAppMessage = {
-      id: `m_${Date.now()}`,
-      text: inputText,
-      sender: 'AGENT',
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  // Fetch real messages from backend
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await fetch('/api/omnichannel/messages');
+        if (!response.ok) throw new Error('Failed to fetch');
+        const data = await response.json();
+        
+        if (data.length > 0) {
+          // Group messages by sender_id to create conversations
+          const grouped: Record<string, WhatsAppConversation> = {};
+          
+          data.forEach((msg: any) => {
+            const senderId = msg.sender_id;
+            if (!grouped[senderId]) {
+              grouped[senderId] = {
+                id: senderId,
+                contactName: `Lead ${senderId.slice(-4)}`,
+                channel: msg.channel.toUpperCase() as ChannelType,
+                status: 'ASSIGNED',
+                sentiment: 'NEUTRAL',
+                campaignId: msg.campaign_id,
+                lastActivity: new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                messages: []
+              };
+            }
+            
+            grouped[senderId].messages.unshift({
+              id: msg.id.toString(),
+              text: msg.content,
+              sender: msg.direction === 'inbound' ? 'CUSTOMER' : 'AGENT',
+              timestamp: new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            });
+          });
+
+          const realConversations = Object.values(grouped);
+          setConversations(prev => {
+            // Merge real with mock for now, or just use real
+            return realConversations.length > 0 ? realConversations : prev;
+          });
+        }
+      } catch (err) {
+        console.error('[WA] Error fetching messages:', err);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
-    setConversations(prev => prev.map(c => 
-      c.id === activeConvId ? { ...c, messages: [...c.messages, newMessage], lastActivity: 'Ahora' } : c
-    ));
-    setInputText("");
-    toast(`Mensaje enviado vía ${activeConv?.channel}.`, 'success');
+    fetchMessages();
+    const interval = setInterval(fetchMessages, 5000); // Poll every 5 seconds
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleSendMessage = async () => {
+    if (!inputText.trim() || !activeConvId || !activeConv) return;
+    
+    const textToSend = inputText;
+    const channel = activeConv.channel;
+    setInputText(""); // Clear input early for UX
+
+    try {
+      let endpoint = '/api/whatsapp/send';
+      if (channel === 'TIKTOK') endpoint = '/api/tiktok/send';
+      else if (channel === 'FACEBOOK') endpoint = '/api/facebook/send';
+      else if (channel === 'INSTAGRAM') endpoint = '/api/instagram/send';
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          to: activeConvId, 
+          text: textToSend,
+          campaignId: activeConv.campaignId 
+        })
+      });
+
+      if (!response.ok) throw new Error('Failed to send');
+      
+      const result = await response.json();
+      
+      if (result.status === 'simulated') {
+        toast(`Modo Simulación: El mensaje no se envió a ${channel}.`, 'info');
+      } else {
+        toast('Mensaje enviado con éxito.', 'success');
+      }
+
+      // Optimistic update
+      const newMessage: WhatsAppMessage = {
+        id: `m_${Date.now()}`,
+        text: textToSend,
+        sender: 'AGENT',
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+
+      setConversations(prev => prev.map(c => 
+        c.id === activeConvId ? { ...c, messages: [...c.messages, newMessage], lastActivity: 'Ahora' } : c
+      ));
+    } catch (err) {
+      console.error(`[${channel}] Error sending message:`, err);
+      toast('Error al enviar mensaje.', 'error');
+      setInputText(textToSend); // Restore text on error
+    }
   };
 
   const handleClaimChat = (id: string) => {
@@ -203,12 +305,13 @@ const WhatsAppModule: React.FC = () => {
   const filteredList = useMemo(() => {
     return conversations.filter(c => {
       const matchChannel = activeChannel === 'ALL' || c.channel === activeChannel;
-      if (activeTab === 'MY_CHATS') return matchChannel && c.status === 'ASSIGNED' && c.agentId === 'usr_1';
-      if (activeTab === 'QUEUE') return matchChannel && c.status === 'QUEUE';
-      if (activeTab === 'SUPERVISOR') return matchChannel;
+      const matchCampaign = campaignFilter === 'ALL' || c.campaignId === campaignFilter;
+      if (activeTab === 'MY_CHATS') return matchChannel && matchCampaign && (c.status === 'ASSIGNED' || !c.status);
+      if (activeTab === 'QUEUE') return matchChannel && matchCampaign && c.status === 'QUEUE';
+      if (activeTab === 'SUPERVISOR') return matchChannel && matchCampaign;
       return false;
     });
-  }, [conversations, activeTab, activeChannel]);
+  }, [conversations, activeTab, activeChannel, campaignFilter]);
 
   return (
     <div className="h-[calc(100vh-120px)] flex flex-col space-y-6 animate-in fade-in duration-700 pb-10">
@@ -257,6 +360,26 @@ const WhatsAppModule: React.FC = () => {
                     {filteredList.length} leads
                   </div>
                </div>
+
+               {/* Campaign Filter */}
+               <div className="relative group">
+                  <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                     <Target size={14} className="text-rose-500" />
+                  </div>
+                  <select 
+                    value={campaignFilter}
+                    onChange={(e) => setCampaignFilter(e.target.value)}
+                    className="w-full bg-slate-900/80 border-2 border-slate-800/50 rounded-[20px] pl-12 pr-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-300 appearance-none focus:border-rose-500/50 focus:ring-0 transition-all cursor-pointer"
+                  >
+                    <option value="ALL">Todas las Campañas</option>
+                    {campaigns.map(c => (
+                      <option key={c} value={c}>{c.replace('camp_', '').replace(/_/g, ' ')}</option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none opacity-40">
+                     <ChevronDown size={14} />
+                  </div>
+               </div>
                
                <div className="flex bg-slate-900 p-1 rounded-xl border border-slate-800">
                   {['ALL', 'WHATSAPP', 'TIKTOK', 'FACEBOOK'].map(c => (
@@ -296,6 +419,12 @@ const WhatsAppModule: React.FC = () => {
                          <p className={`text-[10px] truncate ${activeConvId === c.id ? 'text-blue-100 font-medium' : 'text-slate-500'}`}>
                             {c.messages[c.messages.length-1].text}
                          </p>
+                         {c.campaignId && (
+                           <div className={`mt-2 flex items-center text-[8px] font-black uppercase tracking-widest ${activeConvId === c.id ? 'text-blue-200' : 'text-slate-600'}`}>
+                              <Target size={10} className="mr-1" />
+                              {c.campaignId.replace('camp_', '').replace(/_/g, ' ')}
+                           </div>
+                         )}
                       </div>
                       {c.status === 'QUEUE' && <div className="absolute top-4 right-4 w-2 h-2 rounded-full bg-rose-500 animate-pulse shadow-[0_0_10px_#f43f5e]"></div>}
                    </button>
@@ -335,6 +464,11 @@ const WhatsAppModule: React.FC = () => {
                             <div className="h-3 w-px bg-slate-800"></div>
                             <div className="flex items-center text-[10px] font-black text-slate-500 uppercase tracking-widest">
                                <Clock size={14} className="mr-2 text-indigo-500" />
+                               <Target size={14} className="mr-2 text-rose-500" />
+                               Campaña: <span className="ml-1 text-rose-400">{activeConv.campaignId?.replace('camp_', '').replace(/_/g, ' ')}</span>
+                            </div>
+                            <div className="h-3 w-px bg-slate-800"></div>
+                            <div className="flex items-center text-[10px] font-black text-slate-500 uppercase tracking-widest">
                                SLA: <span className="ml-1 text-emerald-400">00:14s</span>
                             </div>
                          </div>

@@ -16,6 +16,7 @@ import {
   Calculator
 } from 'lucide-react';
 import { useToast } from '../ToastContext';
+import ConfirmDialog from './ConfirmDialog';
 
 type FieldType = 
   | 'TEXT' | 'TEXTAREA' | 'PASSWORD' | 'EMAIL'
@@ -90,6 +91,17 @@ const FormDesigner: React.FC = () => {
   
   // Estado para la previsualización interactiva
   const [previewValues, setPreviewValues] = useState<Record<string, any>>({});
+  const [confirmAction, setConfirmAction] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
+  });
 
   const selectedForm = forms.find(f => f.id === selectedFormId) || forms[0];
 
@@ -107,11 +119,18 @@ const FormDesigner: React.FC = () => {
 
   const deleteForm = (id: string) => {
     if (forms.length <= 1) return;
-    if (confirm('¿Eliminar permanentemente este formulario del clúster?')) {
-      const newList = forms.filter(f => f.id !== id);
-      setForms(newList);
-      setSelectedFormId(newList[0].id);
-    }
+    
+    setConfirmAction({
+      isOpen: true,
+      title: 'Eliminar Formulario',
+      message: '¿Eliminar permanentemente este formulario del clúster?',
+      onConfirm: () => {
+        const newList = forms.filter(f => f.id !== id);
+        setForms(newList);
+        setSelectedFormId(newList[0].id);
+        toast('Formulario eliminado correctamente.', 'success');
+      }
+    });
   };
 
   const addField = (type: FieldType = 'TEXT') => {
@@ -494,6 +513,17 @@ const FormDesigner: React.FC = () => {
             <span>Ver Schema JSON</span>
          </button>
       </div>
+
+      <ConfirmDialog
+        isOpen={confirmAction.isOpen}
+        title={confirmAction.title}
+        message={confirmAction.message}
+        onConfirm={() => {
+          confirmAction.onConfirm();
+          setConfirmAction(prev => ({ ...prev, isOpen: false }));
+        }}
+        onCancel={() => setConfirmAction(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 };

@@ -2,7 +2,9 @@
 export enum UserRole {
   ADMIN = 'ADMIN',
   AGENT = 'AGENT',
-  MANAGER = 'MANAGER'
+  MANAGER = 'MANAGER',
+  MONITOR_GTR = 'MONITOR_GTR',
+  SOCIAL_MEDIA_MANAGER = 'SOCIAL_MEDIA_MANAGER'
 }
 
 export type ThemeType = 'midnight' | 'light' | 'ocean' | 'obsidian' | 'forest' | 'sunset' | 'cyber' | 'minimal';
@@ -84,6 +86,7 @@ export interface WhatsAppConversation {
   channel: ChannelType;
   status: InteractionStatus;
   agentId?: string;
+  campaignId?: string;
   sentiment: 'POSITIVE' | 'NEUTRAL' | 'NEGATIVE';
   lastActivity: string;
   messages: WhatsAppMessage[];

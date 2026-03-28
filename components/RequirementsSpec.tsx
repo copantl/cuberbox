@@ -44,10 +44,11 @@ const RequirementsSpec: React.FC = () => {
         {
           name: "Omnicanalidad",
           items: [
-            "Módulo de WhatsApp para gestión de chats en tiempo real.",
+            "Integración con la API oficial de WhatsApp Business Cloud.",
+            "Soporte para múltiples cuentas y números de teléfono.",
             "Integración de Email para campañas de marketing y soporte.",
-            "Bandeja de entrada unificada para agentes.",
-            "Historial de interacciones cruzadas por cliente."
+            "Bandeja de entrada unificada para agentes con historial cruzado.",
+            "Webhooks para recepción de mensajes en tiempo real."
           ]
         },
         {
@@ -96,9 +97,10 @@ const RequirementsSpec: React.FC = () => {
         {
           name: "Infraestructura",
           items: [
+            "Despliegue On-Premise optimizado para Debian 12 y Proxmox.",
             "Soporte nativo para Docker y Docker Compose.",
             "Alta Disponibilidad (HA) mediante Keepalived y IP Virtual.",
-            "Monitoreo de Clúster para escalabilidad horizontal.",
+            "Gestión dinámica de clúster multi-nodo vía base de datos PostgreSQL.",
             "Servidor de almacenamiento dedicado para grabaciones y logs."
           ]
         }

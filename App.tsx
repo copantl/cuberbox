@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Zap } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Dashboard from './components/Dashboard';
@@ -52,10 +53,10 @@ import { LiveChannelMonitor } from './components/LiveChannelMonitor';
 import { User, UserRole, ThemeType } from './types';
 import { MOCK_USER } from './constants';
 import { ToastProvider } from './ToastContext';
+import { AuthProvider, useAuth } from './AuthContext';
 
-const App: React.FC = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<User>(MOCK_USER);
+const AppContent: React.FC = () => {
+  const { isAuthenticated, user, login, logout, isInitialized } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [theme, setTheme] = useState<ThemeType>((localStorage.getItem('cuberbox-theme') as ThemeType) || 'midnight');
 
@@ -68,91 +69,102 @@ const App: React.FC = () => {
     localStorage.setItem('cuberbox-theme', newTheme);
   };
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
-  };
+  if (!isInitialized) {
+    return (
+      <div className="h-screen bg-[#050505] flex items-center justify-center">
+        <div className="flex flex-col items-center space-y-4">
+          <Logo className="w-16 h-16 animate-pulse" />
+          <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.5em] animate-pulse">Initializing Nexus Core</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <ToastProvider>
+    <>
       {!isAuthenticated ? (
         <Login onLogin={(role?: UserRole) => {
-          let level = 1;
-          if (role === UserRole.ADMIN) level = 9;
-          if (role === UserRole.MANAGER) level = 6;
-          setUser({ ...MOCK_USER, role, userLevel: level });
-          setIsAuthenticated(true);
+          // Si Keycloak no está configurado, el login manual funciona
+          login();
         }} />
       ) : (
         <Router>
-          <div className={`flex h-screen overflow-hidden bg-[#020617] text-white selection:bg-orange-500/30`}>
-            <Sidebar isOpen={sidebarOpen} toggle={() => setSidebarOpen(!sidebarOpen)} role={user.role} userLevel={user.userLevel} />
+          <div className={`flex h-screen overflow-hidden bg-[var(--bg-main)] text-[var(--ink)] selection:bg-blue-500/30 transition-colors duration-500`}>
+            <Sidebar isOpen={sidebarOpen} toggle={() => setSidebarOpen(!sidebarOpen)} role={user?.role || UserRole.AGENT} userLevel={user?.userLevel || 1} />
             
             <main className={`flex-1 flex flex-col transition-all duration-500 ease-in-out relative ${sidebarOpen ? 'ml-64' : 'ml-20'}`}>
               <Header 
-                user={user} 
+                user={user || MOCK_USER} 
                 currentTheme={theme} 
                 onThemeToggle={handleThemeChange} 
-                onLogout={handleLogout} 
+                onLogout={logout} 
               />
               
-              <div className="flex-1 overflow-y-auto p-6 scrollbar-hide bg-[radial-gradient(circle_at_top_right,_rgba(249,115,22,0.03),_transparent)] relative">
-                <div className="fixed bottom-8 right-8 opacity-[0.05] pointer-events-none z-0">
-                  <Logo className="w-16 h-16" />
+              <div className="flex-1 overflow-y-auto p-8 scrollbar-hide relative">
+                {/* Background Grid Accent */}
+                <div className="fixed inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }}></div>
+                
+                <div className="fixed bottom-12 right-12 opacity-[0.02] pointer-events-none z-0 rotate-12">
+                  <Logo className="w-32 h-32" />
                 </div>
 
-                <div className="relative z-10">
+                <div className="relative z-10 max-w-[1600px] mx-auto">
                   <Routes>
                     {/* Command Center */}
-                    <Route path="/" element={<AccessControl userLevel={user.userLevel} minLevel={4}><Dashboard /></AccessControl>} />
-                    <Route path="/agent" element={<AgentScreen user={user} />} />
-                    <Route path="/realtime" element={<AccessControl userLevel={user.userLevel} minLevel={4}><RealTimeMonitor /></AccessControl>} />
-                    <Route path="/gtr" element={<AccessControl userLevel={user.userLevel} minLevel={4}><GTRDashboard /></AccessControl>} />
-                    <Route path="/live-monitor" element={<AccessControl userLevel={user.userLevel} minLevel={4}><LiveChannelMonitor /></AccessControl>} />
-                    <Route path="/whatsapp" element={<AccessControl userLevel={user.userLevel} minLevel={1}><WhatsAppModule /></AccessControl>} />
-                    <Route path="/blueprint" element={<AccessControl userLevel={user.userLevel} minLevel={6}><Workflows /></AccessControl>} />
+                    <Route path="/" element={
+                      user?.role === UserRole.MONITOR_GTR ? <Navigate to="/gtr" /> :
+                      user?.role === UserRole.SOCIAL_MEDIA_MANAGER ? <Navigate to="/whatsapp" /> :
+                      <AccessControl userLevel={user?.userLevel || 1} minLevel={4} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}><Dashboard /></AccessControl>
+                    } />
+                    <Route path="/agent" element={<AgentScreen user={user || MOCK_USER} />} />
+                    <Route path="/realtime" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={4} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER, UserRole.MONITOR_GTR]}><RealTimeMonitor /></AccessControl>} />
+                    <Route path="/gtr" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={4} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER, UserRole.MONITOR_GTR]}><GTRDashboard /></AccessControl>} />
+                    <Route path="/live-monitor" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={4} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER, UserRole.MONITOR_GTR]}><LiveChannelMonitor /></AccessControl>} />
+                    <Route path="/whatsapp" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={1} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER, UserRole.SOCIAL_MEDIA_MANAGER, UserRole.AGENT]}><WhatsAppModule /></AccessControl>} />
+                    <Route path="/blueprint" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={6} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}><Workflows /></AccessControl>} />
 
                     {/* Dialer Engine */}
-                    <Route path="/campaigns" element={<AccessControl userLevel={user.userLevel} minLevel={7}><Campaigns /></AccessControl>} />
-                    <Route path="/broadcast-ai" element={<AccessControl userLevel={user.userLevel} minLevel={8}><BroadcastAI /></AccessControl>} />
-                    <Route path="/lists" element={<AccessControl userLevel={user.userLevel} minLevel={7}><ListsManagement /></AccessControl>} />
-                    <Route path="/dnc" element={<AccessControl userLevel={user.userLevel} minLevel={7}><DNCManagement /></AccessControl>} />
+                    <Route path="/campaigns" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={7} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}><Campaigns /></AccessControl>} />
+                    <Route path="/broadcast-ai" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={8} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}><BroadcastAI /></AccessControl>} />
+                    <Route path="/lists" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={7} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}><ListsManagement /></AccessControl>} />
+                    <Route path="/dnc" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={7} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}><DNCManagement /></AccessControl>} />
 
                     {/* Neural Lab */}
-                    <Route path="/ai-studio" element={<AccessControl userLevel={user.userLevel} minLevel={7}><AIStudio /></AccessControl>} />
-                    <Route path="/ivr" element={<AccessControl userLevel={user.userLevel} minLevel={7}><IVRDesigner /></AccessControl>} />
-                    <Route path="/audio-library" element={<AccessControl userLevel={user.userLevel} minLevel={4}><AudioLibrary user={user} /></AccessControl>} />
+                    <Route path="/ai-studio" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={7} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}><AIStudio /></AccessControl>} />
+                    <Route path="/ivr" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={7} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}><IVRDesigner /></AccessControl>} />
+                    <Route path="/audio-library" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={4} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER, UserRole.AGENT]}><AudioLibrary user={user || MOCK_USER} /></AccessControl>} />
 
                     {/* Data & BI */}
-                    <Route path="/analytics-hub" element={<AccessControl userLevel={user.userLevel} minLevel={6}><AnalyticsHub /></AccessControl>} />
-                    <Route path="/reports" element={<AccessControl userLevel={user.userLevel} minLevel={4}><Reports /></AccessControl>} />
-                    <Route path="/qa" element={<AccessControl userLevel={user.userLevel} minLevel={5}><QualityAssurance /></AccessControl>} />
-                    <Route path="/recordings" element={<AccessControl userLevel={user.userLevel} minLevel={4}><RecordingsManager /></AccessControl>} />
-                    <Route path="/integrations" element={<AccessControl userLevel={user.userLevel} minLevel={8}><ExternalIntegrations /></AccessControl>} />
-                    <Route path="/crm" element={<AccessControl userLevel={user.userLevel} minLevel={8}><CRMIntegrations /></AccessControl>} />
-                    <Route path="/crm-designer" element={<AccessControl userLevel={user.userLevel} minLevel={8}><FormDesigner /></AccessControl>} />
-                    <Route path="/crm-hub" element={<AccessControl userLevel={user.userLevel} minLevel={6}><ExternalCRMHub /></AccessControl>} />
+                    <Route path="/analytics-hub" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={6} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}><AnalyticsHub /></AccessControl>} />
+                    <Route path="/reports" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={4} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}><Reports /></AccessControl>} />
+                    <Route path="/qa" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={5} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}><QualityAssurance /></AccessControl>} />
+                    <Route path="/recordings" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={4} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}><RecordingsManager /></AccessControl>} />
+                    <Route path="/integrations" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={8} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}><ExternalIntegrations /></AccessControl>} />
+                    <Route path="/crm" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={8} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}><CRMIntegrations /></AccessControl>} />
+                    <Route path="/crm-designer" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={8} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}><FormDesigner /></AccessControl>} />
+                    <Route path="/crm-hub" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={6} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER, UserRole.SOCIAL_MEDIA_MANAGER]}><ExternalCRMHub /></AccessControl>} />
 
                     {/* Infrastructure */}
-                    <Route path="/cluster" element={<AccessControl userLevel={user.userLevel} minLevel={9}><ClusterMonitor /></AccessControl>} />
-                    <Route path="/cluster-provisioning" element={<AccessControl userLevel={user.userLevel} minLevel={9}><ClusterProvisioning /></AccessControl>} />
-                    <Route path="/ha-config" element={<AccessControl userLevel={user.userLevel} minLevel={9}><HAConfig /></AccessControl>} />
-                    <Route path="/telephony" element={<AccessControl userLevel={user.userLevel} minLevel={9}><TelephonyConfig /></AccessControl>} />
-                    <Route path="/telephony-console" element={<AccessControl userLevel={user.userLevel} minLevel={9}><TelephonyConsole /></AccessControl>} />
-                    <Route path="/storage" element={<AccessControl userLevel={user.userLevel} minLevel={9}><StorageServer /></AccessControl>} />
+                    <Route path="/cluster" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={9} userRole={user?.role} allowedRoles={[UserRole.ADMIN]}><ClusterMonitor /></AccessControl>} />
+                    <Route path="/cluster-provisioning" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={9} userRole={user?.role} allowedRoles={[UserRole.ADMIN]}><ClusterProvisioning /></AccessControl>} />
+                    <Route path="/ha-config" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={9} userRole={user?.role} allowedRoles={[UserRole.ADMIN]}><HAConfig /></AccessControl>} />
+                    <Route path="/telephony" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={9} userRole={user?.role} allowedRoles={[UserRole.ADMIN]}><TelephonyConfig /></AccessControl>} />
+                    <Route path="/telephony-console" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={9} userRole={user?.role} allowedRoles={[UserRole.ADMIN]}><TelephonyConsole /></AccessControl>} />
+                    <Route path="/storage" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={9} userRole={user?.role} allowedRoles={[UserRole.ADMIN]}><StorageServer /></AccessControl>} />
 
                     {/* Governance */}
-                    <Route path="/users" element={<AccessControl userLevel={user.userLevel} minLevel={9}><UsersManagement currentUser={user} /></AccessControl>} />
-                    <Route path="/user-groups" element={<AccessControl userLevel={user.userLevel} minLevel={9}><UserGroupsManagement /></AccessControl>} />
-                    <Route path="/audit" element={<AccessControl userLevel={user.userLevel} minLevel={9}><SystemAudit /></AccessControl>} />
-                    <Route path="/pause-codes" element={<AccessControl userLevel={user.userLevel} minLevel={8}><PauseCodesManagement /></AccessControl>} />
-                    <Route path="/call-codes" element={<AccessControl userLevel={user.userLevel} minLevel={8}><CallCodesManagement /></AccessControl>} />
+                    <Route path="/users" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={9} userRole={user?.role} allowedRoles={[UserRole.ADMIN]}><UsersManagement currentUser={user || MOCK_USER} /></AccessControl>} />
+                    <Route path="/user-groups" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={9} userRole={user?.role} allowedRoles={[UserRole.ADMIN]}><UserGroupsManagement /></AccessControl>} />
+                    <Route path="/audit" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={9} userRole={user?.role} allowedRoles={[UserRole.ADMIN]}><SystemAudit /></AccessControl>} />
+                    <Route path="/pause-codes" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={8} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}><PauseCodesManagement /></AccessControl>} />
+                    <Route path="/call-codes" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={8} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}><CallCodesManagement /></AccessControl>} />
 
                     {/* System */}
-                    <Route path="/settings" element={<AccessControl userLevel={user.userLevel} minLevel={1}><Settings user={user} currentTheme={theme} onThemeChange={handleThemeChange} /></AccessControl>} />
-                    <Route path="/setup-wizard" element={<AccessControl userLevel={user.userLevel} minLevel={9}><SystemSetupWizard /></AccessControl>} />
-                    <Route path="/requirements" element={<AccessControl userLevel={user.userLevel} minLevel={1}><RequirementsSpec /></AccessControl>} />
-                    <Route path="/manual" element={<AccessControl userLevel={user.userLevel} minLevel={1}><UserManual /></AccessControl>} />
-                    <Route path="/instructions" element={<AccessControl userLevel={user.userLevel} minLevel={9}><Instructions /></AccessControl>} />
+                    <Route path="/settings" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={1} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER, UserRole.SOCIAL_MEDIA_MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR]}><Settings user={user || MOCK_USER} currentTheme={theme} onThemeChange={handleThemeChange} /></AccessControl>} />
+                    <Route path="/setup-wizard" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={9} userRole={user?.role} allowedRoles={[UserRole.ADMIN]}><SystemSetupWizard /></AccessControl>} />
+                    <Route path="/requirements" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={1} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER, UserRole.SOCIAL_MEDIA_MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR]}><RequirementsSpec /></AccessControl>} />
+                    <Route path="/manual" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={1} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER, UserRole.SOCIAL_MEDIA_MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR]}><UserManual /></AccessControl>} />
+                    <Route path="/instructions" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={9} userRole={user?.role} allowedRoles={[UserRole.ADMIN]}><Instructions /></AccessControl>} />
                     
                     <Route path="*" element={<Navigate to="/" />} />
                   </Routes>
@@ -162,6 +174,16 @@ const App: React.FC = () => {
           </div>
         </Router>
       )}
+    </>
+  );
+};
+
+const App: React.FC = () => {
+  return (
+    <ToastProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
     </ToastProvider>
   );
 };

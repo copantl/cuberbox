@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useToast } from '../ToastContext';
 import { GTRAgentMetric, GTRQueueMetric } from '../types';
+import ConfirmDialog from './ConfirmDialog';
 
 const MOCK_QUEUES: GTRQueueMetric[] = [
   { queueName: 'Ventas Florida', callsWaiting: 4, longestWait: 45, agentsLogged: 12, agentsReady: 2, slaPercent: 92 },
@@ -31,6 +32,17 @@ const GTRDashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("ALL");
   const [activeAlerts, setActiveAlerts] = useState<string[]>([]);
+  const [confirmAction, setConfirmAction] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
+  });
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -76,10 +88,15 @@ const GTRDashboard: React.FC = () => {
   };
 
   const handleForceLogout = (id: string) => {
-    if(confirm('¿Deseas desconectar forzosamente al agente? El socket se cerrará inmediatamente.')) {
-       setAgents(agents.filter(a => a.agentId !== id));
-       toast('Agente desconectado por el supervisor.', 'warning');
-    }
+    setConfirmAction({
+      isOpen: true,
+      title: 'Forzar Logout',
+      message: '¿Deseas desconectar forzosamente al agente? El socket se cerrará inmediatamente.',
+      onConfirm: () => {
+        setAgents(agents.filter(a => a.agentId !== id));
+        toast('Agente desconectado por el supervisor.', 'warning');
+      }
+    });
   };
 
   return (
@@ -255,6 +272,13 @@ const GTRDashboard: React.FC = () => {
            </div>
         </div>
       </div>
+      <ConfirmDialog 
+        isOpen={confirmAction.isOpen}
+        title={confirmAction.title}
+        message={confirmAction.message}
+        onConfirm={confirmAction.onConfirm}
+        onCancel={() => setConfirmAction(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 };

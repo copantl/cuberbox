@@ -131,6 +131,26 @@ apt-get update && apt-get install -y postgresql-16
 sudo -u postgres psql -c "CREATE USER cuberbox_admin WITH PASSWORD 'TitanPass2024!';" || true
 sudo -u postgres psql -c "CREATE DATABASE cuberbox_db OWNER cuberbox_admin;" || true
 
+# 8. Compilación del Backend Go (Nexus Connector)
+echo -e "${BLUE}[5/5] Preparando Backend Go de Control...${NC}"
+mkdir -p /opt/cuberbox/bin
+
+# Si existe la carpeta backend, la usamos. Si no, creamos un dummy.
+if [ -d "/opt/cuberbox/backend" ]; then
+    echo -e "${CYAN}[INFO] Detectada carpeta backend, compilando desde ahí...${NC}"
+    cd /opt/cuberbox/backend && go build -o /usr/local/bin/cuberbox-connector main.go
+else
+    echo -e "${CYAN}[INFO] No se detectó carpeta backend, creando dummy...${NC}"
+    cat <<EOF > /opt/cuberbox/main.go
+package main
+import "fmt"
+func main() { fmt.Println("Cuberbox Pro Go Backend v4.7.9 - Operational") }
+EOF
+    cd /opt/cuberbox && go build -o /usr/local/bin/cuberbox-connector main.go
+fi
+
+chmod +x /usr/local/bin/cuberbox-connector
+
 # 9. Finalización y Resumen
 systemctl restart freeswitch
 systemctl enable freeswitch

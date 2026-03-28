@@ -4,14 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Copy, Terminal, Server, Database, Phone, Code, ShieldCheck, 
   Zap, Github, TerminalSquare, AlertCircle, Play, ChevronRight,
-  Layers, Monitor, Globe, ChevronLeft, CheckCircle2
+  Layers, Monitor, Globe, ChevronLeft, CheckCircle2, Bot, MessageSquare
 } from 'lucide-react';
 import { useToast } from '../ToastContext';
 
 const Instructions: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState<'ONE_LINER' | 'MANUAL' | 'POST_INSTALL'>('ONE_LINER');
+  const [activeTab, setActiveTab] = useState<'ONE_LINER' | 'MANUAL' | 'POST_INSTALL' | 'OMNICHANNEL_AI'>('ONE_LINER');
 
   const CodeBlock = ({ title, code, icon: Icon }: any) => {
     const copyToClipboard = () => {
@@ -60,6 +60,7 @@ const Instructions: React.FC = () => {
         {[
           { id: 'ONE_LINER', label: 'Instalación Unificada', icon: Zap },
           { id: 'MANUAL', label: 'Pasos Manuales', icon: Terminal },
+          { id: 'OMNICHANNEL_AI', label: 'Omnicanalidad & IA', icon: Globe },
           { id: 'POST_INSTALL', label: 'Verificación', icon: ShieldCheck }
         ].map(tab => (
           <button
@@ -74,6 +75,154 @@ const Instructions: React.FC = () => {
       </div>
 
       <div className="animate-in fade-in slide-in-from-bottom-8 duration-700">
+        {activeTab === 'OMNICHANNEL_AI' && (
+          <div className="space-y-12">
+            <div className="glass p-12 rounded-[64px] border border-blue-500/20 bg-blue-600/5">
+               <h2 className="text-3xl font-black text-white uppercase tracking-tight flex items-center mb-8">
+                  <Globe size={32} className="mr-4 text-blue-400" /> Activación Omnicanal (WhatsApp)
+               </h2>
+               <p className="text-slate-400 text-lg mb-10 leading-relaxed max-w-2xl font-medium">
+                  Para que la omnicanalidad funcione en su servidor local, debe configurar el Webhook de Meta y las variables de entorno.
+               </p>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                  <div className="p-8 bg-slate-900/50 border border-slate-800 rounded-[32px]">
+                    <h4 className="text-sm font-black text-white uppercase tracking-widest mb-4">1. Configurar Webhook en Meta</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed font-bold uppercase tracking-wider mb-4">
+                      Apunte el Webhook de su App de Meta a la siguiente URL (use un túnel como Cloudflare o Ngrok si no tiene IP pública):
+                    </p>
+                    <code className="text-blue-400 text-[11px] font-mono block bg-black/40 p-4 rounded-xl break-all">
+                      https://tu-dominio.com/api/webhook/whatsapp
+                    </code>
+                  </div>
+                  <div className="p-8 bg-slate-900/50 border border-slate-800 rounded-[32px]">
+                    <h4 className="text-sm font-black text-white uppercase tracking-widest mb-4">2. Variables de Entorno (.env)</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed font-bold uppercase tracking-wider mb-4">
+                      Añada estas líneas a su archivo .env local para habilitar la comunicación real:
+                    </p>
+                    <code className="text-emerald-400 text-[11px] font-mono block bg-black/40 p-4 rounded-xl">
+                      WHATSAPP_VERIFY_TOKEN=cuberbox_token_2024<br/>
+                      WHATSAPP_ACCESS_TOKEN=tu_token_de_meta<br/>
+                      WHATSAPP_PHONE_NUMBER_ID=tu_id_de_telefono
+                    </code>
+                  </div>
+               </div>
+            </div>
+
+            <div className="glass p-12 rounded-[64px] border border-emerald-500/20 bg-emerald-600/5">
+               <h2 className="text-3xl font-black text-white uppercase tracking-tight flex items-center mb-8">
+                  <Bot size={32} className="mr-4 text-emerald-400" /> Inteligencia Artificial (Gemini)
+               </h2>
+               <p className="text-slate-400 text-lg mb-10 leading-relaxed max-w-2xl font-medium">
+                  Active las sugerencias inteligentes y el análisis de sentimiento configurando su API Key de Google Gemini.
+               </p>
+               <CodeBlock 
+                  title="Configuración de IA en .env"
+                  icon={Code}
+                  code={`GEMINI_API_KEY=tu_api_key_de_google_ai_studio`}
+               />
+               <p className="text-xs text-slate-500 font-bold uppercase tracking-wider mt-4">
+                  Nota: Puede obtener su clave gratuita en <a href="https://aistudio.google.com/app/apikey" target="_blank" className="text-blue-400 underline">Google AI Studio</a>.
+               </p>
+            </div>
+
+            <div className="glass p-12 rounded-[64px] border border-pink-500/20 bg-pink-600/5">
+               <h2 className="text-3xl font-black text-white uppercase tracking-tight flex items-center mb-8">
+                  <MessageSquare size={32} className="mr-4 text-pink-400" /> Activación Omnicanal (TikTok)
+               </h2>
+               <p className="text-slate-400 text-lg mb-10 leading-relaxed max-w-2xl font-medium">
+                  Integre TikTok Business para recibir y responder mensajes de sus seguidores directamente desde Cuberbox.
+               </p>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                  <div className="p-8 bg-slate-900/50 border border-slate-800 rounded-[32px]">
+                    <h4 className="text-sm font-black text-white uppercase tracking-widest mb-4">1. Configurar Webhook en TikTok</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed font-bold uppercase tracking-wider mb-4">
+                      Apunte el Webhook de su App de TikTok Business a la siguiente URL:
+                    </p>
+                    <code className="text-pink-400 text-[11px] font-mono block bg-black/40 p-4 rounded-xl break-all">
+                      https://tu-dominio.com/api/webhook/tiktok
+                    </code>
+                  </div>
+                  <div className="p-8 bg-slate-900/50 border border-slate-800 rounded-[32px]">
+                    <h4 className="text-sm font-black text-white uppercase tracking-widest mb-4">2. Variables de Entorno (.env)</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed font-bold uppercase tracking-wider mb-4">
+                      Añada estas líneas a su archivo .env local para habilitar TikTok:
+                    </p>
+                    <code className="text-emerald-400 text-[11px] font-mono block bg-black/40 p-4 rounded-xl">
+                      TIKTOK_VERIFY_TOKEN=cuberbox_tiktok_token_2024<br/>
+                      TIKTOK_ACCESS_TOKEN=tu_token_de_tiktok<br/>
+                      TIKTOK_CLIENT_KEY=tu_client_key
+                    </code>
+                  </div>
+               </div>
+            </div>
+
+            <div className="glass p-12 rounded-[64px] border border-blue-500/20 bg-blue-600/5">
+               <h2 className="text-3xl font-black text-white uppercase tracking-tight flex items-center mb-8">
+                  <Globe size={32} className="mr-4 text-blue-400" /> Activación Omnicanal (Facebook & Instagram)
+               </h2>
+               <p className="text-slate-400 text-lg mb-10 leading-relaxed max-w-2xl font-medium">
+                  Conecte sus páginas de Facebook y cuentas de Instagram Business para centralizar toda su atención al cliente.
+               </p>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                  <div className="p-8 bg-slate-900/50 border border-slate-800 rounded-[32px]">
+                    <h4 className="text-sm font-black text-white uppercase tracking-widest mb-4">1. Configurar Webhook en Meta</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed font-bold uppercase tracking-wider mb-4">
+                      Configure el Webhook de su App de Meta (Messenger e Instagram) a estas URLs:
+                    </p>
+                    <code className="text-blue-400 text-[11px] font-mono block bg-black/40 p-4 rounded-xl break-all">
+                      https://tu-dominio.com/api/webhook/facebook<br/>
+                      https://tu-dominio.com/api/webhook/instagram
+                    </code>
+                  </div>
+                  <div className="p-8 bg-slate-900/50 border border-slate-800 rounded-[32px]">
+                    <h4 className="text-sm font-black text-white uppercase tracking-widest mb-4">2. Variables de Entorno (.env)</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed font-bold uppercase tracking-wider mb-4">
+                      Añada estas líneas para habilitar Facebook e Instagram:
+                    </p>
+                    <code className="text-emerald-400 text-[11px] font-mono block bg-black/40 p-4 rounded-xl">
+                      META_VERIFY_TOKEN=cuberbox_meta_token_2024<br/>
+                      FACEBOOK_PAGE_ACCESS_TOKEN=tu_token_de_pagina<br/>
+                      FACEBOOK_PAGE_ID=tu_id_de_pagina
+                    </code>
+                  </div>
+               </div>
+            </div>
+
+            <div className="glass p-12 rounded-[64px] border border-indigo-500/20 bg-indigo-600/5">
+               <h2 className="text-3xl font-black text-white uppercase tracking-tight flex items-center mb-8">
+                  <ShieldCheck size={32} className="mr-4 text-indigo-400" /> Autenticación (Keycloak)
+               </h2>
+               <p className="text-slate-400 text-lg mb-10 leading-relaxed max-w-2xl font-medium">
+                  Configure el servidor de identidad Keycloak para gestionar el acceso seguro de sus agentes y administradores.
+               </p>
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                  <div className="p-8 bg-slate-900/50 border border-slate-800 rounded-[32px]">
+                    <h4 className="text-sm font-black text-white uppercase tracking-widest mb-4">1. Configuración del Realm</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed font-bold uppercase tracking-wider mb-4">
+                      Asegúrese de que el Realm y el Client ID coincidan con los definidos en su servidor Keycloak:
+                    </p>
+                    <ul className="text-[11px] text-slate-400 font-bold space-y-2 uppercase tracking-widest">
+                      <li>• Realm: <span className="text-indigo-400">cuberbox</span></li>
+                      <li>• Client ID: <span className="text-indigo-400">cuberbox-pro</span></li>
+                      <li>• Access Type: <span className="text-indigo-400">confidential</span></li>
+                    </ul>
+                  </div>
+                  <div className="p-8 bg-slate-900/50 border border-slate-800 rounded-[32px]">
+                    <h4 className="text-sm font-black text-white uppercase tracking-widest mb-4">2. Variables de Entorno (.env)</h4>
+                    <p className="text-xs text-slate-500 leading-relaxed font-bold uppercase tracking-wider mb-4">
+                      Añada estas líneas para conectar con Keycloak:
+                    </p>
+                    <code className="text-emerald-400 text-[11px] font-mono block bg-black/40 p-4 rounded-xl">
+                      VITE_KEYCLOAK_URL=https://tu-keycloak.com<br/>
+                      VITE_KEYCLOAK_REALM=cuberbox<br/>
+                      VITE_KEYCLOAK_CLIENT_ID=cuberbox-pro<br/>
+                      KEYCLOAK_CLIENT_SECRET=tu_secret
+                    </code>
+                  </div>
+               </div>
+            </div>
+          </div>
+        )}
         {activeTab === 'ONE_LINER' && (
           <div className="glass p-12 rounded-[64px] border border-blue-500/20 bg-blue-600/5 mb-16 relative overflow-hidden">
              <h2 className="text-3xl font-black text-white uppercase tracking-tight flex items-center mb-8">
@@ -190,8 +339,24 @@ const Instructions: React.FC = () => {
                         <br/>
                         # Clonar y Construir<br/>
                         git clone https://github.com/copantl/cuberbox-pro.git /opt/cuberbox<br/>
-                        cd /opt/cuberbox/backend && go build -o connector main.go<br/>
-                        cd .. && npm install && npm run build
+                        cd /opt/cuberbox/backend && go build -o /usr/local/bin/cuberbox-connector main.go<br/>
+                        cd /opt/cuberbox && npm install && npm run build<br/>
+                        <br/>
+                        # Configurar Servicios Systemd<br/>
+                        chmod +x /opt/cuberbox/setup-service.sh<br/>
+                        sudo /opt/cuberbox/setup-service.sh
+                      </code>
+                   </div>
+                   <div className="p-8 bg-slate-950 rounded-3xl border border-slate-800">
+                      <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 8: Configuración Multi-Nodo (Opcional)</p>
+                      <p className="text-xs text-slate-500 mb-4 font-bold uppercase tracking-wider">Si tiene múltiples servidores FreeSwitch, regístrelos en la base de datos para habilitar el clúster.</p>
+                      <code className="text-emerald-400 text-[11px] font-mono block leading-relaxed bg-black/40 p-4 rounded-xl">
+                        # Acceder a PostgreSQL<br/>
+                        sudo -u postgres psql -d cuberbox_db<br/>
+                        <br/>
+                        # Registrar un nodo remoto<br/>
+                        INSERT INTO telephony_nodes (name, ip, port, password, role) <br/>
+                        VALUES ('Nodo Miami', '192.168.1.60', 8021, 'ClueCon', 'MEDIA');
                       </code>
                    </div>
                 </div>

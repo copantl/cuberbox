@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Plus, Target, RefreshCw, Cpu, CheckCircle2, Coffee, Settings, Maximize2, 
   Radio, Users, Network, Database, Sliders, ListChecks, Bot, X, Save, 
@@ -15,12 +15,45 @@ import CampaignRealTimeDashboard from './CampaignRealTimeDashboard';
 
 const Campaigns: React.FC = () => {
   const { toast } = useToast();
-  const [campaignsList, setCampaignsList] = useState<Campaign[]>(MOCK_CAMPAIGNS as any);
-  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(MOCK_CAMPAIGNS[0] as any);
+  const [campaignsList, setCampaignsList] = useState<Campaign[]>([]);
+  const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeModalTab, setActiveModalTab] = useState<'ALGORITHM' | 'INBOUND' | 'AUTOMATION' | 'HOPPER'>('ALGORITHM');
   const [editingCampaign, setEditingCampaign] = useState<Partial<Campaign> | null>(null);
   const [showRealTime, setShowRealTime] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      try {
+        const response = await fetch('/api/campaigns');
+        if (response.ok) {
+          const data = await response.json();
+          const mappedCampaigns = data.map((c: any) => ({
+            id: c.id,
+            name: c.name,
+            dialMethod: c.dial_method as DialMethod,
+            type: c.campaign_type as CampaignType,
+            autoDialLevel: parseFloat(c.auto_dial_level),
+            hopperLevel: c.hopper_level,
+            amdEnabled: c.amd_enabled,
+            status: 'ACTIVE', // Default for now
+            recordingMode: 'ALL_CALLS'
+          }));
+          setCampaignsList(mappedCampaigns);
+          if (mappedCampaigns.length > 0 && !selectedCampaign) {
+            setSelectedCampaign(mappedCampaigns[0]);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching campaigns:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCampaigns();
+  }, []);
 
   const handleOpenModal = (campaign?: Campaign) => {
     setActiveModalTab('ALGORITHM');
@@ -65,7 +98,21 @@ const Campaigns: React.FC = () => {
       <div className="grid grid-cols-12 gap-8">
         {/* LISTA DE CAMPAÑAS */}
         <div className="col-span-12 lg:col-span-4 space-y-4">
-           {campaignsList.map(c => (
+           {isLoading ? (
+             Array.from({ length: 4 }).map((_, i) => (
+               <div key={i} className="p-6 rounded-[40px] border-2 border-slate-800 glass animate-pulse h-[160px]">
+                  <div className="flex items-center justify-between mb-4">
+                     <div className="w-10 h-10 bg-slate-800/50 rounded-xl"></div>
+                     <div className="w-20 h-4 bg-slate-800/50 rounded-full"></div>
+                  </div>
+                  <div className="h-6 bg-slate-800/50 rounded-lg w-3/4"></div>
+                  <div className="mt-6 pt-4 border-t border-slate-800/50 flex justify-between">
+                     <div className="w-16 h-3 bg-slate-800/50 rounded-full"></div>
+                     <div className="w-16 h-3 bg-slate-800/50 rounded-full"></div>
+                  </div>
+               </div>
+             ))
+           ) : campaignsList.map(c => (
              <div key={c.id} onClick={() => setSelectedCampaign(c)} className={`p-6 rounded-[40px] border-2 cursor-pointer transition-all relative overflow-hidden group ${selectedCampaign?.id === c.id ? 'bg-blue-600/10 border-blue-500 shadow-2xl' : 'glass border-slate-800 hover:border-slate-700'}`}>
                 <div className="flex items-center justify-between mb-4 relative z-10">
                    <div className={`p-2 rounded-xl ${selectedCampaign?.id === c.id ? 'bg-blue-600 text-white shadow-lg' : 'bg-slate-800 text-slate-500'}`}><Radio size={18} /></div>

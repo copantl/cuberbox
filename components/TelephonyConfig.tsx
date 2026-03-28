@@ -12,6 +12,7 @@ import { SIPTrunk, DID, User } from '../types';
 import { MOCK_DIDS, MOCK_TRUNKS, MOCK_CAMPAIGNS, MOCK_USERS_LIST } from '../constants';
 import FreeswitchCLI from './FreeswitchCLI';
 import { useToast } from '../ToastContext';
+import ConfirmDialog from './ConfirmDialog';
 
 const TelephonyConfig: React.FC = () => {
   const { toast } = useToast();
@@ -24,6 +25,13 @@ const TelephonyConfig: React.FC = () => {
   const [isTrunkModalOpen, setIsTrunkModalOpen] = useState(false);
   const [editingTrunk, setEditingTrunk] = useState<Partial<SIPTrunk> | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+
+  // Confirmation states
+  const [confirmAction, setConfirmAction] = useState<{
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  } | null>(null);
 
   const handleGlobalSync = async () => {
     setIsSyncing(true);
@@ -68,17 +76,27 @@ const TelephonyConfig: React.FC = () => {
   };
 
   const handleDeleteTrunk = (id: string) => {
-    if (confirm('¿Eliminar este gateway SIP? Esta acción desconectará todas las llamadas vinculadas.')) {
-      setTrunks(trunks.filter(t => t.id !== id));
-      toast('Gateway eliminado del plano de control.', 'warning');
-    }
+    setConfirmAction({
+      title: 'Eliminar Gateway',
+      message: '¿Está seguro de eliminar este gateway SIP? Esta acción desconectará todas las llamadas vinculadas.',
+      onConfirm: () => {
+        setTrunks(trunks.filter(t => t.id !== id));
+        toast('Gateway eliminado del plano de control.', 'warning');
+        setConfirmAction(null);
+      }
+    });
   };
 
   const handleDeleteDID = (id: string) => {
-    if (confirm('¿Eliminar este DID del clúster?')) {
-      setDids(dids.filter(d => d.id !== id));
-      toast('DID removido del inventario.', 'warning');
-    }
+    setConfirmAction({
+      title: 'Eliminar DID',
+      message: '¿Está seguro de eliminar este DID del clúster?',
+      onConfirm: () => {
+        setDids(dids.filter(d => d.id !== id));
+        toast('DID removido del inventario.', 'warning');
+        setConfirmAction(null);
+      }
+    });
   };
 
   return (
@@ -399,6 +417,15 @@ const TelephonyConfig: React.FC = () => {
            </div>
         </div>
       )}
+
+      {/* MODAL DE CONFIRMACIÓN REUTILIZABLE */}
+      <ConfirmDialog 
+        isOpen={!!confirmAction}
+        title={confirmAction?.title || ''}
+        message={confirmAction?.message || ''}
+        onConfirm={() => confirmAction?.onConfirm()}
+        onCancel={() => setConfirmAction(null)}
+      />
     </div>
   );
 };

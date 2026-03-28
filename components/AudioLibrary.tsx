@@ -23,6 +23,8 @@ interface AudioLibraryProps {
   user?: User;
 }
 
+import ConfirmDialog from './ConfirmDialog';
+
 const AudioLibrary: React.FC<AudioLibraryProps> = ({ user = MOCK_USER }) => {
   const { toast } = useToast();
   const [audios, setAudios] = useState<AudioAsset[]>(INITIAL_AUDIO_VAULT);
@@ -32,6 +34,13 @@ const AudioLibrary: React.FC<AudioLibraryProps> = ({ user = MOCK_USER }) => {
   const [editingAudio, setEditingAudio] = useState<Partial<AudioAsset> | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   
+  // Confirmation state
+  const [confirmAction, setConfirmAction] = useState<{
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  } | null>(null);
+
   // Audio Player State
   const [activeAudio, setActiveAudio] = useState<AudioAsset | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -93,10 +102,15 @@ const AudioLibrary: React.FC<AudioLibraryProps> = ({ user = MOCK_USER }) => {
       toast('No tienes nivel de autoridad suficiente para eliminar este recurso.', 'error');
       return;
     }
-    if (confirm('¿Eliminar permanentemente este audio de los servidores SIP?')) {
-      setAudios(audios.filter(a => a.id !== id));
-      toast('Recurso liberado.', 'warning');
-    }
+    setConfirmAction({
+      title: 'Eliminar Audio',
+      message: '¿Eliminar permanentemente este audio de los servidores SIP?',
+      onConfirm: () => {
+        setAudios(audios.filter(a => a.id !== id));
+        toast('Recurso liberado.', 'warning');
+        setConfirmAction(null);
+      }
+    });
   };
 
   const togglePlayback = (audio: AudioAsset) => {
@@ -384,6 +398,14 @@ const AudioLibrary: React.FC<AudioLibraryProps> = ({ user = MOCK_USER }) => {
           </div>
         </div>
       )}
+      {/* MODAL DE CONFIRMACIÓN REUTILIZABLE */}
+      <ConfirmDialog 
+        isOpen={!!confirmAction}
+        title={confirmAction?.title || ''}
+        message={confirmAction?.message || ''}
+        onConfirm={() => confirmAction?.onConfirm()}
+        onCancel={() => setConfirmAction(null)}
+      />
     </div>
   );
 };
