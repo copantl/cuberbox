@@ -9,7 +9,7 @@
 set -e
 
 # Variables
-ISO_URL="https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.5.0-amd64-netinst.iso"
+ISO_URL="https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.9.0-amd64-netinst.iso"
 ISO_NAME="debian-12-nexus-core.iso"
 WORKING_DIR="iso_build"
 NEXUS_INSTALLER_URL="https://[TU-DOMINIO]/nexus-installer.sh"
@@ -24,7 +24,11 @@ mkdir -p $WORKING_DIR/iso_content
 # 2. Descargar ISO base
 if [ ! -f "debian-base.iso" ]; then
     echo "Descargando ISO base de Debian 12..."
-    wget -O debian-base.iso $ISO_URL
+    if ! wget -O debian-base.iso $ISO_URL; then
+        echo "Error: No se pudo descargar la ISO de Debian. Es posible que la versión 12.9.0 haya sido actualizada."
+        echo "Por favor, verifica la URL actual en: https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/"
+        exit 1
+    fi
 fi
 
 # 3. Extraer contenido de la ISO
