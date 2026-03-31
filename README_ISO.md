@@ -6,6 +6,11 @@ Esta guía detalla cómo crear una imagen ISO de Debian 12 que instala automáti
 - Un sistema Linux (Debian/Ubuntu recomendado).
 - Herramientas de creación de ISO: `xorriso`, `isolinux`, `wget`, `cpio`.
 
+Puede instalarlas con el siguiente comando:
+```bash
+sudo apt-get update && sudo apt-get install -y xorriso isolinux wget cpio
+```
+
 ## Pasos para la Creación
 
 1. **Descargar el script de construcción:**

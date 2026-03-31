@@ -8,8 +8,30 @@
 
 set -e
 
+# 0. Verificación de Dependencias
+echo "Verificando dependencias necesarias..."
+DEPS=("xorriso" "isolinux" "wget" "cpio")
+MISSING_DEPS=()
+
+for dep in "${DEPS[@]}"; do
+    if ! command -v "$dep" &> /dev/null; then
+        MISSING_DEPS+=("$dep")
+    fi
+done
+
+if [ ${#MISSING_DEPS[@]} -ne 0 ]; then
+    echo "Faltan las siguientes dependencias: ${MISSING_DEPS[*]}"
+    if [[ $EUID -eq 0 ]]; then
+        echo "Intentando instalar dependencias automáticamente..."
+        apt-get update && apt-get install -y xorriso isolinux wget cpio
+    else
+        echo "Por favor, instale las dependencias manualmente: sudo apt-get install xorriso isolinux wget cpio"
+        exit 1
+    fi
+fi
+
 # Variables
-ISO_URL="https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.9.0-amd64-netinst.iso"
+ISO_URL="https://cdimage.debian.org/cdimage/archive/12.9.0/amd64/iso-cd/debian-12.9.0-amd64-netinst.iso"
 ISO_NAME="debian-12-nexus-core.iso"
 WORKING_DIR="iso_build"
 NEXUS_INSTALLER_URL="https://[TU-DOMINIO]/nexus-installer.sh"
