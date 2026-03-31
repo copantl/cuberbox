@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==============================================================================
-# CUBERBOX PRO - NODE AGENT INSTALLER
+# NEXUS CORE - NODE AGENT INSTALLER
 # ==============================================================================
 
 # Colors
@@ -21,7 +21,7 @@ print_status() { echo -e "${BLUE}[INFO]${NC} $1"; log "INFO: $1"; }
 print_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; log "SUCCESS: $1"; }
 print_error() { echo -e "${RED}[ERROR]${NC} $1"; log "ERROR: $1"; }
 
-echo -e "${CYAN}${BOLD}Cuberbox Pro - Node Agent Installer${NC}"
+echo -e "${CYAN}${BOLD}Nexus Core - Node Agent Installer${NC}"
 echo "=============================================================================="
 echo "Seleccione el rol de este servidor:"
 echo "1) Database Server (PostgreSQL)"
@@ -40,9 +40,12 @@ case $NODE_ROLE in
         if [ -f "./setup/schema.sql" ] && command -v psql >/dev/null 2>&1; then
             read -p "¿Desea inicializar el esquema y datos de producción en este servidor? (s/n): " init_db
             if [[ "$init_db" =~ ^[Ss]$ ]]; then
-                read -p "Nombre de la DB: " DB_N
-                read -p "Usuario DB: " DB_U
-                read -p "Password DB: " DB_P
+                read -p "Nombre de la DB [nexus_db]: " DB_N
+                DB_N=${DB_N:-nexus_db}
+                read -p "Usuario DB [nexus_admin]: " DB_U
+                DB_U=${DB_U:-nexus_admin}
+                read -p "Password DB [NexusPass2026!]: " DB_P
+                DB_P=${DB_P:-NexusPass2026!}
                 export PGPASSWORD=$DB_P
                 if psql -h localhost -U "$DB_U" -d "$DB_N" -f "./setup/schema.sql" >> "$LOG_FILE" 2>&1; then
                     print_success "Esquema inicializado."

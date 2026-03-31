@@ -1,4 +1,4 @@
--- CUBERBOX Pro - Production Seed Data V1.0
+-- NEXUS CORE - Production Seed Data V4.7.9
 -- Datos iniciales para arranque en producción
 
 -- 1. Usuario Administrador por defecto
@@ -48,7 +48,7 @@ INSERT INTO omnichannel_messages (channel, sender_id, content, direction, status
 VALUES (
     'SYSTEM', 
     'NEXUS-CORE', 
-    'Sistema Cuberbox Pro inicializado correctamente en entorno de producción.', 
+    'Sistema Nexus Core inicializado correctamente en entorno de producción.', 
     'inbound', 
     'delivered'
 ) ON CONFLICT DO NOTHING;

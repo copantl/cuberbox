@@ -73,6 +73,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggle, role, userLevel }) =>
     { name: 'Wizard Setup', icon: Wand2, path: '/setup-wizard', roles: [UserRole.ADMIN], minLevel: 9, cat: 'SYSTEM' },
     { name: 'Requerimientos', icon: FileText, path: '/requirements', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR, UserRole.SOCIAL_MEDIA_MANAGER], minLevel: 1, cat: 'SYSTEM' },
     { name: 'Manual Pro', icon: BookOpen, path: '/manual', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR, UserRole.SOCIAL_MEDIA_MANAGER], minLevel: 1, cat: 'SYSTEM' },
+    { name: 'Manuales Nexus', icon: FileText, path: '/manuals-viewer', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR, UserRole.SOCIAL_MEDIA_MANAGER], minLevel: 1, cat: 'SYSTEM' },
     { name: 'Nexus Deploy', icon: Terminal, path: '/instructions', roles: [UserRole.ADMIN], minLevel: 9, cat: 'SYSTEM' },
   ];
 
@@ -83,7 +84,16 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggle, role, userLevel }) =>
   );
 
   return (
-    <aside className={`fixed top-0 left-0 h-full bg-[var(--bg-sidebar)] border-r border-[var(--border-glow)] transition-all duration-500 z-50 flex flex-col ${isOpen ? 'w-64' : 'w-20'}`}>
+    <>
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-500"
+          onClick={toggle}
+        />
+      )}
+      
+      <aside className={`fixed top-0 left-0 h-full bg-[var(--bg-sidebar)] border-r border-[var(--border-glow)] transition-all duration-500 z-50 flex flex-col ${isOpen ? 'w-64 translate-x-0' : 'w-20 lg:translate-x-0 -translate-x-full'}`}>
        {/* Sidebar Header */}
        <div className="h-20 flex items-center justify-between px-6 border-b border-white/5 shrink-0">
           {isOpen && (
@@ -186,6 +196,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggle, role, userLevel }) =>
           </div>
        </div>
     </aside>
+    </>
   );
 };
 

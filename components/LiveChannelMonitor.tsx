@@ -219,7 +219,7 @@ export const LiveChannelMonitor: React.FC = () => {
       d.fy = null;
     }
 
-    return () => simulation.stop();
+    return () => { simulation.stop(); };
   }, [channels, activeSpy]);
 
   return (

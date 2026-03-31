@@ -1,4 +1,4 @@
--- CUBERBOX Pro - Neural Schema V3.6
+-- NEXUS CORE - Neural Schema V4.7.9
 -- Optimizado para PostgreSQL 16 y análisis de IA
 
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";

@@ -196,24 +196,24 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
 
   if (!isLaunched) {
     return (
-      <div className="h-full flex items-center justify-center p-6 animate-in fade-in duration-700">
-         <div className="w-full max-w-4xl glass rounded-[64px] border-2 border-slate-800 p-20 flex flex-col items-center space-y-10">
-            <Logo className="w-20 h-20" />
+      <div className="h-full flex items-center justify-center p-4 md:p-6 animate-in fade-in duration-700">
+         <div className="w-full max-w-4xl glass rounded-[32px] md:rounded-[64px] border-2 border-slate-800 p-8 md:p-20 flex flex-col items-center space-y-8 md:space-y-10">
+            <Logo className="w-16 h-16 md:w-20 md:h-20" />
             <div className="text-center">
-               <h2 className="text-4xl font-black text-white uppercase tracking-tighter">Estación Agente Pro</h2>
+               <h2 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tighter">Estación Agente Pro</h2>
                <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-2">Nexus Blended Core v4.8 • AI Enhanced</p>
             </div>
-            <div className="grid grid-cols-2 gap-6 w-full max-w-md">
-               <div className="p-6 bg-slate-900 border border-slate-800 rounded-3xl text-center group hover:border-blue-500/30 transition-all">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 w-full max-w-md">
+               <div className="p-4 md:p-6 bg-slate-900 border border-slate-800 rounded-2xl md:rounded-3xl text-center group hover:border-blue-500/30 transition-all">
                   <p className="text-[10px] font-black text-slate-500 uppercase mb-2">Campaña Activa</p>
-                  <p className="text-white font-black uppercase">Real Estate Florida</p>
+                  <p className="text-white font-black uppercase text-sm md:text-base">Real Estate Florida</p>
                </div>
-               <div className="p-6 bg-slate-900 border border-slate-800 rounded-3xl text-center group hover:border-emerald-500/30 transition-all">
+               <div className="p-4 md:p-6 bg-slate-900 border border-slate-800 rounded-2xl md:rounded-3xl text-center group hover:border-emerald-500/30 transition-all">
                   <p className="text-[10px] font-black text-slate-500 uppercase mb-2">Extensión SIP</p>
-                  <p className="text-blue-400 font-mono font-black">{user.extension}</p>
+                  <p className="text-blue-400 font-mono font-black text-sm md:text-base">{user.extension}</p>
                </div>
             </div>
-            <button onClick={() => setIsLaunched(true)} className="bg-blue-600 hover:bg-blue-500 text-white px-20 py-6 rounded-[32px] font-black text-xs uppercase tracking-[0.4em] shadow-2xl active:scale-95 transition-all group">
+            <button onClick={() => setIsLaunched(true)} className="w-full md:w-auto bg-blue-600 hover:bg-blue-500 text-white px-10 md:px-20 py-4 md:py-6 rounded-[24px] md:rounded-[32px] font-black text-xs uppercase tracking-[0.2em] md:tracking-[0.4em] shadow-2xl active:scale-95 transition-all group">
                <span className="flex items-center space-x-3">
                  <Zap size={20} className="group-hover:animate-pulse" />
                  <span>Entrar en Línea</span>
@@ -228,22 +228,22 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
     <div className="h-full flex flex-col gap-6 animate-in fade-in duration-1000">
       
       {/* 1. HUD DE CONTROL SUPERIOR */}
-      <div className={`glass rounded-[48px] border-2 p-6 flex items-center justify-between shadow-2xl transition-all duration-700 ${status === 'INCALL' ? (sentiment === 'POSITIVE' ? 'border-emerald-500/40 bg-emerald-500/5' : sentiment === 'NEGATIVE' ? 'border-rose-500/40 bg-rose-500/5' : 'border-blue-500/40 bg-blue-500/5') : 'border-slate-800'}`}>
-         <div className="flex items-center space-x-8">
-            <div className={`w-16 h-16 rounded-3xl flex items-center justify-center text-white shadow-2xl transition-all duration-500 ${status === 'INCALL' ? (sentiment === 'POSITIVE' ? 'bg-emerald-500' : sentiment === 'NEGATIVE' ? 'bg-rose-500' : 'bg-blue-600') : status === 'PAUSED' ? 'bg-amber-500' : 'bg-slate-800'}`}>
-               {status === 'INCALL' ? <Smartphone size={32} /> : <Headphones size={32} />}
+      <div className={`glass rounded-[32px] md:rounded-[48px] border-2 p-4 md:p-6 flex flex-col lg:flex-row lg:items-center justify-between gap-6 shadow-2xl transition-all duration-700 ${status === 'INCALL' ? (sentiment === 'POSITIVE' ? 'border-emerald-500/40 bg-emerald-500/5' : sentiment === 'NEGATIVE' ? 'border-rose-500/40 bg-rose-500/5' : 'border-blue-500/40 bg-blue-500/5') : 'border-slate-800'}`}>
+         <div className="flex items-center space-x-4 md:space-x-8">
+            <div className={`w-12 h-12 md:w-16 md:h-16 rounded-2xl md:rounded-3xl flex items-center justify-center text-white shadow-2xl transition-all duration-500 shrink-0 ${status === 'INCALL' ? (sentiment === 'POSITIVE' ? 'bg-emerald-500' : sentiment === 'NEGATIVE' ? 'bg-rose-500' : 'bg-blue-600') : status === 'PAUSED' ? 'bg-amber-500' : 'bg-slate-800'}`}>
+               {status === 'INCALL' ? <Smartphone size={24} className="md:w-8 md:h-8" /> : <Headphones size={24} className="md:w-8 md:h-8" />}
             </div>
             <div>
-               <h3 className="text-2xl font-black text-white uppercase tracking-tighter">
+               <h3 className="text-lg md:text-2xl font-black text-white uppercase tracking-tighter">
                   {status === 'INCALL' ? 'EN LLAMADA ACTIVA' : status === 'READY' ? 'ESPERANDO LEAD...' : status}
                </h3>
-               <div className="flex items-center space-x-4 mt-2">
-                  <span className="text-xl font-mono font-black text-blue-400">
+               <div className="flex flex-wrap items-center gap-2 md:gap-4 mt-1 md:mt-2">
+                  <span className="text-base md:text-xl font-mono font-black text-blue-400">
                     {Math.floor(timer/60).toString().padStart(2,'0')}:{(timer%60).toString().padStart(2,'0')}
                   </span>
-                  {status === 'INCALL' && <AudioWaveform />}
+                  {status === 'INCALL' && <div className="hidden sm:block"><AudioWaveform /></div>}
                   {status === 'INCALL' && (
-                    <div className={`px-4 py-1 rounded-full border text-[10px] font-black uppercase tracking-widest animate-in fade-in ${sentiment === 'POSITIVE' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : sentiment === 'NEGATIVE' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-slate-900 text-slate-500 border-slate-800'}`}>
+                    <div className={`px-3 py-0.5 md:px-4 md:py-1 rounded-full border text-[8px] md:text-[10px] font-black uppercase tracking-widest animate-in fade-in ${sentiment === 'POSITIVE' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : sentiment === 'NEGATIVE' ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' : 'bg-slate-900 text-slate-500 border-slate-800'}`}>
                       Sentimiento: {sentiment}
                     </div>
                   )}
@@ -251,75 +251,75 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
             </div>
          </div>
 
-         <div className="flex items-center space-x-4">
+         <div className="flex items-center gap-2 md:gap-4">
             {status === 'READY' ? (
-               <div className="flex items-center space-x-2">
-                  <button onClick={() => setIsDialerOpen(true)} className="bg-blue-600 hover:bg-blue-500 text-white px-10 py-4 rounded-[24px] font-black text-[10px] uppercase tracking-widest shadow-xl flex items-center">
-                    <Smartphone size={16} className="mr-2" /> Dial Real
+               <div className="flex items-center gap-2 w-full sm:w-auto">
+                  <button onClick={() => setIsDialerOpen(true)} className="flex-1 sm:flex-none bg-blue-600 hover:bg-blue-500 text-white px-4 md:px-10 py-3 md:py-4 rounded-xl md:rounded-[24px] font-black text-[9px] md:text-[10px] uppercase tracking-widest shadow-xl flex items-center justify-center">
+                    <Smartphone size={14} className="mr-2" /> Dial Real
                   </button>
-                  <button onClick={handleDial} className="bg-emerald-600 hover:bg-emerald-500 text-white px-10 py-4 rounded-[24px] font-black text-[10px] uppercase tracking-widest shadow-xl">Simular Dial</button>
+                  <button onClick={handleDial} className="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-500 text-white px-4 md:px-10 py-3 md:py-4 rounded-xl md:rounded-[24px] font-black text-[9px] md:text-[10px] uppercase tracking-widest shadow-xl">Simular Dial</button>
                </div>
             ) : (
-               <button onClick={() => { setStatus('READY'); setCurrentLead(null); setTimer(0); setAiSuggestion(""); }} className="bg-rose-600 hover:bg-rose-500 text-white px-10 py-4 rounded-[24px] font-black text-[10px] uppercase tracking-widest shadow-xl">Colgar / Terminar</button>
+               <button onClick={() => { setStatus('READY'); setCurrentLead(null); setTimer(0); setAiSuggestion(""); }} className="flex-1 sm:flex-none bg-rose-600 hover:bg-rose-500 text-white px-6 md:px-10 py-3 md:py-4 rounded-xl md:rounded-[24px] font-black text-[9px] md:text-[10px] uppercase tracking-widest shadow-xl">Colgar / Terminar</button>
             )}
-            <button onClick={() => setStatus('PAUSED')} className="p-4 bg-slate-800 hover:bg-amber-600 text-slate-400 hover:text-white rounded-2xl transition-all shadow-lg"><Pause size={20} /></button>
-            <button onClick={() => setIsLaunched(false)} className="p-4 bg-slate-900 hover:bg-rose-600 text-slate-500 hover:text-white rounded-2xl transition-all shadow-lg"><Power size={20} /></button>
+            <button onClick={() => setStatus('PAUSED')} className="p-3 md:p-4 bg-slate-800 hover:bg-amber-600 text-slate-400 hover:text-white rounded-xl md:rounded-2xl transition-all shadow-lg"><Pause size={18} /></button>
+            <button onClick={() => setIsLaunched(false)} className="p-3 md:p-4 bg-slate-900 hover:bg-rose-600 text-slate-500 hover:text-white rounded-xl md:rounded-2xl transition-all shadow-lg"><Power size={18} /></button>
          </div>
       </div>
 
-      <div className="flex-1 grid grid-cols-12 gap-6 min-h-0">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-0">
          {/* 2. AREA DE GESTIÓN (CRM & SCRIPT & AI) */}
          <div className="col-span-12 lg:col-span-8 flex flex-col space-y-6 min-h-0">
-            <div className="glass flex-1 rounded-[56px] border border-slate-800 flex flex-col overflow-hidden shadow-2xl">
-               <div className="bg-slate-900/60 p-4 flex space-x-2 border-b border-slate-800 shrink-0">
-                  <button onClick={() => setActiveTab('CRM')} className={`px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center ${activeTab === 'CRM' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}>
-                    <User size={14} className="mr-2" /> Expediente
+            <div className="glass flex-1 rounded-[32px] md:rounded-[56px] border border-slate-800 flex flex-col overflow-hidden shadow-2xl">
+               <div className="bg-slate-900/60 p-2 md:p-4 flex flex-wrap gap-2 border-b border-slate-800 shrink-0">
+                  <button onClick={() => setActiveTab('CRM')} className={`flex-1 md:flex-none px-4 md:px-8 py-2 md:py-3 rounded-xl md:rounded-2xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center ${activeTab === 'CRM' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}>
+                    <User size={12} className="mr-2" /> Expediente
                   </button>
-                  <button onClick={() => setActiveTab('SCRIPT')} className={`px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center ${activeTab === 'SCRIPT' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}>
-                    <FileText size={14} className="mr-2" /> Guion de Venta
+                  <button onClick={() => setActiveTab('SCRIPT')} className={`flex-1 md:flex-none px-4 md:px-8 py-2 md:py-3 rounded-xl md:rounded-2xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center ${activeTab === 'SCRIPT' ? 'bg-blue-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}>
+                    <FileText size={12} className="mr-2" /> Guion
                   </button>
-                  <button onClick={() => setActiveTab('AI_ASSIST')} className={`px-8 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center ${activeTab === 'AI_ASSIST' ? 'bg-purple-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}>
-                    <BrainCircuit size={14} className="mr-2" /> Neural Copilot
+                  <button onClick={() => setActiveTab('AI_ASSIST')} className={`flex-1 md:flex-none px-4 md:px-8 py-2 md:py-3 rounded-xl md:rounded-2xl text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center ${activeTab === 'AI_ASSIST' ? 'bg-purple-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}>
+                    <BrainCircuit size={12} className="mr-2" /> Copilot
                   </button>
                </div>
 
-               <div className="flex-1 overflow-y-auto p-10 scrollbar-hide">
+               <div className="flex-1 overflow-y-auto p-6 md:p-10 scrollbar-hide">
                   {activeTab === 'CRM' && currentLead && (
-                    <div className="space-y-10 animate-in fade-in duration-500">
-                       <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-8">
-                             <div className="w-24 h-24 rounded-[40px] bg-slate-800 flex items-center justify-center text-4xl font-black text-blue-400 border-4 border-slate-700 shadow-inner">
+                    <div className="space-y-8 md:space-y-10 animate-in fade-in duration-500">
+                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                          <div className="flex items-center space-x-4 md:space-x-8">
+                             <div className="w-16 h-16 md:w-24 md:h-24 rounded-2xl md:rounded-[40px] bg-slate-800 flex items-center justify-center text-2xl md:text-4xl font-black text-blue-400 border-2 md:border-4 border-slate-700 shadow-inner">
                                 {currentLead.name.charAt(0)}
                              </div>
                              <div>
-                                <h4 className="text-4xl font-black text-white uppercase tracking-tighter">{currentLead.name}</h4>
-                                <p className="text-xl font-mono text-slate-500 mt-1">{currentLead.phone}</p>
+                                <h4 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tighter">{currentLead.name}</h4>
+                                <p className="text-base md:text-xl font-mono text-slate-500 mt-1">{currentLead.phone}</p>
                              </div>
                           </div>
-                          <div className="p-6 bg-blue-600/5 border border-blue-500/20 rounded-[32px] text-right">
-                             <p className="text-[9px] font-black text-blue-400 uppercase tracking-[0.2em] mb-1">Score de Propensión</p>
-                             <p className="text-3xl font-black text-white">88%</p>
+                          <div className="p-4 md:p-6 bg-blue-600/5 border border-blue-500/20 rounded-2xl md:rounded-[32px] text-left md:text-right">
+                             <p className="text-[8px] md:text-[9px] font-black text-blue-400 uppercase tracking-[0.2em] mb-1">Score de Propensión</p>
+                             <p className="text-2xl md:text-3xl font-black text-white">88%</p>
                           </div>
                        </div>
                        
-                       <div className="grid grid-cols-2 gap-8">
+                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                           <div className="space-y-2">
                              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest ml-2">Ubicación</label>
-                             <div className="p-6 bg-slate-950/60 border border-slate-800 rounded-3xl flex items-center group hover:border-blue-500/30 transition-all">
-                                <MapPin size={18} className="mr-4 text-blue-500" />
-                                <span className="text-sm font-bold text-white uppercase">{currentLead.city}</span>
+                             <div className="p-4 md:p-6 bg-slate-950/60 border border-slate-800 rounded-2xl md:rounded-3xl flex items-center group hover:border-blue-500/30 transition-all">
+                                <MapPin size={16} className="mr-4 text-blue-500" />
+                                <span className="text-xs md:text-sm font-bold text-white uppercase">{currentLead.city}</span>
                              </div>
                           </div>
                           <div className="space-y-2">
                              <label className="text-[10px] font-black text-slate-600 uppercase tracking-widest ml-2">Dirección</label>
-                             <div className="p-6 bg-slate-950/60 border border-slate-800 rounded-3xl flex items-center group hover:border-emerald-500/30 transition-all">
-                                <Info size={18} className="mr-4 text-emerald-500" />
-                                <span className="text-sm font-bold text-white uppercase">{currentLead.address}</span>
+                             <div className="p-4 md:p-6 bg-slate-950/60 border border-slate-800 rounded-2xl md:rounded-3xl flex items-center group hover:border-emerald-500/30 transition-all">
+                                <Info size={16} className="mr-4 text-emerald-500" />
+                                <span className="text-xs md:text-sm font-bold text-white uppercase">{currentLead.address}</span>
                              </div>
                           </div>
                        </div>
 
-                       <div className="p-8 bg-slate-900 border border-slate-800 rounded-[40px] space-y-4 shadow-inner group focus-within:border-blue-500/40 transition-all">
+                       <div className="p-6 md:p-8 bg-slate-900 border border-slate-800 rounded-3xl md:rounded-[40px] space-y-4 shadow-inner group focus-within:border-blue-500/40 transition-all">
                           <div className="flex justify-between items-center">
                              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center"><MessageSquare size={14} className="mr-2" /> Notas de Gestión</label>
                              <button 
@@ -341,9 +341,9 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
 
                   {activeTab === 'SCRIPT' && currentLead && (
                     <div className="animate-in slide-in-from-right-4 duration-500">
-                       <div className="p-10 glass rounded-[48px] border border-blue-500/20 bg-blue-600/5 relative overflow-hidden group shadow-inner">
-                          <Quote size={80} className="absolute -top-4 -right-4 text-blue-500/10 group-hover:scale-110 transition-transform" />
-                          <div className="relative z-10 text-xl text-slate-200 leading-relaxed font-medium space-y-6">
+                       <div className="p-6 md:p-10 glass rounded-[32px] md:rounded-[48px] border border-blue-500/20 bg-blue-600/5 relative overflow-hidden group shadow-inner">
+                          <Quote size={40} className="md:w-20 md:h-20 absolute -top-2 -right-2 md:-top-4 md:-right-4 text-blue-500/10 group-hover:scale-110 transition-transform" />
+                          <div className="relative z-10 text-base md:text-xl text-slate-200 leading-relaxed font-medium space-y-4 md:space-y-6">
                              {renderScript(currentLead.script).split('\n').map((para: string, i: number) => (
                                <p key={i} dangerouslySetInnerHTML={{ __html: para.replace(/\*\*(.*?)\*\*/g, '<b class="text-blue-400">$1</b>') }} />
                              ))}
@@ -353,24 +353,24 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
                   )}
 
                   {activeTab === 'AI_ASSIST' && currentLead && (
-                    <div className="space-y-8 animate-in slide-in-from-right-4 duration-500">
-                       <div className="flex items-center justify-between">
+                    <div className="space-y-6 md:space-y-8 animate-in slide-in-from-right-4 duration-500">
+                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                           <div className="flex items-center space-x-4">
-                             <div className="p-3 bg-purple-600/10 rounded-2xl text-purple-400 border border-purple-500/20">
-                                <BrainCircuit size={28} />
+                             <div className="p-2 md:p-3 bg-purple-600/10 rounded-xl md:rounded-2xl text-purple-400 border border-purple-500/20">
+                                <BrainCircuit size={20} className="md:w-7 md:h-7" />
                              </div>
                              <div>
-                                <h4 className="text-xl font-black text-white uppercase tracking-tight">Nexus Neural Copilot</h4>
-                                <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Asistencia Cognitiva v4.8</p>
+                                <h4 className="text-lg md:text-xl font-black text-white uppercase tracking-tight">Nexus Neural Copilot</h4>
+                                <p className="text-[8px] md:text-[10px] text-slate-500 font-bold uppercase tracking-widest">Asistencia Cognitiva v4.8</p>
                              </div>
                           </div>
-                          {isAiThinking && <RefreshCw size={20} className="animate-spin text-purple-400" />}
+                          {isAiThinking && <RefreshCw className="animate-spin text-purple-400 w-4 h-4 md:w-5 md:h-5" />}
                        </div>
 
-                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                          <div className="space-y-6">
-                             <h5 className="text-[11px] font-black text-slate-600 uppercase tracking-[0.3em] ml-2">Manejo de Objeciones</h5>
-                             <div className="grid grid-cols-1 gap-3">
+                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+                          <div className="space-y-4 md:space-y-6">
+                             <h5 className="text-[9px] md:text-[11px] font-black text-slate-600 uppercase tracking-[0.3em] ml-2">Manejo de Objeciones</h5>
+                             <div className="grid grid-cols-1 gap-2 md:gap-3">
                                 {[
                                   { label: 'El precio es muy alto', context: 'Objeción de costo/precio' },
                                   { label: 'Ya tengo otro proveedor', context: 'Competencia activa' },
@@ -380,27 +380,27 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
                                   <button 
                                     key={i}
                                     onClick={() => handleAiConsult(obj.context)}
-                                    className="p-5 bg-slate-900 border border-slate-800 rounded-3xl text-left hover:border-purple-500/50 hover:bg-purple-600/5 transition-all group flex items-center justify-between"
+                                    className="p-4 md:p-5 bg-slate-900 border border-slate-800 rounded-2xl md:rounded-3xl text-left hover:border-purple-500/50 hover:bg-purple-600/5 transition-all group flex items-center justify-between"
                                   >
-                                     <span className="text-xs font-black text-slate-300 group-hover:text-white uppercase tracking-tight">{obj.label}</span>
-                                     <ChevronRight size={16} className="text-slate-700 group-hover:text-purple-400" />
+                                     <span className="text-[10px] md:text-xs font-black text-slate-300 group-hover:text-white uppercase tracking-tight">{obj.label}</span>
+                                     <ChevronRight className="text-slate-700 group-hover:text-purple-400 w-3.5 h-3.5 md:w-4 md:h-4" />
                                   </button>
                                 ))}
                              </div>
                           </div>
 
-                          <div className="space-y-6">
-                             <h5 className="text-[11px] font-black text-slate-600 uppercase tracking-[0.3em] ml-2">Sugerencia Actual</h5>
-                             <div className="p-8 bg-purple-600/10 border-2 border-purple-500/20 rounded-[40px] relative overflow-hidden min-h-[300px] flex flex-col shadow-inner">
-                                <Sparkles size={100} className="absolute -bottom-10 -right-10 text-purple-500/5" />
+                          <div className="space-y-4 md:space-y-6">
+                             <h5 className="text-[9px] md:text-[11px] font-black text-slate-600 uppercase tracking-[0.3em] ml-2">Sugerencia Actual</h5>
+                             <div className="p-6 md:p-8 bg-purple-600/10 border-2 border-purple-500/20 rounded-3xl md:rounded-[40px] relative overflow-hidden min-h-[200px] md:min-h-[300px] flex flex-col shadow-inner">
+                                <Sparkles size={60} className="md:w-[100px] md:h-[100px] absolute -bottom-6 -right-6 md:-bottom-10 md:-right-10 text-purple-500/5" />
                                 {aiSuggestion ? (
-                                  <div className="relative z-10 space-y-6">
-                                     <p className="text-base text-slate-200 font-medium leading-relaxed italic">
+                                  <div className="relative z-10 space-y-4 md:space-y-6">
+                                     <p className="text-sm md:text-base text-slate-200 font-medium leading-relaxed italic">
                                         "{aiSuggestion}"
                                      </p>
                                      <button 
                                       onClick={() => { setNotes(prev => prev + (prev ? "\n" : "") + "[IA Suggestion]: " + aiSuggestion); toast('Copiado a notas.', 'success'); }}
-                                      className="flex items-center space-x-2 text-[10px] font-black text-purple-400 uppercase tracking-widest hover:text-purple-300 transition-colors"
+                                      className="flex items-center space-x-2 text-[9px] md:text-[10px] font-black text-purple-400 uppercase tracking-widest hover:text-purple-300 transition-colors"
                                      >
                                         <Copy size={12} />
                                         <span>Usar en Notas</span>
@@ -408,8 +408,8 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
                                   </div>
                                 ) : (
                                   <div className="flex-1 flex flex-col items-center justify-center opacity-30 text-center space-y-4">
-                                     <Lightbulb size={48} />
-                                     <p className="text-xs font-black uppercase tracking-widest">Esperando interacción para sugerir táctica...</p>
+                                     <Lightbulb size={32} className="md:w-12 md:h-12" />
+                                     <p className="text-[10px] md:text-xs font-black uppercase tracking-widest">Esperando interacción...</p>
                                   </div>
                                 )}
                              </div>
@@ -432,22 +432,22 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
          <div className="col-span-12 lg:col-span-4 flex flex-col space-y-6 min-h-0">
             
             {/* MATRIX DE DISPOSICIONES */}
-            <div className="glass p-8 rounded-[48px] border border-slate-800 flex flex-col space-y-6 shrink-0 shadow-xl">
+            <div className="glass p-6 md:p-8 rounded-[32px] md:rounded-[48px] border border-slate-800 flex flex-col space-y-4 md:space-y-6 shrink-0 shadow-xl">
                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-black text-slate-500 uppercase tracking-widest flex items-center"><ListChecks size={16} className="mr-2 text-blue-500" /> Tipificar</h4>
+                  <h4 className="text-[10px] md:text-xs font-black text-slate-500 uppercase tracking-widest flex items-center"><ListChecks className="mr-2 text-blue-500 w-3.5 h-3.5 md:w-4 md:h-4" /> Tipificar</h4>
                   <div className="flex items-center space-x-2">
                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]"></div>
-                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-tighter">Ready to Save</span>
+                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-tighter">Ready</span>
                   </div>
                </div>
-               <div className="grid grid-cols-2 gap-3 max-h-[300px] overflow-y-auto scrollbar-hide pr-1">
+               <div className="grid grid-cols-2 gap-2 md:gap-3 max-h-[200px] md:max-h-[300px] overflow-y-auto scrollbar-hide pr-1">
                   {MOCK_CALL_CODES.map(code => (
                     <button 
                       key={code.id}
                       onClick={() => { setStatus('WRAPUP'); setCurrentLead(null); setAiSuggestion(""); toast(`Tipificación guardada: ${code.name}`, 'success'); }}
-                      className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-[10px] font-black uppercase tracking-tighter text-white hover:border-blue-500/50 hover:bg-blue-600/5 transition-all active:scale-95 group text-center shadow-inner"
+                      className="p-3 md:p-4 bg-slate-900 border border-slate-800 rounded-xl md:rounded-2xl text-[8px] md:text-[10px] font-black uppercase tracking-tighter text-white hover:border-blue-500/50 hover:bg-blue-600/5 transition-all active:scale-95 group text-center shadow-inner"
                     >
-                       <div className={`w-2 h-2 rounded-full mx-auto mb-2 ${code.isSale ? 'bg-emerald-500 shadow-[0_0_10px_#10b981]' : 'bg-slate-700'}`}></div>
+                       <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full mx-auto mb-1 md:mb-2 ${code.isSale ? 'bg-emerald-500 shadow-[0_0_10px_#10b981]' : 'bg-slate-700'}`}></div>
                        {code.name}
                     </button>
                   ))}
@@ -455,55 +455,54 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
             </div>
 
             {/* CONTROLES DE TELEFONÍA AVANZADA */}
-            <div className="glass flex-1 rounded-[48px] border border-slate-800 p-8 flex flex-col space-y-8 bg-gradient-to-br from-[#0f172a] to-black relative overflow-hidden shadow-2xl">
-               <div className="absolute top-0 right-0 p-8 opacity-5 text-blue-400 pointer-events-none"><Signal size={120} /></div>
+            <div className="glass flex-1 rounded-[32px] md:rounded-[48px] border border-slate-800 p-6 md:p-8 flex flex-col space-y-6 md:space-y-8 bg-gradient-to-br from-[#0f172a] to-black relative overflow-hidden shadow-2xl">
+               <div className="absolute top-0 right-0 p-8 opacity-5 text-blue-400 pointer-events-none hidden md:block"><Signal size={120} /></div>
                
-               <div className="grid grid-cols-2 gap-4 relative z-10">
-                  <button onClick={() => setIsMuted(!isMuted)} className={`p-6 rounded-3xl border-2 transition-all flex flex-col items-center justify-center space-y-2 shadow-xl ${isMuted ? 'bg-rose-600/20 border-rose-500 text-rose-500' : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-white hover:border-blue-500/30'}`}>
-                     {isMuted ? <MicOff size={24} /> : <Mic size={24} />}
-                     <span className="text-[8px] font-black uppercase">Silencio</span>
+               <div className="grid grid-cols-2 gap-3 md:gap-4 relative z-10">
+                  <button onClick={() => setIsMuted(!isMuted)} className={`p-4 md:p-6 rounded-2xl md:rounded-3xl border-2 transition-all flex flex-col items-center justify-center space-y-1 md:space-y-2 shadow-xl ${isMuted ? 'bg-rose-600/20 border-rose-500 text-rose-500' : 'bg-slate-900 border-slate-800 text-slate-500 hover:text-white hover:border-blue-500/30'}`}>
+                     {isMuted ? <MicOff className="w-5 h-5 md:w-6 md:h-6" /> : <Mic className="w-5 h-5 md:w-6 md:h-6" />}
+                     <span className="text-[7px] md:text-[8px] font-black uppercase">Silencio</span>
                   </button>
-                  <button className="p-6 rounded-3xl border-2 bg-slate-900 border-slate-800 text-slate-500 hover:text-blue-400 hover:border-blue-500/40 transition-all flex flex-col items-center justify-center space-y-2 shadow-xl">
-                     <VolumeX size={24} />
-                     <span className="text-[8px] font-black uppercase">Espera</span>
+                  <button className="p-4 md:p-6 rounded-2xl md:rounded-3xl border-2 bg-slate-900 border-slate-800 text-slate-500 hover:text-blue-400 hover:border-blue-500/40 transition-all flex flex-col items-center justify-center space-y-1 md:space-y-2 shadow-xl">
+                     <VolumeX className="w-5 h-5 md:w-6 md:h-6" />
+                     <span className="text-[7px] md:text-[8px] font-black uppercase">Espera</span>
                   </button>
-                  <button className="p-6 rounded-3xl border-2 bg-slate-900 border-slate-800 text-slate-500 hover:text-blue-400 hover:border-blue-500/40 transition-all flex flex-col items-center justify-center space-y-2 shadow-xl">
-                     <ArrowRightLeft size={24} />
-                     <span className="text-[8px] font-black uppercase">Transferir</span>
+                  <button className="p-4 md:p-6 rounded-2xl md:rounded-3xl border-2 bg-slate-900 border-slate-800 text-slate-500 hover:text-blue-400 hover:border-blue-500/40 transition-all flex flex-col items-center justify-center space-y-1 md:space-y-2 shadow-xl">
+                     <ArrowRightLeft className="w-5 h-5 md:w-6 md:h-6" />
+                     <span className="text-[7px] md:text-[8px] font-black uppercase">Transferir</span>
                   </button>
-                  <button className="p-6 rounded-3xl border-2 bg-slate-900 border-slate-800 text-slate-500 hover:text-blue-400 hover:border-blue-500/40 transition-all flex flex-col items-center justify-center space-y-2 shadow-xl">
-                     <Users2 size={24} />
-                     <span className="text-[8px] font-black uppercase">Conferencia</span>
+                  <button className="p-4 md:p-6 rounded-2xl md:rounded-3xl border-2 bg-slate-900 border-slate-800 text-slate-500 hover:text-blue-400 hover:border-blue-500/40 transition-all flex flex-col items-center justify-center space-y-1 md:space-y-2 shadow-xl">
+                     <Users2 className="w-5 h-5 md:w-6 md:h-6" />
+                     <span className="text-[7px] md:text-[8px] font-black uppercase">Conferencia</span>
                   </button>
                </div>
 
-               <div className="space-y-4 pt-4 relative z-10">
+               <div className="space-y-3 md:space-y-4 pt-2 md:pt-4 relative z-10">
                   <button 
                     onClick={() => setIsCallbackModalOpen(true)}
-                    className="w-full py-5 bg-slate-950 border border-slate-800 rounded-2xl flex items-center justify-center space-x-3 text-blue-400 hover:text-blue-300 hover:bg-slate-900 transition-all active:scale-95 group shadow-xl"
+                    className="w-full py-4 md:py-5 bg-slate-950 border border-slate-800 rounded-xl md:rounded-2xl flex items-center justify-center space-x-3 text-blue-400 hover:text-blue-300 hover:bg-slate-900 transition-all active:scale-95 group shadow-xl"
                   >
-                     <Clock size={16} />
-                     <span className="text-[10px] font-black uppercase tracking-widest">Programar Callback</span>
+                     <Clock className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                     <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest">Programar Callback</span>
                   </button>
                   
-                  {/* AI Quick Analysis Shortcut */}
                   <button 
                     onClick={() => handleAiConsult('Analizar audio y detectar compromiso de pago')}
-                    className="w-full py-5 bg-purple-600/10 border border-purple-500/30 rounded-2xl flex items-center justify-center space-x-3 text-purple-400 hover:bg-purple-600/20 transition-all active:scale-95 group shadow-xl"
+                    className="w-full py-4 md:py-5 bg-purple-600/10 border border-purple-500/30 rounded-xl md:rounded-2xl flex items-center justify-center space-x-3 text-purple-400 hover:bg-purple-600/20 transition-all active:scale-95 group shadow-xl"
                   >
-                     <Sparkles size={16} className="animate-pulse" />
-                     <span className="text-[10px] font-black uppercase tracking-widest">Extract AI Commit</span>
+                     <Sparkles className="animate-pulse w-3.5 h-3.5 md:w-4 md:h-4" />
+                     <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest">Extract AI Commit</span>
                   </button>
                </div>
 
-               <div className="mt-auto pt-6 border-t border-slate-800/50 flex items-center justify-between relative z-10">
+               <div className="mt-auto pt-4 md:pt-6 border-t border-slate-800/50 flex items-center justify-between relative z-10">
                   <div className="flex items-center space-x-2">
-                     <Wifi size={14} className="text-emerald-500" />
-                     <span className="text-[8px] font-black text-slate-500 uppercase">Jitter: 0.02ms</span>
+                     <Wifi className="text-emerald-500 w-3 h-3 md:w-3.5 md:h-3.5" />
+                     <span className="text-[7px] md:text-[8px] font-black text-slate-500 uppercase">Jitter: 0.02ms</span>
                   </div>
                   <div className="flex items-center space-x-2">
-                     <ShieldCheck size={14} className="text-blue-500" />
-                     <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest">L7 Encrypted</span>
+                     <ShieldCheck className="text-blue-500 w-3 h-3 md:w-3.5 md:h-3.5" />
+                     <span className="text-[7px] md:text-[8px] font-black text-slate-500 uppercase tracking-widest">L7 Encrypted</span>
                   </div>
                </div>
             </div>
@@ -512,44 +511,44 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
 
       {/* MODAL DE DIALER MANUAL REAL */}
       {isDialerOpen && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-300">
-           <div className="relative w-full max-w-md glass rounded-[64px] border border-slate-700/50 shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-300">
-              <div className="p-10 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-300">
+           <div className="relative w-full max-w-md glass rounded-[32px] md:rounded-[64px] border border-slate-700/50 shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-300 max-h-[90vh]">
+              <div className="p-6 md:p-10 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between shrink-0">
                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-400 border border-blue-500/20">
-                       <Smartphone size={24} />
+                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl bg-blue-600/10 flex items-center justify-center text-blue-400 border border-blue-500/20">
+                       <Smartphone className="w-5 h-5 md:w-6 md:h-6" />
                     </div>
                     <div>
-                       <h3 className="text-xl font-black text-white uppercase tracking-tighter">Manual Dialer</h3>
-                       <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Llamada Real vía ESL</p>
+                       <h3 className="text-lg md:text-xl font-black text-white uppercase tracking-tighter">Manual Dialer</h3>
+                       <p className="text-[8px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest">Llamada Real vía ESL</p>
                     </div>
                  </div>
-                 <button onClick={() => setIsDialerOpen(false)} className="p-3 bg-slate-800 hover:bg-rose-500/10 rounded-xl text-slate-400 hover:text-rose-500 transition-all"><X size={20} /></button>
+                 <button onClick={() => setIsDialerOpen(false)} className="p-2 md:p-3 bg-slate-800 hover:bg-rose-500/10 rounded-xl text-slate-400 hover:text-rose-500 transition-all"><X className="w-4.5 h-4.5 md:w-5 md:h-5" /></button>
               </div>
 
-              <div className="p-10 space-y-8">
-                 <div className="space-y-4">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-2">Número de Destino</label>
+              <div className="p-6 md:p-10 space-y-6 md:space-y-8 overflow-y-auto">
+                 <div className="space-y-3 md:space-y-4">
+                    <label className="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-2">Número de Destino</label>
                     <div className="relative">
-                       <Phone className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-600" size={20} />
+                       <Phone className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-600 w-4.5 h-4.5 md:w-5 md:h-5" />
                        <input 
                          type="text" 
                          value={dialNumber}
                          onChange={e => setDialNumber(e.target.value)}
-                         className="w-full bg-slate-950 border-2 border-slate-800 rounded-[28px] pl-16 pr-8 py-5 text-xl text-white font-mono font-black outline-none focus:border-blue-500 shadow-inner" 
+                         className="w-full bg-slate-950 border-2 border-slate-800 rounded-2xl md:rounded-[28px] pl-12 md:pl-16 pr-6 md:pr-8 py-4 md:py-5 text-lg md:text-xl text-white font-mono font-black outline-none focus:border-blue-500 shadow-inner" 
                          placeholder="Ej: 13055550122" 
                        />
                     </div>
                  </div>
 
-                 <div className="space-y-4">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-2">Gateway SIP (Opcional)</label>
+                 <div className="space-y-3 md:space-y-4">
+                    <label className="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-2">Gateway SIP (Opcional)</label>
                     <div className="relative">
-                       <Globe className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
+                       <Globe className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-600 w-4 h-4 md:w-[18px] md:h-[18px]" />
                        <select 
                          value={selectedGateway}
                          onChange={e => setSelectedGateway(e.target.value)}
-                         className="w-full bg-slate-950 border-2 border-slate-800 rounded-[28px] pl-16 pr-8 py-5 text-sm text-white font-bold outline-none focus:border-blue-500 shadow-inner appearance-none"
+                         className="w-full bg-slate-950 border-2 border-slate-800 rounded-2xl md:rounded-[28px] pl-12 md:pl-16 pr-6 md:pr-8 py-4 md:py-5 text-xs md:text-sm text-white font-black outline-none focus:border-blue-500 appearance-none shadow-inner"
                        >
                           <option value="">Llamada Interna / Eco</option>
                           {MOCK_TRUNKS.map(t => (
@@ -557,7 +556,7 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
                           ))}
                        </select>
                     </div>
-                    <p className="text-[9px] text-slate-500 font-bold uppercase italic px-2">
+                    <p className="text-[8px] md:text-[9px] text-slate-500 font-bold uppercase italic px-2">
                        * Si no selecciona gateway, se realizará una prueba de eco a su extensión.
                     </p>
                  </div>
@@ -565,9 +564,9 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
                  <button 
                    onClick={performRealDial}
                    disabled={isDialing}
-                   className="w-full bg-blue-600 hover:bg-blue-500 text-white py-6 rounded-[32px] font-black text-xs uppercase tracking-[0.4em] shadow-xl shadow-blue-600/30 transition-all active:scale-95 flex items-center justify-center space-x-4 disabled:opacity-50"
+                   className="w-full bg-blue-600 hover:bg-blue-500 text-white py-5 md:py-6 rounded-2xl md:rounded-[32px] font-black text-xs md:text-sm uppercase tracking-[0.3em] shadow-xl shadow-blue-600/30 transition-all active:scale-95 flex items-center justify-center space-x-3 md:space-x-4 disabled:opacity-50"
                  >
-                    {isDialing ? <RefreshCw className="animate-spin" size={20} /> : <Phone size={20} />}
+                    {isDialing ? <RefreshCw className="animate-spin w-4.5 h-4.5 md:w-5 md:h-5" /> : <Phone className="w-4.5 h-4.5 md:w-5 md:h-5" />}
                     <span>{isDialing ? 'Originando...' : 'Llamar Ahora'}</span>
                  </button>
               </div>
@@ -577,98 +576,98 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
 
       {/* MODAL DE PROGRAMACIÓN DE CALLBACK */}
       {isCallbackModalOpen && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-300">
-           <div className="relative w-full max-w-xl glass rounded-[64px] border border-slate-700/50 shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6 bg-slate-950/90 backdrop-blur-xl animate-in fade-in duration-300">
+           <div className="relative w-full max-w-xl glass rounded-[32px] md:rounded-[64px] border border-slate-700/50 shadow-2xl overflow-hidden flex flex-col animate-in zoom-in-95 duration-300 max-h-[90vh]">
               
               {isScheduling && (
-                 <div className="absolute inset-0 z-[210] bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center space-y-6 text-center p-10">
-                    <RefreshCw className="text-blue-500 animate-spin" size={48} />
-                    <h3 className="text-2xl font-black text-white uppercase tracking-[0.2em]">Programando Re-contacto</h3>
-                    <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest animate-pulse">Escribiendo en el plano de control...</p>
+                 <div className="absolute inset-0 z-[210] bg-slate-950/80 backdrop-blur-md flex flex-col items-center justify-center space-y-4 md:space-y-6 text-center p-6 md:p-10">
+                    <RefreshCw className="text-blue-500 animate-spin w-8 h-8 md:w-12 md:h-12" />
+                    <h3 className="text-lg md:text-2xl font-black text-white uppercase tracking-[0.2em]">Programando Re-contacto</h3>
+                    <p className="text-slate-500 text-[8px] md:text-[10px] font-black uppercase tracking-widest animate-pulse">Escribiendo en el plano de control...</p>
                  </div>
               )}
 
-              <div className="p-10 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between shrink-0 shadow-lg">
-                 <div className="flex items-center space-x-6">
-                    <div className="w-16 h-16 rounded-[24px] bg-blue-600/10 flex items-center justify-center text-blue-400 border border-blue-500/20 shadow-inner">
-                       <Clock size={32} />
+              <div className="p-6 md:p-10 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between shrink-0 shadow-lg">
+                 <div className="flex items-center space-x-4 md:space-x-6">
+                    <div className="w-10 h-10 md:w-16 md:h-16 rounded-xl md:rounded-[24px] bg-blue-600/10 flex items-center justify-center text-blue-400 border border-blue-500/20 shadow-inner">
+                       <Clock className="w-5 h-5 md:w-8 md:h-8" />
                     </div>
                     <div>
-                       <h3 className="text-2xl font-black text-white uppercase tracking-tighter">Scheduled Callback</h3>
-                       <p className="text-[11px] font-black text-slate-500 uppercase tracking-[0.3em] mt-1">Aprovisionamiento de Rellamada</p>
+                       <h3 className="text-lg md:text-2xl font-black text-white uppercase tracking-tighter">Scheduled Callback</h3>
+                       <p className="text-[8px] md:text-[11px] font-black text-slate-500 uppercase tracking-[0.3em] mt-1">Aprovisionamiento</p>
                     </div>
                  </div>
-                 <button onClick={() => setIsCallbackModalOpen(false)} className="p-4 bg-slate-800 hover:bg-rose-500/10 rounded-[20px] text-slate-400 hover:text-rose-500 transition-all border border-slate-700 shadow-xl"><X size={24} /></button>
+                 <button onClick={() => setIsCallbackModalOpen(false)} className="p-2 md:p-4 bg-slate-800 hover:bg-rose-500/10 rounded-xl md:rounded-[20px] text-slate-400 hover:text-rose-500 transition-all border border-slate-700 shadow-xl"><X className="w-4.5 h-4.5 md:w-6 md:h-6" /></button>
               </div>
 
-              <div className="p-12 space-y-10">
-                 <div className="grid grid-cols-2 gap-8">
-                    <div className="space-y-4">
-                       <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-2">Fecha</label>
+              <div className="p-6 md:p-12 space-y-6 md:space-y-10 overflow-y-auto">
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+                    <div className="space-y-2 md:space-y-4">
+                       <label className="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-2">Fecha</label>
                        <div className="relative">
-                          <Calendar className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
+                          <Calendar className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-600 w-4 h-4 md:w-[18px] md:h-[18px]" />
                           <input 
                             type="date" 
                             value={callbackData.date}
                             onChange={e => setCallbackData({...callbackData, date: e.target.value})}
-                            className="w-full bg-slate-950 border-2 border-slate-800 rounded-[28px] pl-16 pr-6 py-5 text-xs text-white font-bold outline-none focus:border-blue-500 shadow-inner appearance-none" 
+                            className="w-full bg-slate-950 border-2 border-slate-800 rounded-2xl md:rounded-[28px] pl-12 md:pl-16 pr-4 md:pr-6 py-4 md:py-5 text-[10px] md:text-xs text-white font-bold outline-none focus:border-blue-500 shadow-inner appearance-none" 
                           />
                        </div>
                     </div>
-                    <div className="space-y-4">
-                       <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-2">Hora (UTC)</label>
+                    <div className="space-y-2 md:space-y-4">
+                       <label className="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-2">Hora (UTC)</label>
                        <div className="relative">
-                          <Clock className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-600" size={18} />
+                          <Clock className="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-slate-600 w-4 h-4 md:w-[18px] md:h-[18px]" />
                           <input 
                             type="time" 
                             value={callbackData.time}
                             onChange={e => setCallbackData({...callbackData, time: e.target.value})}
-                            className="w-full bg-slate-950 border-2 border-slate-800 rounded-[28px] pl-16 pr-8 py-5 text-xs text-white font-bold outline-none focus:border-blue-500 shadow-inner appearance-none" 
+                            className="w-full bg-slate-950 border-2 border-slate-800 rounded-2xl md:rounded-[28px] pl-12 md:pl-16 pr-4 md:pr-8 py-4 md:py-5 text-[10px] md:text-xs text-white font-bold outline-none focus:border-blue-500 shadow-inner appearance-none" 
                           />
                        </div>
                     </div>
                  </div>
 
-                 <div className="space-y-4">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-2">Propiedad de la Llamada</label>
-                    <div className="grid grid-cols-2 gap-4 p-2 bg-slate-950 border border-slate-800 rounded-[32px] shadow-inner">
+                 <div className="space-y-2 md:space-y-4">
+                    <label className="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-2">Propiedad</label>
+                    <div className="grid grid-cols-2 gap-2 md:gap-4 p-1.5 md:p-2 bg-slate-950 border border-slate-800 rounded-2xl md:rounded-[32px] shadow-inner">
                        <button 
                          onClick={() => setCallbackData({...callbackData, type: 'PERSONAL'})}
-                         className={`py-4 rounded-[24px] text-[9px] font-black uppercase tracking-widest transition-all ${callbackData.type === 'PERSONAL' ? 'bg-blue-600 text-white shadow-xl' : 'text-slate-600 hover:text-slate-400'}`}
+                         className={`py-3 md:py-4 rounded-xl md:rounded-[24px] text-[8px] md:text-[9px] font-black uppercase tracking-widest transition-all ${callbackData.type === 'PERSONAL' ? 'bg-blue-600 text-white shadow-xl' : 'text-slate-600 hover:text-slate-400'}`}
                        >
-                          Sólo yo (User Specific)
+                          Sólo yo
                        </button>
                        <button 
                          onClick={() => setCallbackData({...callbackData, type: 'ANY_AGENT'})}
-                         className={`py-4 rounded-[24px] text-[9px] font-black uppercase tracking-widest transition-all ${callbackData.type === 'ANY_AGENT' ? 'bg-indigo-600 text-white shadow-xl' : 'text-slate-600 hover:text-slate-400'}`}
+                         className={`py-3 md:py-4 rounded-xl md:rounded-[24px] text-[8px] md:text-[9px] font-black uppercase tracking-widest transition-all ${callbackData.type === 'ANY_AGENT' ? 'bg-indigo-600 text-white shadow-xl' : 'text-slate-600 hover:text-slate-400'}`}
                        >
                           Cualquier Agente
                        </button>
                     </div>
                  </div>
 
-                 <div className="space-y-4">
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-2">Notas de Seguimiento</label>
+                 <div className="space-y-2 md:space-y-4">
+                    <label className="text-[9px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest ml-2">Notas</label>
                     <textarea 
                       value={callbackData.notes}
                       onChange={e => setCallbackData({...callbackData, notes: e.target.value})}
-                      className="w-full h-32 bg-slate-950 border-2 border-slate-800 rounded-[32px] p-8 text-sm text-slate-300 font-medium outline-none focus:border-blue-500 shadow-inner leading-relaxed resize-none"
-                      placeholder="Indique puntos clave para la rellamada..."
+                      className="w-full h-24 md:h-32 bg-slate-950 border-2 border-slate-800 rounded-2xl md:rounded-[32px] p-4 md:p-8 text-xs md:text-sm text-slate-300 font-medium outline-none focus:border-blue-500 shadow-inner leading-relaxed resize-none"
+                      placeholder="Indique puntos clave..."
                     />
                  </div>
               </div>
 
-              <div className="p-10 bg-slate-900/60 border-t border-slate-800 flex justify-end items-center space-x-6">
-                 <div className="flex items-center space-x-3 text-[10px] font-black text-slate-500 uppercase tracking-widest italic opacity-60">
-                    <ShieldCheck size={18} className="text-emerald-500" />
+              <div className="p-6 md:p-10 bg-slate-900/60 border-t border-slate-800 flex flex-col sm:flex-row justify-end items-center gap-4 md:gap-6">
+                 <div className="flex items-center space-x-3 text-[8px] md:text-[10px] font-black text-slate-500 uppercase tracking-widest italic opacity-60">
+                    <ShieldCheck className="text-emerald-500 w-3.5 h-3.5 md:w-4.5 md:h-4.5" />
                     <span>Inyección en Hopper v4.8</span>
                  </div>
                  <button 
                    onClick={handleScheduleCallback}
                    disabled={isScheduling}
-                   className="bg-blue-600 hover:bg-blue-500 text-white px-12 py-5 rounded-[28px] font-black text-xs uppercase tracking-[0.2em] shadow-xl shadow-blue-600/30 transition-all active:scale-95 flex items-center space-x-4 group"
+                   className="w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white px-8 md:px-12 py-4 md:py-5 rounded-xl md:rounded-[28px] font-black text-[10px] md:text-xs uppercase tracking-[0.2em] shadow-xl shadow-blue-600/30 transition-all active:scale-95 flex items-center justify-center space-x-3 md:space-x-4 group"
                  >
-                    <CheckIcon size={20} className="group-hover:scale-110 transition-transform" />
+                    <CheckIcon className="group-hover:scale-110 transition-transform w-4 h-4 md:w-5 md:h-5" />
                     <span>Confirmar Agenda</span>
                  </button>
               </div>

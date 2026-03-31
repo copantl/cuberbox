@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # =============================================================================
-# CUBERBOX PRO - NEXUS INFRASTRUCTURE ORCHESTRATOR V4.7.9
+# NEXUS CORE - INFRASTRUCTURE ORCHESTRATOR V4.7.9
 # Soporte: Debian 12 (Bookworm) / Debian 13 (Trixie)
 # Componentes: FreeSwitch 1.10, PostgreSQL 16, Go 1.22, HAProxy, Keepalived
 # =============================================================================
@@ -33,7 +33,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # 2. Captura de Datos Interactiva
-echo -e "${CYAN}[CONFIG] Configuración del Nodo Titan${NC}"
+echo -e "${CYAN}[CONFIG] Configuración del Nodo Nexus${NC}"
 read -p "Dominio/FQDN para SSL (ej: sip.empresa.com): " CBX_DOMAIN
 read -p "Token SignalWire (PAT): " SW_TOKEN
 read -p "IP Virtual (VIP) para el Clúster HA: " HA_VIP
@@ -113,7 +113,7 @@ apt-get install -y freeswitch-all \
 
 # Configuración Base de Datos y ESL
 ESL_PASS=$(openssl rand -base64 16)
-DB_PASS="TitanPass2024!"
+DB_PASS="NexusPass2026!"
 
 echo -e "${BLUE}[4/7] Configurando Event Socket Layer (ESL)...${NC}"
 cat <<EOF > /etc/freeswitch/autoload_configs/event_socket.conf.xml
@@ -126,8 +126,8 @@ cat <<EOF > /etc/freeswitch/autoload_configs/event_socket.conf.xml
 </configuration>
 EOF
 
-sudo -u postgres psql -c "CREATE USER cuberbox_admin WITH PASSWORD '$DB_PASS';" || true
-sudo -u postgres psql -c "CREATE DATABASE cuberbox_db OWNER cuberbox_admin;" || true
+sudo -u postgres psql -c "CREATE USER nexus_admin WITH PASSWORD '$DB_PASS';" || true
+sudo -u postgres psql -c "CREATE DATABASE nexus_db OWNER nexus_admin;" || true
 
 # 6. Generación de Capa SSL (Nexus Shield)
 echo -e "${BLUE}[4/7] Generando certificados SSL para WebRTC/WSS...${NC}"
@@ -135,7 +135,7 @@ mkdir -p /etc/freeswitch/tls
 openssl req -x509 -nodes -days 3650 -newkey rsa:4096 \
     -keyout /etc/freeswitch/tls/wss.key \
     -out /etc/freeswitch/tls/wss.crt \
-    -subj "/C=US/ST=Tech/L=Cloud/O=Cuberbox/CN=$CBX_DOMAIN"
+    -subj "/C=US/ST=Tech/L=Cloud/O=Nexus/CN=$CBX_DOMAIN"
 
 cat /etc/freeswitch/tls/wss.crt /etc/freeswitch/tls/wss.key > /etc/freeswitch/tls/wss.pem
 chown -R freeswitch:freeswitch /etc/freeswitch/tls
@@ -164,23 +164,23 @@ EOF
 
 # 8. Compilación del Backend Go (Nexus Connector)
 echo -e "${BLUE}[6/7] Preparando Backend Go de Control...${NC}"
-mkdir -p /opt/cuberbox/bin
+mkdir -p /opt/nexus/bin
 
 # Si existe la carpeta backend, la usamos. Si no, creamos un dummy.
-if [ -d "/opt/cuberbox/backend" ]; then
+if [ -d "/opt/nexus/backend" ]; then
     echo -e "${CYAN}[INFO] Detectada carpeta backend, compilando desde ahí...${NC}"
-    cd /opt/cuberbox/backend && go build -o /usr/local/bin/cuberbox-connector main.go
+    cd /opt/nexus/backend && go build -o /usr/local/bin/nexus-connector main.go
 else
     echo -e "${CYAN}[INFO] No se detectó carpeta backend, creando dummy...${NC}"
-    cat <<EOF > /opt/cuberbox/main.go
+    cat <<EOF > /opt/nexus/main.go
 package main
 import "fmt"
-func main() { fmt.Println("Cuberbox Pro Go Backend v4.7.9 - Operational") }
+func main() { fmt.Println("Nexus Core Go Backend v4.7.9 - Operational") }
 EOF
-    cd /opt/cuberbox && go build -o /usr/local/bin/cuberbox-connector main.go
+    cd /opt/nexus && go build -o /usr/local/bin/nexus-connector main.go
 fi
 
-chmod +x /usr/local/bin/cuberbox-connector
+chmod +x /usr/local/bin/nexus-connector
 
 # 9. Finalización y Optimización del Kernel
 echo -e "${BLUE}[7/7] Sintonizando parámetros del Kernel para VoIP...${NC}"
@@ -198,7 +198,7 @@ systemctl restart keepalived
 systemctl restart haproxy
 
 echo -e "\n${BOLD}${GREEN}===================================================="
-echo "   CUBERBOX PRO v4.7.9 INSTALADO CORRECTAMENTE"
+echo "   NEXUS CORE v4.7.9 INSTALADO CORRECTAMENTE"
 echo "===================================================="
 echo -e "${NC}"
 echo -e "Virtual IP (VIP): ${BOLD}$HA_VIP${NC}"

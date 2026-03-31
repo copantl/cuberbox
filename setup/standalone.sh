@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # ==============================================================================
-# CUBERBOX PRO - STANDALONE INSTALLER
+# NEXUS CORE - STANDALONE INSTALLER
 # ==============================================================================
 
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
+YELLOW='\1;33m'
 BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 BOLD='\033[1m'
@@ -47,9 +47,9 @@ if [ ! -f "$ENV_FILE" ]; then
     echo "GEMINI_API_KEY=$G_KEY" > "$ENV_FILE"
     echo "DB_HOST=localhost" >> "$ENV_FILE"
     echo "DB_PORT=5432" >> "$ENV_FILE"
-    echo "DB_USER=cuberbox_admin" >> "$ENV_FILE"
-    echo "DB_PASSWORD=TitanPass2024!" >> "$ENV_FILE"
-    echo "DB_NAME=cuberbox_db" >> "$ENV_FILE"
+    echo "DB_USER=nexus_admin" >> "$ENV_FILE"
+    echo "DB_PASSWORD=NexusPass2026!" >> "$ENV_FILE"
+    echo "DB_NAME=nexus_db" >> "$ENV_FILE"
     echo "ESL_HOST=127.0.0.1" >> "$ENV_FILE"
     echo "ESL_PORT=8021" >> "$ENV_FILE"
     echo "ESL_PASSWORD=ClueCon" >> "$ENV_FILE"
@@ -63,15 +63,15 @@ print_success "Módulos instalados."
 # 4. DB
 if [ -f "$SCHEMA_FILE" ] && command -v psql >/dev/null 2>&1; then
     print_status "Inicializando base de datos local..."
-    export PGPASSWORD="TitanPass2024!"
-    if psql -h localhost -U cuberbox_admin -d cuberbox_db -f "$SCHEMA_FILE" >> "$LOG_FILE" 2>&1; then
+    export PGPASSWORD="NexusPass2026!"
+    if psql -h localhost -U nexus_admin -d nexus_db -f "$SCHEMA_FILE" >> "$LOG_FILE" 2>&1; then
         print_success "Esquema de base de datos inicializado."
         
         # Seed Production Data
         if [ -f "./setup/seed_production.sql" ]; then
             read -p "¿Desea cargar los datos iniciales de producción (admin, campañas base)? (s/n): " seed_db
             if [[ "$seed_db" =~ ^[Ss]$ ]]; then
-                if psql -h localhost -U cuberbox_admin -d cuberbox_db -f "./setup/seed_production.sql" >> "$LOG_FILE" 2>&1; then
+                if psql -h localhost -U nexus_admin -d nexus_db -f "./setup/seed_production.sql" >> "$LOG_FILE" 2>&1; then
                     print_success "Datos de producción cargados correctamente."
                 else
                     print_error "Error al cargar datos de producción."

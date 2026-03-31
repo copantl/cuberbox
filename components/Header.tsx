@@ -58,7 +58,7 @@ const Header: React.FC<HeaderProps> = ({ user, currentTheme, onThemeToggle, onLo
 
         <div className="h-4 w-[1px] bg-white/10 mx-2 hidden xl:block"></div>
 
-        <div className="flex items-center bg-[var(--bg-glass)] rounded-xl px-4 py-2 border border-[var(--border-glow)] w-72 group focus-within:border-blue-500/30 transition-all">
+        <div className="flex items-center bg-[var(--bg-glass)] rounded-xl px-4 py-2 border border-[var(--border-glow)] w-32 md:w-72 group focus-within:border-blue-500/30 transition-all">
           <Search size={14} className="text-slate-600 group-focus-within:text-blue-500" />
           <input 
             type="text" 

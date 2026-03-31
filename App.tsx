@@ -20,6 +20,7 @@ import AIStudio from './components/AIStudio';
 import Reports from './components/Reports';
 import Settings from './components/Settings';
 import UserManual from './components/UserManual';
+import ManualsViewer from './components/ManualsViewer';
 import RequirementsSpec from './components/RequirementsSpec';
 import Instructions from './components/Instructions';
 import ListsManagement from './components/ListsManagement';
@@ -92,7 +93,7 @@ const AppContent: React.FC = () => {
           <div className={`flex h-screen overflow-hidden bg-[var(--bg-main)] text-[var(--ink)] selection:bg-blue-500/30 transition-colors duration-500`}>
             <Sidebar isOpen={sidebarOpen} toggle={() => setSidebarOpen(!sidebarOpen)} role={user?.role || UserRole.AGENT} userLevel={user?.userLevel || 1} />
             
-            <main className={`flex-1 flex flex-col transition-all duration-500 ease-in-out relative ${sidebarOpen ? 'ml-64' : 'ml-20'}`}>
+            <main className={`flex-1 flex flex-col transition-all duration-500 ease-in-out relative ${sidebarOpen ? 'lg:ml-64' : 'lg:ml-20'} ml-0`}>
               <Header 
                 user={user || MOCK_USER} 
                 currentTheme={theme} 
@@ -100,7 +101,7 @@ const AppContent: React.FC = () => {
                 onLogout={logout} 
               />
               
-              <div className="flex-1 overflow-y-auto p-8 scrollbar-hide relative">
+              <div className="flex-1 overflow-y-auto p-4 md:p-8 scrollbar-hide relative">
                 {/* Background Grid Accent */}
                 <div className="fixed inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }}></div>
                 
@@ -164,6 +165,7 @@ const AppContent: React.FC = () => {
                     <Route path="/setup-wizard" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={9} userRole={user?.role} allowedRoles={[UserRole.ADMIN]}><SystemSetupWizard /></AccessControl>} />
                     <Route path="/requirements" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={1} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER, UserRole.SOCIAL_MEDIA_MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR]}><RequirementsSpec /></AccessControl>} />
                     <Route path="/manual" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={1} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER, UserRole.SOCIAL_MEDIA_MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR]}><UserManual /></AccessControl>} />
+                    <Route path="/manuals-viewer" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={1} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER, UserRole.SOCIAL_MEDIA_MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR]}><ManualsViewer /></AccessControl>} />
                     <Route path="/instructions" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={9} userRole={user?.role} allowedRoles={[UserRole.ADMIN]}><Instructions /></AccessControl>} />
                     
                     <Route path="*" element={<Navigate to="/" />} />

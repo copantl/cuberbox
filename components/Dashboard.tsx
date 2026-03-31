@@ -55,7 +55,7 @@ const colorMap: Record<string, { bg: string, text: string, border: string }> = {
 const StatCard = ({ title, value, icon: Icon, trend, color, subtitle }: any) => {
   const styles = colorMap[color] || colorMap.blue;
   return (
-    <div className="bg-bg-card p-8 rounded-3xl flex flex-col justify-between border border-border-main relative overflow-hidden group hover:border-accent-primary/20 transition-all duration-500 shadow-2xl">
+    <div className="bg-bg-card p-4 md:p-8 rounded-3xl flex flex-col justify-between border border-border-main relative overflow-hidden group hover:border-accent-primary/20 transition-all duration-500 shadow-2xl">
       <div className="absolute top-0 right-0 p-6 opacity-[0.02] group-hover:opacity-[0.05] transition-opacity duration-700 pointer-events-none">
         <Icon size={100} />
       </div>
@@ -410,7 +410,7 @@ const Dashboard: React.FC = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={dispositionData} layout="vertical" margin={{ left: -20 }}>
                     <XAxis type="number" hide />
-                    <YAxis dataKey="name" type="category" stroke="var(--text-secondary)" fontSize={8} width={100} axisLine={false} tickLine={false} tick={{fontWeight: 800, textTransform: 'uppercase'}} />
+                    <YAxis dataKey="name" type="category" stroke="var(--text-secondary)" fontSize={8} width={100} axisLine={false} tickLine={false} tick={{fontWeight: 800, style: { textTransform: 'uppercase' }}} />
                     <Tooltip cursor={{fill: 'rgba(255,255,255,0.02)'}} contentStyle={{backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-main)', borderRadius: '12px'}} />
                     <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={18}>
                       {dispositionData.map((entry, index) => <Cell key={index} fill={entry.color} />)}

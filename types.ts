@@ -68,6 +68,7 @@ export interface User {
   userLevel: number;
   groupId?: string;
   mfaEnabled?: boolean;
+  authMethod?: 'LOCAL' | 'LDAP' | 'OIDC';
 }
 
 export type ChannelType = 'WHATSAPP' | 'TIKTOK' | 'FACEBOOK' | 'INSTAGRAM' | 'SMS';
@@ -239,7 +240,9 @@ export type SyncStatus = 'ONLINE' | 'OFFLINE' | 'PROVISIONING' | 'REPLICATING' |
 
 export interface ClusterNode {
   id: string;
+  name: string;
   ip: string;
+  sshPort?: number;
   role: NodeRole;
   status: SyncStatus;
   cpu: number;

@@ -23,8 +23,8 @@ async function startServer() {
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT || '5432'),
     user: process.env.DB_USER || 'cuberbox_admin',
-    password: process.env.DB_PASSWORD || 'TitanPass2024!',
-    database: process.env.DB_NAME || 'cuberbox_db',
+    password: process.env.DB_PASSWORD || 'TitanPass2026!',
+    database: process.env.DB_NAME || 'nexus_db',
     max: 20,
     idleTimeoutMillis: 30000,
     connectionTimeoutMillis: 2000,
@@ -109,10 +109,22 @@ async function startServer() {
 
   // Serve setup scripts directly
   app.use('/setup', express.static(path.join(__dirname, 'setup')));
+  
+  // Serve manuals and ISO files
+  app.use('/manuals', express.static(path.join(__dirname, 'manuals')));
+  app.use('/iso', express.static(path.join(__dirname, 'iso')));
+  
+  // Direct download for the installer and ISO builder
+  app.get('/nexus-installer.sh', (req, res) => {
+    res.sendFile(path.join(__dirname, 'nexus-installer.sh'));
+  });
+  app.get('/build-iso.sh', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build-iso.sh'));
+  });
 
   // Keycloak Middleware
-  const keycloakUrl = process.env.VITE_KEYCLOAK_URL || 'https://keycloak.cuberbox.com';
-  const keycloakRealm = process.env.VITE_KEYCLOAK_REALM || 'cuberbox';
+  const keycloakUrl = process.env.VITE_KEYCLOAK_URL || 'https://keycloak.nexus-core.com';
+  const keycloakRealm = process.env.VITE_KEYCLOAK_REALM || 'nexus-core';
 
   const client = jwksClient({
     jwksUri: `${keycloakUrl}/realms/${keycloakRealm}/protocol/openid-connect/certs`
@@ -486,7 +498,7 @@ async function startServer() {
     const token = req.query["hub.verify_token"];
     const challenge = req.query["hub.challenge"];
 
-    const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || 'cuberbox_token_2024';
+    const verifyToken = process.env.WHATSAPP_VERIFY_TOKEN || 'nexus_token_2026';
 
     if (mode && token) {
       if (mode === "subscribe" && token === verifyToken) {

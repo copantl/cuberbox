@@ -1,9 +1,8 @@
 #!/bin/bash
 
 # =============================================================================
-# CUBERBOX PRO - FREESWITCH NEXUS INSTALLER V4.7.9
+# NEXUS CORE - FREESWITCH INSTALLER V4.7.9
 # Soporte: Debian 11 (Bullseye) / Debian 12 (Bookworm)
-# Reference: PieceByte Architecture Standard (blog.piecebyte.com)
 # =============================================================================
 
 set -e
@@ -128,39 +127,39 @@ apt-key del ACCC4CF8 || true
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql-archive-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/postgresql-archive-keyring.gpg] http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list
 apt-get update && apt-get install -y postgresql-16
-sudo -u postgres psql -c "CREATE USER cuberbox_admin WITH PASSWORD 'TitanPass2024!';" || true
-sudo -u postgres psql -c "CREATE DATABASE cuberbox_db OWNER cuberbox_admin;" || true
+sudo -u postgres psql -c "CREATE USER nexus_admin WITH PASSWORD 'NexusPass2026!';" || true
+sudo -u postgres psql -c "CREATE DATABASE nexus_db OWNER nexus_admin;" || true
 
 # 8. Compilación del Backend Go (Nexus Connector)
 echo -e "${BLUE}[5/5] Preparando Backend Go de Control...${NC}"
-mkdir -p /opt/cuberbox/bin
+mkdir -p /opt/nexus/bin
 
 # Si existe la carpeta backend, la usamos. Si no, creamos un dummy.
-if [ -d "/opt/cuberbox/backend" ]; then
+if [ -d "/opt/nexus/backend" ]; then
     echo -e "${CYAN}[INFO] Detectada carpeta backend, compilando desde ahí...${NC}"
-    cd /opt/cuberbox/backend && go build -o /usr/local/bin/cuberbox-connector main.go
+    cd /opt/nexus/backend && go build -o /usr/local/bin/nexus-connector main.go
 else
     echo -e "${CYAN}[INFO] No se detectó carpeta backend, creando dummy...${NC}"
-    cat <<EOF > /opt/cuberbox/main.go
+    cat <<EOF > /opt/nexus/main.go
 package main
 import "fmt"
-func main() { fmt.Println("Cuberbox Pro Go Backend v4.7.9 - Operational") }
+func main() { fmt.Println("Nexus Core Go Backend v4.7.9 - Operational") }
 EOF
-    cd /opt/cuberbox && go build -o /usr/local/bin/cuberbox-connector main.go
+    cd /opt/nexus && go build -o /usr/local/bin/nexus-connector main.go
 fi
 
-chmod +x /usr/local/bin/cuberbox-connector
+chmod +x /usr/local/bin/nexus-connector
 
 # 9. Finalización y Resumen
 systemctl restart freeswitch
 systemctl enable freeswitch
 
 echo -e "\n${BOLD}${GREEN}===================================================="
-echo "   CUBERBOX PRO v4.7.9 INSTALADO CORRECTAMENTE"
+echo "   NEXUS CORE v4.7.9 INSTALADO CORRECTAMENTE"
 echo "===================================================="
 echo -e "${NC}"
 echo -e "ESL Port: ${BOLD}8021${NC}"
 echo -e "ESL Secret: ${BOLD}$ESL_PASS${NC}"
 echo -e "WebRTC WSS: ${BOLD}8089${NC}"
 echo -e "SIP Port: ${BOLD}5060${NC}"
-echo -e "\nConfiguración completada bajo estándares de PieceByte."
+echo -e "\nConfiguración completada bajo estándares de Nexus Core."
