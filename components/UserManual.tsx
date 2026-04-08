@@ -8,7 +8,7 @@ import {
   Play, Headphones, TerminalSquare, GitMerge, MessageCircle, Share2,
   Music, Smartphone as PhoneIcon, BarChart3, Target, Mic, PhoneIncoming,
   ListChecks, Copy, Settings, PieChart, Filter, Mail, MessageSquare, 
-  Workflow, Globe2, ShieldAlert, Layout
+  Workflow, Globe2, ShieldAlert, Layout, Disc
 } from 'lucide-react';
 // Added missing useToast import
 import { useToast } from '../ToastContext';
@@ -29,6 +29,7 @@ interface ManualEntry {
   usage: string;
   steps: ManualStep[];
   technicalNote?: string;
+  image?: string;
 }
 
 const MANUAL_DATABASE: ManualEntry[] = [
@@ -46,7 +47,8 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { title: 'Paso 3: Ponerse en modo "Ready"', desc: 'Haga clic en el botón verde de "Ready". A partir de este momento, el motor predictivo comenzará a enviarle llamadas o mensajes de redes sociales de forma automática.' },
       { title: 'Paso 4: Gestión de la Interacción', desc: 'Cuando entre una llamada, verá los datos del cliente en pantalla. Siga el script sugerido. Al terminar, use la matriz de botones a la derecha para indicar qué sucedió (Venta, No Contesta, etc.).' },
       { title: 'Paso 5: Uso de Pausas', desc: 'Si necesita retirarse de su puesto, use el menú de Pausas. Elija el motivo correcto (Almuerzo, Capacitación, etc.). Esto es vital para que el supervisor sepa por qué no está recibiendo llamadas.' }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/agent-terminal/1200/600'
   },
   {
     id: 'campaigns-manager',
@@ -61,7 +63,8 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { title: 'Paso 2: Asignación de Listas', desc: 'Vincule las bases de datos cargadas previamente. Puede asignar múltiples listas a una sola campaña y priorizarlas.' },
       { title: 'Paso 3: Configuración de CID', desc: 'Establezca los números de máscara (Caller ID) que verán los clientes. Use rotación de números para mejorar la tasa de respuesta.' },
       { title: 'Paso 4: Definición de Horarios', desc: 'Configure los "Call Times" para cumplir con las regulaciones locales y evitar llamar en horarios no permitidos.' }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/campaigns/1200/600'
   },
   {
     id: 'real-time-monitor',
@@ -76,7 +79,8 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { title: 'Paso 2: Escucha Activa', desc: 'Haga clic en el icono de audífono junto a un agente para escuchar su llamada sin que el cliente ni el agente lo noten.' },
       { title: 'Paso 3: Susurro de Coaching', desc: 'Use el modo "Whisper" para hablarle solo al agente y darle instrucciones durante una negociación difícil.' },
       { title: 'Paso 4: Gestión de Pausas', desc: 'Si un agente excede el tiempo de pausa permitido, puede forzar su cambio a estado "Ready" o desloguearlo desde el panel.' }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/realtime/1200/600'
   },
   {
     id: 'local-deployment-debian12',
@@ -95,19 +99,20 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { 
         title: 'Paso 2: Base de Datos PostgreSQL 16', 
         desc: 'Instale y configure PostgreSQL. Cree el usuario y la base de datos para la aplicación.',
-        code: 'apt install -y postgresql-16\nsudo -u postgres psql -c "CREATE USER cuberbox_admin WITH PASSWORD \'TuPassword\';" \nsudo -u postgres psql -c "CREATE DATABASE cuberbox_db OWNER cuberbox_admin;"'
+        code: 'apt install -y postgresql-16\nsudo -u postgres psql -c "CREATE USER nexus_admin WITH PASSWORD \'TuPassword\';" \nsudo -u postgres psql -c "CREATE DATABASE nexus_db OWNER nexus_admin;"'
       },
       { 
         title: 'Paso 3: Entorno Node.js y App', 
         desc: 'Instale Node.js 20+ y clone el repositorio. Instale las dependencias de npm.',
-        code: 'curl -fsSL https://deb.nodesource.com/setup_20.x | bash -\napt install -y nodejs\ngit clone https://github.com/tu-repo/cuberbox.git\ncd cuberbox && npm install'
+        code: 'curl -fsSL https://deb.nodesource.com/setup_20.x | bash -\napt install -y nodejs\ngit clone https://github.com/tu-repo/nexus-core.git\ncd nexus-core && npm install'
       },
       { 
         title: 'Paso 4: Persistencia con Systemd', 
         desc: 'Cree un servicio para que la app inicie automáticamente con el servidor.',
-        code: 'cat <<EOF > /etc/systemd/system/cuberbox.service\n[Unit]\nDescription=Cuberbox App\nAfter=network.target\n\n[Service]\nType=simple\nWorkingDirectory=/opt/cuberbox\nExecStart=/usr/bin/npm run dev -- --host 0.0.0.0\nRestart=always\n\n[Install]\nWantedBy=multi-user.target\nEOF\nsystemctl enable --now cuberbox'
+        code: 'cat <<EOF > /etc/systemd/system/nexus-core.service\n[Unit]\nDescription=CUBERBOX Nexus Core App\nAfter=network.target\n\n[Service]\nType=simple\nWorkingDirectory=/opt/nexus-core\nExecStart=/usr/bin/npm run dev -- --host 0.0.0.0\nRestart=always\n\n[Install]\nWantedBy=multi-user.target\nEOF\nsystemctl enable --now nexus-core'
       }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/debian/1200/600'
   },
   {
     id: 'whatsapp-api-setup',
@@ -122,11 +127,12 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { 
         title: 'Paso 2: Configuración de Webhook', 
         desc: 'Configure la URL de callback en Meta: https://tu-ip-o-dominio/api/webhook/whatsapp. Use el Verify Token configurado en su .env.',
-        code: 'WHATSAPP_VERIFY_TOKEN=cuberbox_token_2024'
+        code: 'WHATSAPP_VERIFY_TOKEN=nexus_token_2026'
       },
-      { title: 'Paso 3: Variables de Entorno', desc: 'Añada las credenciales a su archivo .env local para que el servidor pueda autenticarse con Meta.' },
-      { title: 'Paso 4: Verificación de Conexión', desc: 'Envíe un mensaje de prueba desde la interfaz de WhatsApp de la app. Si el estado cambia a "Entregado", la conexión es exitosa.' }
-    ]
+      { title: 'Paso 1: Variables de Entorno', desc: 'Añada las credenciales a su archivo .env local para que el servidor pueda autenticarse con Meta.' },
+      { title: 'Paso 2: Verificación de Conexión', desc: 'Envíe un mensaje de prueba desde la interfaz de WhatsApp de la app. Si el estado cambia a "Entregado", la conexión es exitosa.' }
+    ],
+    image: 'https://picsum.photos/seed/whatsapp/1200/600'
   },
   {
     id: 'tiktok-api-setup',
@@ -141,11 +147,12 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { 
         title: 'Paso 2: Configuración de Webhook', 
         desc: 'Configure la URL de callback en TikTok: https://tu-ip-o-dominio/api/webhook/tiktok. Use el Verify Token configurado en su .env.',
-        code: 'TIKTOK_VERIFY_TOKEN=cuberbox_tiktok_token_2024'
+        code: 'TIKTOK_VERIFY_TOKEN=nexus_tiktok_token_2026'
       },
       { title: 'Paso 3: Variables de Entorno', desc: 'Añada las credenciales a su archivo .env local para que el servidor pueda autenticarse con TikTok.' },
       { title: 'Paso 4: Verificación de Conexión', desc: 'Envíe un mensaje de prueba desde la interfaz de TikTok de la app. Si el estado cambia a "Entregado", la conexión es exitosa.' }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/tiktok/1200/600'
   },
   {
     id: 'facebook-messenger-setup',
@@ -161,9 +168,10 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { 
         title: 'Paso 3: Webhook de Messenger', 
         desc: 'Configure el Webhook apuntando a /api/webhook/facebook y suscríbase al campo "messages".',
-        code: 'META_VERIFY_TOKEN=cuberbox_meta_token_2024'
+        code: 'META_VERIFY_TOKEN=nexus_meta_token_2026'
       }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/facebook/1200/600'
   },
   {
     id: 'instagram-direct-setup',
@@ -179,9 +187,10 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { 
         title: 'Paso 3: Webhook de Instagram', 
         desc: 'Configure el Webhook apuntando a /api/webhook/instagram y suscríbase al campo "messages".',
-        code: 'META_VERIFY_TOKEN=cuberbox_meta_token_2024'
+        code: 'META_VERIFY_TOKEN=nexus_meta_token_2026'
       }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/instagram/1200/600'
   },
   {
     id: 'multi-node-freeswitch',
@@ -204,7 +213,8 @@ const MANUAL_DATABASE: ManualEntry[] = [
         code: 'INSERT INTO telephony_nodes (name, ip, password) VALUES (\'Nodo Miami\', \'192.168.1.60\', \'ClueCon\');'
       },
       { title: 'Paso 4: Monitoreo de Salud', desc: 'Revise el "Cluster Monitor" para ver el estado ONLINE/OFFLINE de cada nodo en tiempo real.' }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/freeswitch/1200/600'
   },
   {
     id: 'reports-analytics',
@@ -219,7 +229,8 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { title: 'Paso 2: Reporte de Productividad', desc: 'Revise el tiempo "Talk", "Wait", "Pause" y "Wrap-up" para identificar a sus mejores talentos.' },
       { title: 'Paso 3: Análisis de Disposiciones', desc: 'Vea qué porcentaje de sus llamadas terminan en Venta, Buzón o No Interesado para ajustar su base de datos.' },
       { title: 'Paso 4: Programación de Envíos', desc: 'Configure el sistema para que envíe automáticamente los reportes diarios a su correo electrónico cada mañana.' }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/analytics/1200/600'
   },
   {
     id: 'users-permissions-pro',
@@ -235,7 +246,8 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { title: 'Paso 3: Configuración de MFA', desc: 'Active el código de seguridad por aplicación (Google Authenticator) para proteger las cuentas de administrador.' },
       { title: 'Paso 4: Importación y Exportación', desc: 'Use los botones de "Importar" y "Exportar" para gestionar bases de usuarios masivas en formato JSON, facilitando la migración entre clústeres.' },
       { title: 'Paso 5: Auditoría de Logs', desc: 'Revise quién entró al sistema, desde qué IP y qué cambios realizó en la configuración.' }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/security/1200/600'
   },
   {
     id: 'crm-integrations-hub',
@@ -246,11 +258,12 @@ const MANUAL_DATABASE: ManualEntry[] = [
     functionality: 'Permite disparar eventos (Webhooks) cuando ocurre una venta o una llamada termina. Integración nativa con Salesforce, Zoho, HubSpot y bases de datos SQL externas.',
     usage: 'Automatice el flujo de información para que sus agentes no tengan que capturar datos en dos sistemas diferentes.',
     steps: [
-      { title: 'Paso 1: Configuración de URL de Destino', desc: 'Ingrese la URL de su CRM donde Cuberbox debe enviar la información de las llamadas.' },
-      { title: 'Paso 2: Mapeo de Campos', desc: 'Indique qué dato de Cuberbox (ej. Teléfono) corresponde a qué campo en su CRM.' },
+      { title: 'Paso 1: Configuración de URL de Destino', desc: 'Ingrese la URL de su CRM donde CUBERBOX Nexus Core debe enviar la información de las llamadas.' },
+      { title: 'Paso 2: Mapeo de Campos', desc: 'Indique qué dato de CUBERBOX Nexus Core (ej. Teléfono) corresponde a qué campo en su CRM.' },
       { title: 'Paso 3: Definición de Triggers', desc: 'Elija en qué momento enviar los datos: ¿Al iniciar la llamada o solo cuando se tipifica como "Venta"?' },
       { title: 'Paso 4: Prueba de Conectividad', desc: 'Use el botón de "Test" para verificar que su CRM está recibiendo los datos correctamente.' }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/crm/1200/600'
   },
   {
     id: 'omnichannel-whatsapp',
@@ -265,7 +278,8 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { title: 'Paso 2: Creación de Plantillas', desc: 'Diseñe mensajes pre-aprobados para iniciar conversaciones de forma masiva y legal.' },
       { title: 'Paso 3: Configuración de Chatbots', desc: 'Cree flujos de auto-atención para resolver dudas frecuentes antes de pasar con un humano.' },
       { title: 'Paso 4: Bandeja de Entrada Unificada', desc: 'Los agentes recibirán los chats en la misma pantalla donde reciben las llamadas, manteniendo el historial completo.' }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/omnichannel/1200/600'
   },
   {
     id: 'cluster-ha-nexus',
@@ -280,7 +294,8 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { title: 'Paso 2: Sincronización de Archivos', desc: 'Active rsync para que las grabaciones y configuraciones de audio estén presentes en todos los nodos.' },
       { title: 'Paso 3: Monitoreo de Heartbeat', desc: 'Verifique que los nodos se "saluden" constantemente. Si uno deja de responder, el tráfico se moverá al otro.' },
       { title: 'Paso 4: Mantenimiento Programado', desc: 'Ponga un nodo en modo "Drain" para realizar actualizaciones sin desconectar las llamadas activas.' }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/cluster/1200/600'
   },
   {
     id: 'broadcast-ai-voice',
@@ -295,7 +310,8 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { title: 'Paso 2: Entrenamiento de Intenciones', desc: 'Dígale al bot qué hacer si el cliente dice "Sí", "No", "No puedo" o "Llamen más tarde".' },
       { title: 'Paso 3: Selección de Voz Neural', desc: 'Elija entre voces masculinas o femeninas con acentos locales para generar confianza en el cliente.' },
       { title: 'Paso 4: Lanzamiento y Escalado', desc: 'Inicie la campaña. El sistema detectará automáticamente cuántos canales de telefonía tiene disponibles para no saturar su troncal.' }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/voicebot/1200/600'
   },
   {
     id: 'manual-dialer-callbacks',
@@ -310,7 +326,8 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { title: 'Paso 2: Ejecución de Llamada', desc: 'Haga clic en el botón de llamar. El sistema utilizará la troncal configurada para establecer la comunicación mediante ESL.' },
       { title: 'Paso 3: Programación de Callback', desc: 'Si el cliente solicita ser llamado después, haga clic en "Agendar Callback". Seleccione la fecha, hora y el tipo (Privado o Público).' },
       { title: 'Paso 4: Gestión de Agenda', desc: 'El sistema le notificará cuando un callback esté vencido. Podrá ver su lista de compromisos pendientes en el panel lateral.' }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/dialer/1200/600'
   },
   {
     id: 'ivr-designer-pro',
@@ -325,7 +342,8 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { title: 'Paso 2: Configuración de Nodos', desc: 'Haga doble clic en un nodo para subir el archivo de audio o definir qué sucede si el cliente presiona la opción 1.' },
       { title: 'Paso 3: Integración de Datos', desc: 'Use el nodo "Data Query" para validar el número de cuenta del cliente contra su base de datos antes de pasarlo con un agente.' },
       { title: 'Paso 4: Publicación en Vivo', desc: 'Guarde y asigne el IVR a un número de teléfono entrante (DID) para que los cambios surtan efecto inmediatamente.' }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/ivr/1200/600'
   },
   {
     id: 'quality-assurance-audit',
@@ -340,7 +358,8 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { title: 'Paso 2: Aplicación de Formulario', desc: 'Escuche la llamada y califique los ítems (ej. ¿Cerró la venta?, ¿Siguió el script?).' },
       { title: 'Paso 3: Retroalimentación', desc: 'Deje comentarios específicos en el minuto exacto donde el agente cometió un error o tuvo un acierto.' },
       { title: 'Paso 4: Calibración', desc: 'Compare las notas de diferentes auditores para asegurar que todos están evaluando bajo los mismos criterios.' }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/qa/1200/600'
   },
   {
     id: 'workflows-automation-engine',
@@ -355,7 +374,8 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { title: 'Paso 2: Establecimiento de Condiciones', desc: 'Añada filtros: "Solo si el monto es mayor a $1000" o "Solo para clientes nuevos".' },
       { title: 'Paso 3: Configuración de Acciones', desc: 'Defina qué debe pasar: ¿Enviar un correo?, ¿Actualizar el CRM?, ¿Notificar por Slack?' },
       { title: 'Paso 4: Monitoreo de Ejecución', desc: 'Revise el historial para confirmar que todos los flujos se están ejecutando correctamente.' }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/workflow/1200/600'
   },
   {
     id: 'lists-dnc-management',
@@ -370,7 +390,8 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { title: 'Paso 2: Limpieza de Base', desc: 'Use la herramienta de "Deduplicación" para eliminar registros repetidos y ahorrar canales de marcación.' },
       { title: 'Paso 3: Gestión de DNC', desc: 'Añada números a la lista negra. El marcador filtrará estos números automáticamente incluso si están en sus listas de campaña.' },
       { title: 'Paso 4: Reciclaje de Listas', desc: 'Configure cuándo volver a llamar a los números que no contestaron (ej. "Llamar de nuevo en 4 horas").' }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/lists/1200/600'
   },
   {
     id: 'github-clone-nexus',
@@ -384,7 +405,7 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { 
         title: 'Paso 1: Clonar Repositorio', 
         desc: 'Use git para descargar los archivos. Asegúrese de tener sus llaves SSH configuradas o use el token de acceso personal.',
-        code: 'git clone https://github.com/tu-organizacion/cuberbox-pro.git\ncd cuberbox-pro'
+        code: 'git clone https://github.com/tu-organizacion/nexus-core.git\ncd nexus-core'
       },
       { 
         title: 'Paso 2: Configurar Ramas', 
@@ -396,22 +417,24 @@ const MANUAL_DATABASE: ManualEntry[] = [
         desc: 'Si el proyecto usa submódulos para el motor de audio, inicialícelos ahora.',
         code: 'git submodule update --init --recursive'
       }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/github/1200/600'
   },
   {
     id: 'network-ports-matrix',
     title: 'Matriz de Puertos y Red',
     icon: Globe2,
     category: 'INFRAESTRUCTURA',
-    summary: 'Configuración de Firewall y conectividad requerida para el ecosistema Nexus.',
+    summary: 'Configuración de Firewall y conectividad requerida para el ecosistema CUBERBOX Nexus.',
     functionality: 'Detalla los puertos lógicos que deben estar abiertos en el Firewall perimetral y del servidor para permitir el tráfico de señalización SIP, medios RTP y gestión de datos.',
     usage: 'Asegúrese de que su proveedor de red o administrador de IT habilite estos puertos para evitar llamadas sin audio o errores de conexión en la terminal.',
     steps: [
       { title: 'Señalización SIP (5060-5061)', desc: 'Puerto 5060 (UDP/TCP) para tráfico estándar y 5061 (TLS) para tráfico encriptado. Vital para el registro de teléfonos físicos y troncales.' },
       { title: 'WebRTC Verto (8081-8082)', desc: 'Puertos seguros (WSS) utilizados por la terminal del agente en el navegador. Deben estar abiertos para que el "Anclaje de Audio" funcione.' },
       { title: 'Rango de Medios RTP (16384-32768)', desc: 'Rango UDP masivo para el transporte de la voz. Si estos puertos están cerrados, las llamadas se conectarán pero no habrá audio (One-way audio).' },
-      { title: 'Gestión y Datos (3000, 5432, 8021)', desc: '3000: Interfaz Web Cuberbox. 5432: Base de Datos PostgreSQL. 8021: Event Socket Layer (ESL) para control del motor desde el backend.' }
-    ]
+      { title: 'Gestión y Datos (3000, 5432, 8021)', desc: '3000: Interfaz Web CUBERBOX Nexus Core. 5432: Base de Datos PostgreSQL. 8021: Event Socket Layer (ESL) para control del motor desde el backend.' }
+    ],
+    image: 'https://picsum.photos/seed/network/1200/600'
   },
   {
     id: 'predictive-dialer-core',
@@ -426,7 +449,8 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { title: 'Paso 2: Configuración del Hopper', desc: 'Defina cuántos leads quiere que el sistema tenga "listos" en memoria. Un valor de 500 es ideal para la mayoría de las operaciones medianas.' },
       { title: 'Paso 3: Ajuste del Nivel de Marcación', desc: 'Comience con un ratio bajo (ej. 1.5). Si nota que los agentes esperan mucho, suba el ratio. Si nota que entran llamadas y no hay agentes libres (Drop), baje el ratio inmediatamente.' },
       { title: 'Paso 4: Activación de AMD', desc: 'Habilite la detección de contestadoras. Esto ahorra tiempo a sus agentes al filtrar automáticamente los buzones de voz, entregándoles solo personas reales.' }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/predictive/1200/600'
   },
   {
     id: 'telephony-config-nexus',
@@ -441,7 +465,8 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { title: 'Paso 2: Alta de DIDs', desc: 'Registre los números de teléfono adquiridos. Puede asignarlos directamente a una campaña entrante o a un flujo de IVR.' },
       { title: 'Paso 3: Configuración de Rutas', desc: 'Defina las reglas de marcado (Dialplan). Por ejemplo, anteponer un prefijo para llamadas internacionales o bloquear ciertos destinos.' },
       { title: 'Paso 4: Monitoreo de Registro', desc: 'Verifique en el panel que la troncal aparezca como "Registered". Si falla, revise sus credenciales y el firewall (Puerto 5060).' }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/telephony/1200/600'
   },
   {
     id: 'ai-studio-gemini',
@@ -456,14 +481,15 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { title: 'Paso 2: Prompting de Sistema', desc: 'Defina las instrucciones base para la IA. Esto determina el tono y el conocimiento experto del asistente.' },
       { title: 'Paso 3: Consulta en Vivo', desc: 'El agente puede escribir dudas en el panel lateral. La IA responderá basándose en el contexto de la campaña y el manual del producto.' },
       { title: 'Paso 4: Análisis de Sentimiento', desc: 'El sistema procesa el texto de la interacción para alertar sobre clientes insatisfechos o oportunidades de cierre perdidas.' }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/gemini/1200/600'
   },
   {
     id: 'manual-installation-nexus',
-    title: 'Instalación Automática (Nexus Pro)',
+    title: 'Instalación Automática (CUBERBOX Nexus Pro)',
     icon: Zap,
     category: 'ADMINISTRACIÓN',
-    summary: 'Despliegue ultra-rápido de Cuberbox Pro mediante el script de orquestación inteligente.',
+    summary: 'Despliegue ultra-rápido de CUBERBOX Nexus Core mediante el script de orquestación inteligente.',
     functionality: 'El script install_pro.sh automatiza la configuración de repositorios, instalación de binarios de FreeSwitch 1.10, PostgreSQL 16, Go 1.22, y el stack de Alta Disponibilidad (Keepalived/HAProxy). Detecta automáticamente la versión de Debian (12/13) y aplica optimizaciones de kernel para VoIP.',
     usage: 'Este es el método recomendado para servidores de producción. Requiere un Token de SignalWire (PAT) válido.',
     steps: [
@@ -487,7 +513,8 @@ const MANUAL_DATABASE: ManualEntry[] = [
         desc: 'Abra su navegador e ingrese a la IP Virtual o el Dominio configurado para acceder a la interfaz de administración.',
         code: 'https://tu-dominio-o-vip.com'
       }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/install/1200/600'
   },
   {
     id: 'manual-compilacion-detallada',
@@ -518,14 +545,15 @@ const MANUAL_DATABASE: ManualEntry[] = [
         desc: 'Compilación del núcleo con soporte PostgreSQL.',
         code: 'cd /usr/src\ngit clone https://github.com/signalwire/freeswitch.git -b v1.10 freeswitch\ncd freeswitch\n./bootstrap.sh -j\n# Habilitar mod_av, mod_opus, mod_pgsql en modules.conf\n./configure --enable-core-pgsql-support\nmake -j$(nproc) && make install && make cd-sounds-install && make cd-moh-install'
       }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/compile/1200/600'
   },
   {
     id: 'docker-deployment-debian12',
     title: 'Despliegue Docker (Debian 12)',
     icon: Box,
     category: 'ADMINISTRACIÓN',
-    summary: 'Guía para instalar Cuberbox Pro usando contenedores Docker en Debian 12.',
+    summary: 'Guía para instalar CUBERBOX Nexus Core usando contenedores Docker en Debian 12.',
     functionality: 'Aísla cada componente (Base de datos, Telefonía, Backend, Frontend) en contenedores independientes, facilitando la portabilidad y escalabilidad.',
     usage: 'Ideal para entornos de producción modernos y despliegues rápidos en la nube.',
     steps: [
@@ -537,7 +565,7 @@ const MANUAL_DATABASE: ManualEntry[] = [
       {
         title: 'Paso 2: Descargar el Proyecto de GitHub',
         desc: 'Clonamos el repositorio oficial para obtener los archivos de configuración de Docker.',
-        code: 'cd /opt\ngit clone https://github.com/tu-usuario/cuberbox.git\ncd cuberbox'
+        code: 'cd /opt\ngit clone https://github.com/tu-usuario/nexus-core.git\ncd nexus-core'
       },
       { 
         title: 'Paso 3: Preparar Archivos de Configuración', 
@@ -559,7 +587,8 @@ const MANUAL_DATABASE: ManualEntry[] = [
         desc: 'Compruebe que todos los servicios estén en estado "Running".',
         code: 'docker compose ps'
       }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/docker/1200/600'
   },
   {
     id: 'docker-cluster-ha',
@@ -585,7 +614,8 @@ const MANUAL_DATABASE: ManualEntry[] = [
         desc: 'Para un clúster real, use volúmenes externos o un sistema de archivos compartido (NFS) para las grabaciones y la base de datos.',
         code: 'volumes:\n  postgres_data:\n    driver: local\n    driver_opts:\n      type: nfs\n      o: addr=192.168.1.50,rw\n      device: ":/export/postgres_data"'
       }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/docker-cluster/1200/600'
   },
   {
     id: 'systemd-automation',
@@ -604,9 +634,10 @@ const MANUAL_DATABASE: ManualEntry[] = [
       { 
         title: 'Verificación de Estado', 
         desc: 'Confirme que ambos servicios estén corriendo correctamente.',
-        code: 'systemctl status cuberbox-web\nsystemctl status cuberbox'
+        code: 'systemctl status nexus-web\nsystemctl status nexus-core'
       }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/systemd/1200/600'
   },
   {
     id: 'systemd-unit-creation',
@@ -614,25 +645,26 @@ const MANUAL_DATABASE: ManualEntry[] = [
     icon: FileText,
     category: 'ADMINISTRACIÓN',
     summary: 'Cómo crear manualmente los archivos .service si no existen.',
-    functionality: 'Proporciona los comandos exactos para generar los archivos de configuración que systemd requiere para administrar Cuberbox como un servicio del sistema.',
+    functionality: 'Proporciona los comandos exactos para generar los archivos de configuración que systemd requiere para administrar CUBERBOX Nexus Core como un servicio del sistema.',
     usage: 'Use esta guía si recibe el error "Unit file does not exist" al intentar usar systemctl.',
     steps: [
       { 
-        title: 'Crear cuberbox-web.service', 
+        title: 'Crear nexus-web.service', 
         desc: 'Ejecute este bloque completo para crear el servicio del servidor web (Puerto 3000).',
-        code: 'cat <<EOF > /etc/systemd/system/cuberbox-web.service\n[Unit]\nDescription=Cuberbox Web Interface\nAfter=network.target\n\n[Service]\nType=simple\nWorkingDirectory=/opt/cuberbox\nExecStart=/usr/bin/npm run dev -- --host 0.0.0.0\nRestart=always\nEnvironment=NODE_ENV=production\n\n[Install]\nWantedBy=multi-user.target\nEOF'
+        code: 'cat <<EOF > /etc/systemd/system/nexus-web.service\n[Unit]\nDescription=CUBERBOX Nexus Core Web Interface\nAfter=network.target\n\n[Service]\nType=simple\nWorkingDirectory=/opt/nexus-core\nExecStart=/usr/bin/npm run dev -- --host 0.0.0.0\nRestart=always\nEnvironment=NODE_ENV=production\n\n[Install]\nWantedBy=multi-user.target\nEOF'
       },
       { 
-        title: 'Crear cuberbox-connector.service', 
+        title: 'Crear nexus-connector.service', 
         desc: 'Ejecute este bloque para crear el servicio del motor de eventos (Puerto 8021).',
-        code: 'cat <<EOF > /etc/systemd/system/cuberbox.service\n[Unit]\nDescription=Cuberbox Pro Connector\nAfter=network.target freeswitch.service\n\n[Service]\nType=simple\nWorkingDirectory=/opt/cuberbox\nExecStart=/usr/local/bin/cuberbox-connector\nRestart=always\n\n[Install]\nWantedBy=multi-user.target\nEOF'
+        code: 'cat <<EOF > /etc/systemd/system/nexus-core.service\n[Unit]\nDescription=CUBERBOX Nexus Core Connector\nAfter=network.target freeswitch.service\n\n[Service]\nType=simple\nWorkingDirectory=/opt/nexus-core\nExecStart=/usr/local/bin/nexus-connector\nRestart=always\n\n[Install]\nWantedBy=multi-user.target\nEOF'
       },
       { 
         title: 'Activar Servicios', 
         desc: 'Después de crear los archivos, ejecute estos comandos para ponerlos en marcha.',
-        code: 'systemctl daemon-reload\nsystemctl enable --now cuberbox-web\nsystemctl enable --now cuberbox'
+        code: 'systemctl daemon-reload\nsystemctl enable --now nexus-web\nsystemctl enable --now nexus-core'
       }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/unit/1200/600'
   },
   {
     id: 'emergency-port-3000',
@@ -660,10 +692,11 @@ const MANUAL_DATABASE: ManualEntry[] = [
       },
       { 
         title: 'Paso 4: Persistencia con Systemd', 
-        desc: 'Una vez que funcione manualmente, asegúrese de que el servicio cuberbox-web esté activo para que inicie con el servidor.',
-        code: 'systemctl daemon-reload && systemctl enable --now cuberbox-web'
+        desc: 'Una vez que funcione manualmente, asegúrese de que el servicio nexus-web esté activo para que inicie con el servidor.',
+        code: 'systemctl daemon-reload && systemctl enable --now nexus-web'
       }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/emergency/1200/600'
   },
   {
     id: 'troubleshooting-service',
@@ -672,29 +705,78 @@ const MANUAL_DATABASE: ManualEntry[] = [
     category: 'ADMINISTRACIÓN',
     summary: 'Guía para corregir fallos de inicio del servicio (Error 203/EXEC).',
     functionality: 'Explica cómo diagnosticar y reparar el error 203/EXEC que ocurre cuando el binario del conector no es ejecutable o no existe en la ruta /usr/local/bin.',
-    usage: 'Si el comando "systemctl status cuberbox" muestra un error en rojo, siga estos pasos para restaurar el servicio.',
+    usage: 'Si el comando "systemctl status nexus-core" muestra un error en rojo, siga estos pasos para restaurar el servicio.',
     steps: [
       { 
         title: 'Paso 1: Verificar Existencia del Binario', 
         desc: 'Asegúrese de que el archivo realmente exista en la ruta. Si no aparece, el proceso de compilación falló.',
-        code: 'ls -lh /usr/local/bin/cuberbox-connector'
+        code: 'ls -lh /usr/local/bin/nexus-connector'
       },
       { 
         title: 'Paso 2: Corregir Permisos de Ejecución', 
         desc: 'A veces el archivo se copia pero pierde el bit de ejecución. Este comando le otorga los permisos necesarios.',
-        code: 'chmod +x /usr/local/bin/cuberbox-connector'
+        code: 'chmod +x /usr/local/bin/nexus-connector'
       },
       { 
         title: 'Paso 3: Recompilar el Conector (Si no existe)', 
         desc: 'Si el binario falta, debe entrar a la carpeta del backend y volver a generarlo con Go.',
-        code: 'cd /opt/cuberbox/backend\ngo build -o cuberbox-connector main.go\ncp cuberbox-connector /usr/local/bin/\nsystemctl restart cuberbox'
+        code: 'cd /opt/nexus-core/backend\ngo build -o nexus-connector main.go\ncp nexus-connector /usr/local/bin/\nsystemctl restart nexus-core'
       },
       { 
         title: 'Paso 4: Verificar Logs del Sistema', 
         desc: 'Si el error persiste, revise los mensajes detallados del kernel para ver si falta alguna librería.',
-        code: 'journalctl -u cuberbox.service -f'
+        code: 'journalctl -u nexus-core.service -f'
       }
-    ]
+    ],
+    image: 'https://picsum.photos/seed/troubleshoot/1200/600'
+  },
+  {
+    id: 'keycloak-sso-setup',
+    title: 'Integración Keycloak SSO',
+    icon: Key,
+    category: 'ADMINISTRACIÓN',
+    summary: 'Configuración de autenticación centralizada y Single Sign-On.',
+    functionality: 'Permite delegar la autenticación a un servidor Keycloak externo, facilitando la gestión de usuarios corporativos y el cumplimiento de políticas de seguridad.',
+    usage: 'Configure el Realm y el Client ID en Keycloak y actualice las variables de entorno en CUBERBOX Nexus Core.',
+    steps: [
+      { title: 'Paso 1: Crear Realm en Keycloak', desc: 'Cree un nuevo Realm llamado "nexus" en su consola de Keycloak.' },
+      { title: 'Paso 2: Configurar Cliente', desc: 'Cree un cliente "nexus-core" con el protocolo openid-connect y configure las URLs de redirección.' },
+      { title: 'Paso 3: Variables de Entorno', desc: 'Añada KEYCLOAK_URL, KEYCLOAK_REALM y KEYCLOAK_CLIENT_ID a su archivo .env.', code: 'KEYCLOAK_URL=https://sso.tu-dominio.com\nKEYCLOAK_REALM=nexus\nKEYCLOAK_CLIENT_ID=nexus-core' },
+      { title: 'Paso 4: Prueba de Login', desc: 'Cierre sesión y verifique que el botón de "Login con Keycloak" aparezca y funcione correctamente.' }
+    ],
+    image: 'https://picsum.photos/seed/keycloak/1200/600'
+  },
+  {
+    id: 'iso-installation-nexus',
+    title: 'Instalación vía Imagen ISO',
+    icon: Disc,
+    category: 'INFRAESTRUCTURA',
+    summary: 'Despliegue del sistema operativo pre-configurado mediante imagen ISO.',
+    functionality: 'Proporciona una imagen de Debian 12 con todos los componentes de CUBERBOX Nexus Core pre-instalados y listos para el primer arranque.',
+    usage: 'Ideal para despliegues masivos en hardware físico donde se busca consistencia total.',
+    steps: [
+      { title: 'Paso 1: Descargar ISO', desc: 'Obtenga la última versión de la ISO desde el portal de soporte de CUBERBOX Nexus Core.' },
+      { title: 'Paso 2: Crear Medio de Arranque', desc: 'Use herramientas como Rufus o BalenaEtcher para grabar la ISO en un pendrive USB.' },
+      { title: 'Paso 3: Instalación Desatendida', desc: 'Arranque el servidor desde el USB. El instalador automático particionará el disco y configurará el entorno.' },
+      { title: 'Paso 4: Post-Instalación', desc: 'Al terminar, retire el USB y reinicie. El sistema estará listo en la IP asignada por DHCP.' }
+    ],
+    image: 'https://picsum.photos/seed/iso/1200/600'
+  },
+  {
+    id: 'erp-crm-advanced-sync',
+    title: 'Sincronización Avanzada ERP/CRM',
+    icon: Network,
+    category: 'ADMINISTRACIÓN',
+    summary: 'Integración profunda con sistemas SAP, Odoo y Microsoft Dynamics.',
+    functionality: 'Habilita flujos de datos bidireccionales complejos, permitiendo que CUBERBOX Nexus Core actualice inventarios o estados de pedidos directamente en el ERP durante la llamada.',
+    usage: 'Configure los conectores específicos para su sistema de gestión empresarial.',
+    steps: [
+      { title: 'Paso 1: Configurar API Endpoints', desc: 'Defina las URLs de la API de su ERP/CRM y las credenciales de autenticación (OAuth2/API Key).' },
+      { title: 'Paso 2: Mapeo de Objetos', desc: 'Vincule los campos de CUBERBOX Nexus Core con los objetos del ERP (ej. Lead -> Odoo Opportunity).' },
+      { title: 'Paso 3: Flujos de Automatización', desc: 'Cree reglas: "Si la llamada termina en Venta, crear Factura en SAP automáticamente".' },
+      { title: 'Paso 4: Logs de Sincronización', desc: 'Monitoree el panel de integraciones para asegurar que no haya errores de comunicación entre sistemas.' }
+    ],
+    image: 'https://picsum.photos/seed/erp/1200/600'
   }
 ];
 
@@ -718,7 +800,7 @@ const UserManual: React.FC = () => {
       <div className="text-center space-y-6">
         <div className="inline-flex items-center space-x-3 bg-blue-500/10 border border-blue-500/20 px-6 py-2.5 rounded-full mb-2">
           <Sparkles size={18} className="text-blue-400 animate-pulse" />
-          <span className="text-[11px] font-black text-blue-400 uppercase tracking-[0.4em]">Nexus Knowledge Base v4.7.9</span>
+          <span className="text-[11px] font-black text-blue-400 uppercase tracking-[0.4em]">CUBERBOX Knowledge Base v4.7.9</span>
         </div>
         <h1 className="text-6xl font-black text-white tracking-tighter uppercase leading-none">Manual de Operación Crítica</h1>
         <p className="text-slate-500 text-sm max-w-2xl mx-auto font-bold uppercase tracking-widest">Documentación exhaustiva para administradores y operadores de alto rendimiento.</p>
@@ -851,15 +933,39 @@ const UserManual: React.FC = () => {
                       </p>
                    </div>
                 </div>
+
+                {selectedEntry.image && (
+                  <div className="mt-12 rounded-[48px] overflow-hidden border border-slate-800 shadow-2xl">
+                    <img 
+                      src={selectedEntry.image} 
+                      alt={selectedEntry.title} 
+                      className="w-full h-auto object-cover"
+                      referrerPolicy="no-referrer"
+                    />
+                  </div>
+                )}
              </div>
            ) : (
              <div className="flex flex-col items-center justify-center h-full text-center opacity-20">
                 <BookOpen size={120} className="mb-8" />
-                <h3 className="text-3xl font-black uppercase tracking-[0.4em]">Wiki Nexus Pro</h3>
+                <h3 className="text-3xl font-black uppercase tracking-[0.4em]">Wiki CUBERBOX Nexus Pro</h3>
              </div>
            )}
         </div>
       </div>
+      
+      <footer className="mt-20 pt-10 border-t border-slate-800 text-center space-y-4">
+        <div className="flex items-center justify-center space-x-4">
+          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-black text-xl">C</div>
+          <span className="text-2xl font-black text-white uppercase tracking-tighter">CUBERBOX</span>
+        </div>
+        <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.5em]">
+          © 2026 CUBERBOX Systems • Todos los derechos reservados • CUBERBOX Nexus Core v4.7.9
+        </p>
+        <p className="text-[9px] text-slate-600 font-bold uppercase tracking-widest max-w-xl mx-auto leading-relaxed">
+          Este documento contiene información confidencial y propietaria de CUBERBOX. El acceso no autorizado, reproducción o distribución está estrictamente prohibido y sujeto a acciones legales internacionales.
+        </p>
+      </footer>
     </div>
   );
 };

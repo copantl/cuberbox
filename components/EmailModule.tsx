@@ -1,6 +1,6 @@
 /**
  * @file EmailModule.tsx
- * @description Centro de Operaciones de Email masivo e individual de CUBERBOX Pro.
+ * @description Centro de Operaciones de Email masivo e individual de CUBERBOX Nexus Core.
  */
 
 import React, { useState, useMemo } from 'react';
@@ -43,7 +43,7 @@ interface EmailCampaign {
 }
 
 const INITIAL_TEMPLATES: EmailTemplate[] = [
-  { id: 'et_1', name: 'Bienvenida_RealEstate_v1', subject: 'Bienvenido a Cuberbox Real Estate {{name}}', body: 'Hola {{name}},\n\nGracias por interesarte en nuestras propiedades...', category: 'MARKETING', lastModified: '2024-11-20' },
+  { id: 'et_1', name: 'Bienvenida_RealEstate_v1', subject: 'Bienvenido a CUBERBOX Nexus Core Real Estate {{name}}', body: 'Hola {{name}},\n\nGracias por interesarte en nuestras propiedades...', category: 'MARKETING', lastModified: '2024-11-20' },
   { id: 'et_2', name: 'Alerta_Inversionista_Q4', subject: 'Oportunidad: Nueva Propiedad en Miami', body: 'Contamos con una nueva unidad con 12% ROI...', category: 'MARKETING', lastModified: '2024-11-21' },
 ];
 

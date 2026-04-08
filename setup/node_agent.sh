@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==============================================================================
-# NEXUS CORE - NODE AGENT INSTALLER
+# CUBERBOX NEXUS CORE - NODE AGENT INSTALLER
 # ==============================================================================
 
 # Colors
@@ -21,11 +21,11 @@ print_status() { echo -e "${BLUE}[INFO]${NC} $1"; log "INFO: $1"; }
 print_success() { echo -e "${GREEN}[SUCCESS]${NC} $1"; log "SUCCESS: $1"; }
 print_error() { echo -e "${RED}[ERROR]${NC} $1"; log "ERROR: $1"; }
 
-echo -e "${CYAN}${BOLD}Nexus Core - Node Agent Installer${NC}"
+echo -e "${CYAN}${BOLD}CUBERBOX Nexus Core - Node Agent Installer${NC}"
 echo "=============================================================================="
 echo "Seleccione el rol de este servidor:"
 echo "1) Database Server (PostgreSQL)"
-echo "2) Web/API Server (Nexus Application)"
+echo "2) Web/API Server (CUBERBOX Nexus Application)"
 echo "3) Media Server (FreeSwitch)"
 echo ""
 read -p "Rol [1-3]: " NODE_ROLE
@@ -61,9 +61,9 @@ case $NODE_ROLE in
         fi
         ;;
     2)
-        print_status "Instalando Nexus Web/API..."
+        print_status "Instalando CUBERBOX Nexus Web/API..."
         # (In a real scenario, this would be git clone + npm install)
-        print_success "Nexus Web/API instalado en este nodo."
+        print_success "CUBERBOX Nexus Web/API instalado en este nodo."
         ;;
     3)
         print_status "Instalando FreeSwitch..."

@@ -36,7 +36,7 @@ const MFAConfigurator: React.FC<Props> = ({ user, onClose, onComplete }) => {
     setSecret(genSecret);
   }, []);
 
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=otpauth://totp/CUBERBOX:${user.username}?secret=${secret}&issuer=CUBERBOX_PRO`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=otpauth://totp/NEXUS:${user.username}?secret=${secret}&issuer=NEXUS_CORE`;
 
   const handleCopySecret = () => {
     navigator.clipboard.writeText(secret);

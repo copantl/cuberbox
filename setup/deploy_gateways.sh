@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # =============================================================================
-# CUBERBOX PRO - GATEWAY DEPLOYER V1.0
+# CUBERBOX Nexus Core PRO - GATEWAY DEPLOYER V1.0
 # Despliega configuraciones de Gateways en una instalación compilada.
 # =============================================================================
 
@@ -10,7 +10,7 @@ GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'
 
-echo -e "${BLUE}=== Cuberbox Gateway Deployer (Compiled FS) ===${NC}"
+echo -e "${BLUE}=== CUBERBOX Nexus Core Gateway Deployer (Compiled FS) ===${NC}"
 
 # 1. Detectar ruta base
 FS_PATHS=("/usr/local/freeswitch" "/opt/freeswitch" "/usr/freeswitch")

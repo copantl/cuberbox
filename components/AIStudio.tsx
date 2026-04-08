@@ -29,7 +29,7 @@ const AIStudio: React.FC = () => {
         model: 'gemini-3-pro-preview',
         contents: userText,
         config: {
-          systemInstruction: `Eres un agente de ventas experto de CUBERBOX llamado ${selectedBot.name}. Objetivo: ${selectedBot.prompt}. Tono: Profesional, ejecutivo y persuasivo.`,
+          systemInstruction: `Eres un agente de ventas experto de CUBERBOX Nexus Core llamado ${selectedBot.name}. Objetivo: ${selectedBot.prompt}. Tono: Profesional, ejecutivo y persuasivo.`,
           temperature: 0.7,
         },
       });

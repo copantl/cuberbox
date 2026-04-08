@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==============================================================================
-# CUBERBOX PRO - NEXUS CLUSTER ORCHESTRATOR v4.7.9
+# CUBERBOX NEXUS CORE - CLUSTER ORCHESTRATOR v4.7.9
 # Advanced Multi-Node Deployment & Verification System
 # ==============================================================================
 
@@ -37,7 +37,7 @@ print_header() {
     echo " / /   / / / / __  / __/ / /_/ / __  / / / /   / "
     echo "/ /___/ /_/ / /_/ / /___/ _, _/ /_/ / /_/ /   |  "
     echo "\____/\____/_____/_____/_/ |_/_____/\____/_/|_|  "
-    echo -e "          NEXUS CLUSTER ORCHESTRATOR v4.7.9${NC}"
+    echo -e "          CUBERBOX NEXUS CLUSTER ORCHESTRATOR v4.7.9${NC}"
     echo "=============================================================================="
 }
 
@@ -177,7 +177,7 @@ case $DEPLOY_MODE in
         for node in "${DB_NODES[@]}"; do check_port "$node" 5432 "PostgreSQL"; done
         
         # Test Web
-        for node in "${WEB_NODES[@]}"; do check_port "$node" 3000 "Nexus Web/API"; done
+        for node in "${WEB_NODES[@]}"; do check_port "$node" 3000 "CUBERBOX Nexus Web/API"; done
         
         # Test FreeSwitch
         for node in "${FS_NODES[@]}"; do check_port "$node" 8021 "FreeSwitch ESL"; done

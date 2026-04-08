@@ -88,7 +88,7 @@ const Campaigns: React.FC = () => {
             <Target className="mr-4 text-blue-500" size={36} />
             Estrategia de Marcación
           </h2>
-          <p className="text-slate-400 text-sm font-medium mt-1">Configuración del núcleo predictivo y reglas de negocio v4.8.</p>
+          <p className="text-slate-400 text-sm font-medium mt-1">Configuración del núcleo predictivo CUBERBOX y reglas de negocio v4.8.</p>
         </div>
         <button onClick={() => handleOpenModal()} className="bg-blue-600 hover:bg-blue-500 text-white px-10 py-4 rounded-[28px] font-black text-[11px] uppercase tracking-widest shadow-xl transition-all active:scale-95 flex items-center">
           <Plus size={20} className="mr-2" /> Nueva Campaña

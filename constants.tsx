@@ -133,7 +133,7 @@ export const MOCK_USER_PROFILES: UserProfile[] = [
 ];
 
 export const MOCK_SMTP_SERVERS: SMTPServer[] = [
-  { id: 'smtp_1', name: 'Gmail Relay', host: 'smtp.gmail.com', port: 587, encryption: 'TLS', authMethod: 'LOGIN', username: 'relay@cuberbox.com', fromEmail: 'noreply@cuberbox.com', fromName: 'Cuberbox', isActive: true, status: 'CONNECTED' },
+  { id: 'smtp_1', name: 'Gmail Relay', host: 'smtp.gmail.com', port: 587, encryption: 'TLS', authMethod: 'LOGIN', username: 'relay@cuberbox.com', fromEmail: 'noreply@cuberbox.com', fromName: 'CUBERBOX Nexus Core', isActive: true, status: 'CONNECTED' },
 ];
 
 export const MOCK_AGENT_STATS = [

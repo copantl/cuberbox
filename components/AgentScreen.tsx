@@ -82,7 +82,7 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
         phone: '+1 305-555-0122',
         city: 'Miami, FL',
         address: 'Brickell Ave 1200',
-        script: 'Hola **{{name}}**, te llamo de Cuberbox porque notamos tu interés en el proyecto inmobiliario de {{city}}...'
+        script: 'Hola **{{name}}**, te llamo de CUBERBOX Nexus Core porque notamos tu interés en el proyecto inmobiliario de {{city}}...'
       });
       setStatus('INCALL');
       setSentiment('NEUTRAL');
@@ -201,7 +201,7 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
             <Logo className="w-16 h-16 md:w-20 md:h-20" />
             <div className="text-center">
                <h2 className="text-2xl md:text-4xl font-black text-white uppercase tracking-tighter">Estación Agente Pro</h2>
-               <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-2">Nexus Blended Core v4.8 • AI Enhanced</p>
+               <p className="text-slate-500 font-bold uppercase tracking-widest text-[10px] mt-2">CUBERBOX Nexus Core v4.8 • AI Enhanced</p>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 w-full max-w-md">
                <div className="p-4 md:p-6 bg-slate-900 border border-slate-800 rounded-2xl md:rounded-3xl text-center group hover:border-blue-500/30 transition-all">
@@ -360,7 +360,7 @@ const AgentScreen: React.FC<{ user?: UserType }> = ({ user = MOCK_USER }) => {
                                 <BrainCircuit size={20} className="md:w-7 md:h-7" />
                              </div>
                              <div>
-                                <h4 className="text-lg md:text-xl font-black text-white uppercase tracking-tight">Nexus Neural Copilot</h4>
+                                <h4 className="text-lg md:text-xl font-black text-white uppercase tracking-tight">CUBERBOX Neural Copilot</h4>
                                 <p className="text-[8px] md:text-[10px] text-slate-500 font-bold uppercase tracking-widest">Asistencia Cognitiva v4.8</p>
                              </div>
                           </div>

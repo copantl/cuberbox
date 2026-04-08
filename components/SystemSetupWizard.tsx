@@ -48,7 +48,7 @@ const SystemSetupWizard: React.FC = () => {
             <div className="p-3 bg-blue-600 rounded-2xl text-white shadow-xl shadow-blue-600/20">
                <Zap size={24} />
             </div>
-            <h2 className="text-2xl font-black text-white uppercase tracking-tighter">Nexus Deployment Wizard</h2>
+            <h2 className="text-2xl font-black text-white uppercase tracking-tighter">CUBERBOX Deployment Wizard</h2>
          </div>
          <div className="flex space-x-3">
             {steps.map((s, idx) => {
@@ -154,7 +154,7 @@ const SystemSetupWizard: React.FC = () => {
                        <Lock size={24} className="text-rose-500" />
                        <div>
                           <p className="text-sm font-black text-white uppercase">WSS Encryption Status</p>
-                          <p className="text-[10px] text-slate-500 font-bold uppercase mt-1">Certificado: valid.cuberbox-pro.net</p>
+                          <p className="text-[10px] text-slate-500 font-bold uppercase mt-1">Certificado: valid.nexus-core.net</p>
                        </div>
                     </div>
                     <span className="bg-emerald-500/10 text-emerald-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border border-emerald-500/20">Verified</span>
@@ -223,9 +223,9 @@ const SystemSetupWizard: React.FC = () => {
                </div>
             </div>
             <div className="space-y-4">
-               <h2 className="text-6xl font-black text-white uppercase tracking-tighter">NEXUS v4.7.9 ACTIVADO</h2>
+               <h2 className="text-6xl font-black text-white uppercase tracking-tighter">CUBERBOX v4.7.9 ACTIVADO</h2>
                <p className="text-slate-400 text-xl max-w-xl mx-auto font-medium leading-relaxed">
-                  El clúster CUBERBOX está ahora gobernado por <span className="text-white font-black underline decoration-blue-500">FreeSwitch 1.10 LTS</span>. El plano de control está sincronizado.
+                  El clúster CUBERBOX Nexus Core está ahora gobernado por <span className="text-white font-black underline decoration-blue-500">FreeSwitch 1.10 LTS</span>. El plano de control está sincronizado.
                </p>
             </div>
             <button 

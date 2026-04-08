@@ -16,9 +16,9 @@ const ClusterMonitor: React.FC = () => {
   const { toast } = useToast();
   const [loadData, setLoadData] = useState(Array.from({ length: 20 }, (_, i) => ({ time: i, load: Math.floor(Math.random() * 30) + 15 })));
   
-  // Mock data actualizado a FreeSwitch 1.10 Nexus Core
+  // Mock data actualizado a FreeSwitch 1.10 CUBERBOX Nexus Core
   const [nodes, setNodes] = useState<ClusterNode[]>([
-    { id: 'fs-01', name: 'FreeSwitch Master Core', ip: '10.0.0.10', role: 'MASTER', status: 'ONLINE', cpu: 14, mem: 6.2, channels: 245, threads: 520, dbLatency: 2 },
+    { id: 'fs-01', name: 'CUBERBOX Master Core', ip: '10.0.0.10', role: 'MASTER', status: 'ONLINE', cpu: 14, mem: 6.2, channels: 245, threads: 520, dbLatency: 2 },
     { id: 'fs-02', name: 'FreeSwitch Media Node 01', ip: '10.0.0.11', role: 'MEDIA', status: 'ONLINE', cpu: 18, mem: 4.8, channels: 412, threads: 380, dbLatency: 5 },
     { id: 'fs-03', name: 'FreeSwitch Media Node 02', ip: '10.0.0.12', role: 'MEDIA', status: 'ONLINE', cpu: 11, mem: 4.1, channels: 310, threads: 310, dbLatency: 3 },
   ]);
@@ -57,7 +57,7 @@ const ClusterMonitor: React.FC = () => {
             <Zap className="mr-4 text-blue-500" size={36} />
             Clúster FreeSwitch v4.7.9
           </h2>
-          <p className="text-slate-400 text-sm font-medium mt-1 uppercase tracking-widest opacity-60">Gobernanza del Media Plane • Nexus Core Edition</p>
+          <p className="text-slate-400 text-sm font-medium mt-1 uppercase tracking-widest opacity-60">Gobernanza del Media Plane • CUBERBOX Nexus Core Edition</p>
         </div>
         <div className="flex items-center space-x-3 bg-slate-900 border border-slate-800 p-2 rounded-2xl">
            <div className="px-4 py-2 bg-blue-600/10 border border-blue-500/20 rounded-xl">

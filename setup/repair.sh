@@ -1,5 +1,5 @@
 #!/bin/bash
-# Cuberbox Pro - Script de Reparación de Repositorios
+# CUBERBOX Nexus Core Pro - Script de Reparación de Repositorios
 # Este script limpia archivos de fuentes mal configurados
 
 GREEN='\033[0;32m'

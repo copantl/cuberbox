@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	fmt.Println("CUBERBOX FREESWITCH CONNECTOR - BOOTING...")
+	fmt.Println("CUBERBOX NEXUS CORE - BOOTING...")
 	fmt.Println("Version: 4.7.9 (LEGACY CORE)")
 	fmt.Println("Status: Listening for ESL Events on 8021...")
 

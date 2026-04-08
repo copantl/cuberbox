@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # =============================================================================
-# NEXUS CORE - FREESWITCH INSTALLER V4.7.9
+# CUBERBOX NEXUS CORE - FREESWITCH INSTALLER V4.7.9
 # Soporte: Debian 11 (Bullseye) / Debian 12 (Bookworm)
 # =============================================================================
 
@@ -22,7 +22,7 @@ echo "  / ____/ / / / __ ) ____/ __ \/ __ )/ __ \ |/ /"
 echo " / /   / / / / __  / __/ / /_/ / __  / / / /   / "
 echo "/ /___/ /_/ / /_/ / /___/ _, _/ /_/ / /_/ /   |  "
 echo "\____/\____/_____/_____/_/ |_/_____/\____/_/|_|  "
-echo -e "          NEXUS CORE ENGINE v4.7.9 (FreeSwitch 1.10)${NC}\n"
+echo -e "          CUBERBOX NEXUS CORE ENGINE v4.7.9 (FreeSwitch 1.10)${NC}\n"
 
 # 1. Validación de Root
 if [[ $EUID -ne 0 ]]; then
@@ -130,7 +130,7 @@ apt-get update && apt-get install -y postgresql-16
 sudo -u postgres psql -c "CREATE USER nexus_admin WITH PASSWORD 'NexusPass2026!';" || true
 sudo -u postgres psql -c "CREATE DATABASE nexus_db OWNER nexus_admin;" || true
 
-# 8. Compilación del Backend Go (Nexus Connector)
+# 8. Compilación del Backend Go (CUBERBOX Nexus Connector)
 echo -e "${BLUE}[5/5] Preparando Backend Go de Control...${NC}"
 mkdir -p /opt/nexus/bin
 
@@ -143,7 +143,7 @@ else
     cat <<EOF > /opt/nexus/main.go
 package main
 import "fmt"
-func main() { fmt.Println("Nexus Core Go Backend v4.7.9 - Operational") }
+func main() { fmt.Println("CUBERBOX Nexus Core Go Backend v4.7.9 - Operational") }
 EOF
     cd /opt/nexus && go build -o /usr/local/bin/nexus-connector main.go
 fi
@@ -155,11 +155,11 @@ systemctl restart freeswitch
 systemctl enable freeswitch
 
 echo -e "\n${BOLD}${GREEN}===================================================="
-echo "   NEXUS CORE v4.7.9 INSTALADO CORRECTAMENTE"
+echo "   CUBERBOX NEXUS CORE v4.7.9 INSTALADO CORRECTAMENTE"
 echo "===================================================="
 echo -e "${NC}"
 echo -e "ESL Port: ${BOLD}8021${NC}"
 echo -e "ESL Secret: ${BOLD}$ESL_PASS${NC}"
 echo -e "WebRTC WSS: ${BOLD}8089${NC}"
 echo -e "SIP Port: ${BOLD}5060${NC}"
-echo -e "\nConfiguración completada bajo estándares de Nexus Core."
+echo -e "\nConfiguración completada bajo estándares de CUBERBOX Nexus Core."

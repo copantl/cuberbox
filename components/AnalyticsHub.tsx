@@ -114,8 +114,8 @@ const AnalyticsHub: React.FC = () => {
                       <h4 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.4em] border-b border-slate-800 pb-3">Endpoint de Red</h4>
                       <div className="space-y-4">
                          {[
-                           { label: 'Host / URI', val: 'db.cuberbox-pro.net', icon: Globe2 },
-                           { label: 'Database', val: 'cuberbox_bi_warehouse', icon: Database },
+                           { label: 'Host / URI', val: 'db.cuberbox.net', icon: Globe2 },
+                           { label: 'Database', val: 'nexus_bi_warehouse', icon: Database },
                            { label: 'Port', val: '5432', icon: Settings },
                          ].map((item, i) => (
                            <div key={i} className="p-5 bg-slate-950/80 border border-slate-800 rounded-3xl space-y-2 group hover:border-emerald-500/30 transition-all">
@@ -247,7 +247,7 @@ const AnalyticsHub: React.FC = () => {
                      <div className="flex-1">
                         <h5 className="text-xs font-black text-white uppercase tracking-widest mb-1">Generación de Guest Tokens</h5>
                         <p className="text-[10px] text-slate-500 font-bold leading-relaxed uppercase tracking-wider mb-4">
-                           Para que el embebido sea seguro, CUBERBOX debe firmar peticiones JWT. Configura la duración de sesión del token.
+                           Para que el embebido sea seguro, CUBERBOX Nexus Core debe firmar peticiones JWT. Configura la duración de sesión del token.
                         </p>
                         <div className="flex items-center space-x-4">
                            <input type="range" min="15" max="240" step="15" value={embedConfig.guestTokenExpiry} onChange={e => setEmbedConfig({...embedConfig, guestTokenExpiry: e.target.value})} className="flex-1 h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-blue-500" />
@@ -341,7 +341,7 @@ const AnalyticsHub: React.FC = () => {
                        <span className="text-[10px] font-black text-white uppercase tracking-widest">Seguridad de Capas</span>
                     </div>
                     <p className="text-[10px] text-slate-500 font-bold leading-relaxed uppercase">
-                       El tráfico entre CUBERBOX y Superset está encapsulado vía <span className="text-white">TLS 1.3</span>. Las IPs autorizadas se validan mediante el Firewall de Capa 7.
+                       El tráfico entre CUBERBOX Nexus Core y Superset está encapsulado vía <span className="text-white">TLS 1.3</span>. Las IPs autorizadas se validan mediante el Firewall de Capa 7.
                     </p>
                  </div>
               </div>

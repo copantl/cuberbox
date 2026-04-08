@@ -41,7 +41,7 @@ const DNCManagement: React.FC = () => {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "cuberbox_dnc_registry.csv");
+    link.setAttribute("download", "nexus_dnc_registry.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

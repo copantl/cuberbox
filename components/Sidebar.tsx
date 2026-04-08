@@ -23,58 +23,60 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggle, role, userLevel }) => {
   const menuItems = [
-    // COMMAND CENTER
-    { name: 'Dashboard', icon: LayoutDashboard, path: '/', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.MONITOR_GTR], minLevel: 4, cat: 'COMMAND CENTER' },
-    { name: 'Terminal Agente', icon: Smartphone, path: '/agent', roles: [UserRole.AGENT, UserRole.ADMIN, UserRole.MANAGER], minLevel: 1, cat: 'COMMAND CENTER' },
-    { name: 'Monitor GTR', icon: MonitorCheck, path: '/realtime', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.MONITOR_GTR], minLevel: 4, cat: 'COMMAND CENTER' },
-    { name: 'GTR Avanzado', icon: Activity, path: '/gtr', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.MONITOR_GTR], minLevel: 4, cat: 'COMMAND CENTER' },
-    { name: 'Monitor Burbujas', icon: Radio, path: '/live-monitor', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.MONITOR_GTR], minLevel: 4, cat: 'COMMAND CENTER' },
-    { name: 'Omnicanal Hub', icon: Share2, path: '/whatsapp', roles: [UserRole.AGENT, UserRole.ADMIN, UserRole.MANAGER, UserRole.SOCIAL_MEDIA_MANAGER], minLevel: 1, cat: 'COMMAND CENTER' },
-    { name: 'Blueprints', icon: Workflow, path: '/blueprint', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 6, cat: 'COMMAND CENTER' },
+    // CENTRO DE OPERACIONES
+    { name: 'Dashboard', icon: LayoutDashboard, path: '/', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.MONITOR_GTR], minLevel: 4, cat: 'CENTRO DE OPERACIONES' },
+    { name: 'Terminal Agente', icon: Smartphone, path: '/agent', roles: [UserRole.AGENT, UserRole.ADMIN, UserRole.MANAGER], minLevel: 1, cat: 'CENTRO DE OPERACIONES' },
+    { name: 'Monitor GTR', icon: MonitorCheck, path: '/realtime', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.MONITOR_GTR], minLevel: 4, cat: 'CENTRO DE OPERACIONES' },
+    { name: 'GTR Avanzado', icon: Activity, path: '/gtr', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.MONITOR_GTR], minLevel: 4, cat: 'CENTRO DE OPERACIONES' },
+    { name: 'Monitor Burbujas', icon: Radio, path: '/live-monitor', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.MONITOR_GTR], minLevel: 4, cat: 'CENTRO DE OPERACIONES' },
+    { name: 'Omnicanal Hub', icon: Share2, path: '/whatsapp', roles: [UserRole.AGENT, UserRole.ADMIN, UserRole.MANAGER, UserRole.SOCIAL_MEDIA_MANAGER], minLevel: 1, cat: 'CENTRO DE OPERACIONES' },
 
-    // DIALER ENGINE
-    { name: 'Campañas Pro', icon: Target, path: '/campaigns', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 7, cat: 'DIALER ENGINE' },
-    { name: 'Broadcast AI', icon: Radio, path: '/broadcast-ai', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 8, cat: 'DIALER ENGINE' },
-    { name: 'Data Warehouse', icon: Database, path: '/lists', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 7, cat: 'DIALER ENGINE' },
-    { name: 'DNC Shield', icon: ShieldAlert, path: '/dnc', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 7, cat: 'DIALER ENGINE' },
+    // GESTIÓN DE MARCACIÓN
+    { name: 'Campañas Pro', icon: Target, path: '/campaigns', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 7, cat: 'GESTIÓN DE MARCACIÓN' },
+    { name: 'Broadcast AI', icon: Radio, path: '/broadcast-ai', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 8, cat: 'GESTIÓN DE MARCACIÓN' },
+    { name: 'Data Warehouse', icon: Database, path: '/lists', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 7, cat: 'GESTIÓN DE MARCACIÓN' },
+    { name: 'DNC Shield', icon: ShieldAlert, path: '/dnc', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 7, cat: 'GESTIÓN DE MARCACIÓN' },
 
-    // NEURAL LAB
-    { name: 'AI Studio', icon: Bot, path: '/ai-studio', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 7, cat: 'NEURAL LAB' },
-    { name: 'Diseño IVR', icon: GitMerge, path: '/ivr', roles: [UserRole.ADMIN], minLevel: 7, cat: 'NEURAL LAB' },
-    { name: 'Sonic Vault', icon: Volume2, path: '/audio-library', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 4, cat: 'NEURAL LAB' },
+    // LABORATORIO IA & IVR
+    { name: 'AI Studio', icon: Bot, path: '/ai-studio', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 7, cat: 'LABORATORIO IA & IVR' },
+    { name: 'Diseño IVR', icon: GitMerge, path: '/ivr', roles: [UserRole.ADMIN], minLevel: 7, cat: 'LABORATORIO IA & IVR' },
+    { name: 'Sonic Vault', icon: Volume2, path: '/audio-library', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 4, cat: 'LABORATORIO IA & IVR' },
+    { name: 'Blueprints', icon: Workflow, path: '/blueprint', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 6, cat: 'LABORATORIO IA & IVR' },
 
-    // DATA & BI
-    { name: 'Analytics Hub', icon: BarChart3, path: '/analytics-hub', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 6, cat: 'DATA & BI' },
-    { name: 'Reportes BI', icon: FileText, path: '/reports', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 4, cat: 'DATA & BI' },
-    { name: 'Calidad & QA', icon: ShieldCheck, path: '/qa', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 5, cat: 'DATA & BI' },
-    { name: 'Grabaciones', icon: Headphones, path: '/recordings', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 4, cat: 'DATA & BI' },
-    { name: 'Cloud Mesh', icon: Cloud, path: '/integrations', roles: [UserRole.ADMIN], minLevel: 8, cat: 'DATA & BI' },
-    { name: 'CRM Connect', icon: Globe, path: '/crm', roles: [UserRole.ADMIN], minLevel: 8, cat: 'DATA & BI' },
-    { name: 'Form Designer', icon: Layers, path: '/crm-designer', roles: [UserRole.ADMIN], minLevel: 8, cat: 'DATA & BI' },
-    { name: 'External ERP', icon: Network, path: '/crm-hub', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.SOCIAL_MEDIA_MANAGER], minLevel: 6, cat: 'DATA & BI' },
+    // INTELIGENCIA DE DATOS
+    { name: 'Analytics Hub', icon: BarChart3, path: '/analytics-hub', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 6, cat: 'INTELIGENCIA DE DATOS' },
+    { name: 'Reportes BI', icon: FileText, path: '/reports', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 4, cat: 'INTELIGENCIA DE DATOS' },
+    { name: 'Calidad & QA', icon: ShieldCheck, path: '/qa', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 5, cat: 'INTELIGENCIA DE DATOS' },
+    { name: 'Grabaciones', icon: Headphones, path: '/recordings', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 4, cat: 'INTELIGENCIA DE DATOS' },
 
-    // INFRASTRUCTURE
-    { name: 'Clúster Monitor', icon: Server, path: '/cluster', roles: [UserRole.ADMIN], minLevel: 9, cat: 'INFRASTRUCTURE' },
-    { name: 'Provisioning', icon: Zap, path: '/cluster-provisioning', roles: [UserRole.ADMIN], minLevel: 9, cat: 'INFRASTRUCTURE' },
-    { name: 'HA Config', icon: Shield, path: '/ha-config', roles: [UserRole.ADMIN], minLevel: 9, cat: 'INFRASTRUCTURE' },
-    { name: 'SIP Telephony', icon: PhoneCall, path: '/telephony', roles: [UserRole.ADMIN], minLevel: 9, cat: 'INFRASTRUCTURE' },
-    { name: 'Consola ESL', icon: Terminal, path: '/telephony-console', roles: [UserRole.ADMIN], minLevel: 9, cat: 'INFRASTRUCTURE' },
-    { name: 'Media Storage', icon: HardDrive, path: '/storage', roles: [UserRole.ADMIN], minLevel: 9, cat: 'INFRASTRUCTURE' },
+    // ECOSISTEMA & CRM
+    { name: 'Cloud Mesh', icon: Cloud, path: '/integrations', roles: [UserRole.ADMIN], minLevel: 8, cat: 'ECOSISTEMA & CRM' },
+    { name: 'CRM Connect', icon: Globe, path: '/crm', roles: [UserRole.ADMIN], minLevel: 8, cat: 'ECOSISTEMA & CRM' },
+    { name: 'Form Designer', icon: Layers, path: '/crm-designer', roles: [UserRole.ADMIN], minLevel: 8, cat: 'ECOSISTEMA & CRM' },
+    { name: 'External ERP', icon: Network, path: '/crm-hub', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.SOCIAL_MEDIA_MANAGER], minLevel: 6, cat: 'ECOSISTEMA & CRM' },
 
-    // GOVERNANCE
-    { name: 'Usuarios', icon: Users, path: '/users', roles: [UserRole.ADMIN], minLevel: 9, cat: 'GOVERNANCE' },
-    { name: 'Grupos Red', icon: Users2, path: '/user-groups', roles: [UserRole.ADMIN], minLevel: 9, cat: 'GOVERNANCE' },
-    { name: 'Forense Audit', icon: AuditIcon, path: '/audit', roles: [UserRole.ADMIN], minLevel: 9, cat: 'GOVERNANCE' },
-    { name: 'Pause Codes', icon: Sliders, path: '/pause-codes', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 8, cat: 'GOVERNANCE' },
-    { name: 'Call Codes', icon: ListChecks, path: '/call-codes', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 8, cat: 'GOVERNANCE' },
+    // INFRAESTRUCTURA CRÍTICA
+    { name: 'Clúster Monitor', icon: Server, path: '/cluster', roles: [UserRole.ADMIN], minLevel: 9, cat: 'INFRAESTRUCTURA CRÍTICA' },
+    { name: 'Provisioning', icon: Zap, path: '/cluster-provisioning', roles: [UserRole.ADMIN], minLevel: 9, cat: 'INFRAESTRUCTURA CRÍTICA' },
+    { name: 'HA Config', icon: Shield, path: '/ha-config', roles: [UserRole.ADMIN], minLevel: 9, cat: 'INFRAESTRUCTURA CRÍTICA' },
+    { name: 'SIP Telephony', icon: PhoneCall, path: '/telephony', roles: [UserRole.ADMIN], minLevel: 9, cat: 'INFRAESTRUCTURA CRÍTICA' },
+    { name: 'Consola ESL', icon: Terminal, path: '/telephony-console', roles: [UserRole.ADMIN], minLevel: 9, cat: 'INFRAESTRUCTURA CRÍTICA' },
+    { name: 'Media Storage', icon: HardDrive, path: '/storage', roles: [UserRole.ADMIN], minLevel: 9, cat: 'INFRAESTRUCTURA CRÍTICA' },
 
-    // SYSTEM
-    { name: 'Ajustes Core', icon: Settings, path: '/settings', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR, UserRole.SOCIAL_MEDIA_MANAGER], minLevel: 1, cat: 'SYSTEM' },
-    { name: 'Wizard Setup', icon: Wand2, path: '/setup-wizard', roles: [UserRole.ADMIN], minLevel: 9, cat: 'SYSTEM' },
-    { name: 'Requerimientos', icon: FileText, path: '/requirements', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR, UserRole.SOCIAL_MEDIA_MANAGER], minLevel: 1, cat: 'SYSTEM' },
-    { name: 'Manual Pro', icon: BookOpen, path: '/manual', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR, UserRole.SOCIAL_MEDIA_MANAGER], minLevel: 1, cat: 'SYSTEM' },
-    { name: 'Manuales Nexus', icon: FileText, path: '/manuals-viewer', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR, UserRole.SOCIAL_MEDIA_MANAGER], minLevel: 1, cat: 'SYSTEM' },
-    { name: 'Nexus Deploy', icon: Terminal, path: '/instructions', roles: [UserRole.ADMIN], minLevel: 9, cat: 'SYSTEM' },
+    // CONTROL DE ACCESO & AUDITORÍA
+    { name: 'Usuarios', icon: Users, path: '/users', roles: [UserRole.ADMIN], minLevel: 9, cat: 'CONTROL DE ACCESO & AUDITORÍA' },
+    { name: 'Grupos Red', icon: Users2, path: '/user-groups', roles: [UserRole.ADMIN], minLevel: 9, cat: 'CONTROL DE ACCESO & AUDITORÍA' },
+    { name: 'Forense Audit', icon: AuditIcon, path: '/audit', roles: [UserRole.ADMIN], minLevel: 9, cat: 'CONTROL DE ACCESO & AUDITORÍA' },
+    { name: 'Pause Codes', icon: Sliders, path: '/pause-codes', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 8, cat: 'CONTROL DE ACCESO & AUDITORÍA' },
+    { name: 'Call Codes', icon: ListChecks, path: '/call-codes', roles: [UserRole.ADMIN, UserRole.MANAGER], minLevel: 8, cat: 'CONTROL DE ACCESO & AUDITORÍA' },
+
+    // CONFIGURACIÓN & SOPORTE
+    { name: 'Ajustes Core', icon: Settings, path: '/settings', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR, UserRole.SOCIAL_MEDIA_MANAGER], minLevel: 1, cat: 'CONFIGURACIÓN & SOPORTE' },
+    { name: 'Wizard Setup', icon: Wand2, path: '/setup-wizard', roles: [UserRole.ADMIN], minLevel: 9, cat: 'CONFIGURACIÓN & SOPORTE' },
+    { name: 'Requerimientos', icon: FileText, path: '/requirements', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR, UserRole.SOCIAL_MEDIA_MANAGER], minLevel: 1, cat: 'CONFIGURACIÓN & SOPORTE' },
+    { name: 'Manual Pro', icon: BookOpen, path: '/manual', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR, UserRole.SOCIAL_MEDIA_MANAGER], minLevel: 1, cat: 'CONFIGURACIÓN & SOPORTE' },
+    { name: 'Manuales CUBERBOX Nexus', icon: FileText, path: '/manuals-viewer', roles: [UserRole.ADMIN, UserRole.MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR, UserRole.SOCIAL_MEDIA_MANAGER], minLevel: 1, cat: 'CONFIGURACIÓN & SOPORTE' },
+    { name: 'CUBERBOX Nexus Deploy', icon: Terminal, path: '/instructions', roles: [UserRole.ADMIN], minLevel: 9, cat: 'CONFIGURACIÓN & SOPORTE' },
   ];
 
   const categories = Array.from(new Set(menuItems.map(item => item.cat)));
@@ -100,8 +102,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggle, role, userLevel }) =>
             <div className="flex items-center space-x-3 animate-in fade-in duration-500">
                <Logo className="w-8 h-8" />
                <div className="flex flex-col">
-                 <span className="font-black text-white tracking-tighter uppercase text-sm leading-none">Cuberbox</span>
-                 <span className="text-[8px] font-bold text-blue-500 uppercase tracking-[0.2em] mt-1">Nexus Core</span>
+                 <span className="font-black text-white tracking-tighter uppercase text-sm leading-none">CUBERBOX Nexus Core</span>
+                 <span className="text-[8px] font-bold text-blue-500 uppercase tracking-[0.2em] mt-1">Authority Node</span>
                </div>
             </div>
           )}
@@ -189,7 +191,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, toggle, role, userLevel }) =>
              </div>
              {isOpen && (
                <div className="min-w-0 animate-in fade-in duration-500">
-                  <p className="text-[9px] font-black text-white uppercase tracking-tighter truncate">Authority Node</p>
+                  <p className="text-[9px] font-black text-white uppercase tracking-tighter truncate">CUBERBOX Brand</p>
                   <p className="text-[8px] font-bold text-slate-500 uppercase tracking-widest">Level {userLevel}</p>
                </div>
              )}

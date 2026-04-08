@@ -97,7 +97,7 @@ const Wallboard: React.FC<{ onClose: () => void }> = ({ onClose }) => {
          </div>
          <div className="flex items-center space-x-4">
             <RefreshCw size={24} className="text-blue-500 animate-spin" />
-            <span className="text-[11px] font-black text-white uppercase tracking-widest">NEXUS CORE ACTIVE</span>
+            <span className="text-[11px] font-black text-white uppercase tracking-widest">CUBERBOX NEXUS CORE ACTIVE</span>
          </div>
       </div>
     </div>

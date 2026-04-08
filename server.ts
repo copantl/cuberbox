@@ -22,8 +22,8 @@ async function startServer() {
   const pool = new Pool({
     host: process.env.DB_HOST || 'localhost',
     port: parseInt(process.env.DB_PORT || '5432'),
-    user: process.env.DB_USER || 'cuberbox_admin',
-    password: process.env.DB_PASSWORD || 'TitanPass2026!',
+    user: process.env.DB_USER || 'nexus_admin',
+    password: process.env.DB_PASSWORD || 'NexusPass2026!',
     database: process.env.DB_NAME || 'nexus_db',
     max: 20,
     idleTimeoutMillis: 30000,
@@ -187,8 +187,8 @@ async function startServer() {
   app.get("/api/users", async (req, res) => {
     if (!dbConnected) {
       return res.json([
-        { id: '1', username: 'admin', full_name: 'Administrador Nexus', role: 'ADMIN', email: 'admin@nexus.com', extension: '1000', mfa_enabled: true, is_active: true },
-        { id: '2', username: 'agent1', full_name: 'Juan Perez', role: 'AGENT', email: 'juan@nexus.com', extension: '1001', mfa_enabled: false, is_active: true }
+        { id: '1', username: 'admin', full_name: 'Administrador CUBERBOX Nexus', role: 'ADMIN', email: 'admin@cuberbox-nexus.com', extension: '1000', mfa_enabled: true, is_active: true },
+        { id: '2', username: 'agent1', full_name: 'Juan Perez', role: 'AGENT', email: 'juan@cuberbox-nexus.com', extension: '1001', mfa_enabled: false, is_active: true }
       ]);
     }
     try {
@@ -196,8 +196,8 @@ async function startServer() {
       res.json(result.rows);
     } catch (err: any) {
       res.json([
-        { id: '1', username: 'admin', full_name: 'Administrador Nexus', role: 'ADMIN', email: 'admin@nexus.com', extension: '1000', mfa_enabled: true, is_active: true },
-        { id: '2', username: 'agent1', full_name: 'Juan Perez', role: 'AGENT', email: 'juan@nexus.com', extension: '1001', mfa_enabled: false, is_active: true }
+        { id: '1', username: 'admin', full_name: 'Administrador CUBERBOX Nexus', role: 'ADMIN', email: 'admin@cuberbox-nexus.com', extension: '1000', mfa_enabled: true, is_active: true },
+        { id: '2', username: 'agent1', full_name: 'Juan Perez', role: 'AGENT', email: 'juan@cuberbox-nexus.com', extension: '1001', mfa_enabled: false, is_active: true }
       ]);
     }
   });
@@ -238,7 +238,7 @@ async function startServer() {
 
   // Recordings API
   app.get("/api/recordings", (req, res) => {
-    const recordingsBase = "/opt/cuberbox/recordings";
+    const recordingsBase = process.env.RECORDINGS_PATH || "/opt/nexus/recordings";
     const isMockMode = process.env.MOCK_ESL === 'true' || !fs.existsSync(recordingsBase);
 
     if (isMockMode) {
@@ -277,7 +277,8 @@ async function startServer() {
 
   app.get("/api/recordings/:date/:filename", (req, res) => {
     const { date, filename } = req.params;
-    const filePath = path.join("/opt/cuberbox/recordings", date, filename);
+    const recordingsBase = process.env.RECORDINGS_PATH || "/opt/nexus/recordings";
+    const filePath = path.join(recordingsBase, date, filename);
 
     if (process.env.MOCK_ESL === 'true' || !fs.existsSync(filePath)) {
       // In mock mode, we could return a placeholder audio or 404
@@ -408,7 +409,7 @@ async function startServer() {
       vars = 'eavesdrop_whisper_aleg=true,eavesdrop_whisper_bleg=true,';
     }
 
-    const command = `originate {${vars}origination_caller_id_name=NexusSpy,origination_caller_id_number=000}user/${supervisorExtension} &eavesdrop(${uuid})`;
+    const command = `originate {${vars}origination_caller_id_name=CUBERBOXNexusSpy,origination_caller_id_number=000}user/${supervisorExtension} &eavesdrop(${uuid})`;
 
     if (isMockMode) {
       console.log(`[MOCK ESL SPY] Mode: ${mode || 'listen'} | Executing: ${command}`);
@@ -461,7 +462,7 @@ async function startServer() {
       // 2. Al contestar, lo puentea (bridge) al destino externo vía gateway
       
       let command = "";
-      const nameVar = customerName ? `cuberbox_customer_name='${customerName.replace(/'/g, "")}',` : "";
+      const nameVar = customerName ? `nexus_customer_name='${customerName.replace(/'/g, "")}',` : "";
       
       if (gateway) {
         command = `originate {${nameVar}origination_caller_id_number=${extension}}user/${extension} &bridge(sofia/gateway/${gateway}/${destination})`;

@@ -110,7 +110,7 @@ const ClusterProvisioning: React.FC = () => {
            </div>
            <div>
               <h2 className="text-4xl font-black text-white tracking-tighter uppercase leading-none">
-                Orquestador Titan
+                Orquestador CUBERBOX
               </h2>
               <p className="text-slate-400 text-sm font-medium mt-2 uppercase tracking-widest opacity-60">Control de Topología v4.7.9</p>
            </div>

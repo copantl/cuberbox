@@ -1,4 +1,4 @@
--- NEXUS CORE - Production Seed Data V4.7.9
+-- CUBERBOX NEXUS CORE - Production Seed Data V4.7.9
 -- Datos iniciales para arranque en producción
 
 -- 1. Usuario Administrador por defecto
@@ -6,10 +6,10 @@
 INSERT INTO users (username, full_name, password_hash, role, email, extension, is_active)
 VALUES (
     'admin', 
-    'Administrador Nexus', 
+    'Administrador CUBERBOX', 
     '$2b$10$EixZaYVK1fsbw1ZfbX3OXePaGuZNCPVWRXKCAfGuZNCPVWRXKCAfG', -- admin123
     'ADMIN', 
-    'admin@nexus.com', 
+    'admin@cuberbox.com', 
     '1000', 
     TRUE
 ) ON CONFLICT (username) DO NOTHING;
@@ -35,7 +35,7 @@ LIMIT 1;
 -- 4. Nodo de Telefonía Maestro (Local)
 INSERT INTO telephony_nodes (name, ip, port, password, role, status)
 VALUES (
-    'Nexus-Master-Local', 
+    'CUBERBOX-Master-Local', 
     '127.0.0.1', 
     8021, 
     'ClueCon', 
@@ -47,8 +47,8 @@ VALUES (
 INSERT INTO omnichannel_messages (channel, sender_id, content, direction, status)
 VALUES (
     'SYSTEM', 
-    'NEXUS-CORE', 
-    'Sistema Nexus Core inicializado correctamente en entorno de producción.', 
+    'CUBERBOX-CORE', 
+    'Sistema CUBERBOX Nexus Core inicializado correctamente en entorno de producción.', 
     'inbound', 
     'delivered'
 ) ON CONFLICT DO NOTHING;

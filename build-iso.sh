@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Nexus Core - Debian 12 ISO Builder Script
+# CUBERBOX Nexus Core - Debian 12 ISO Builder Script
 # Este script automatiza la creación de una ISO personalizada de Debian 12
-# que incluye el instalador de Nexus Core y configuración preseed.
+# que incluye el instalador de CUBERBOX Nexus Core y configuración preseed.
 
 # Requisitos: xorriso, isolinux, wget, cpio
 
@@ -32,12 +32,17 @@ fi
 
 # Variables
 ISO_URL="https://cdimage.debian.org/cdimage/archive/12.9.0/amd64/iso-cd/debian-12.9.0-amd64-netinst.iso"
-ISO_NAME="debian-12-nexus-core.iso"
+ISO_NAME="debian-12-cuberbox-nexus.iso"
 WORKING_DIR="iso_build"
 NEXUS_INSTALLER_URL="https://[TU-DOMINIO]/nexus-installer.sh"
 PRESEED_URL="https://[TU-DOMINIO]/iso/preseed.cfg"
 
-echo "--- Iniciando creación de ISO personalizada de Nexus Core ---"
+echo "--- Iniciando creación de ISO personalizada de CUBERBOX Nexus Core ---"
+
+# Preguntar por la ruta de instalación de CUBERBOX Nexus en el sistema destino
+read -p "Ingrese la ruta de instalación por defecto para CUBERBOX Nexus Core (ej: /opt/nexus): " INSTALL_PATH
+INSTALL_PATH=${INSTALL_PATH:-"/opt/nexus"}
+echo "Usando ruta de instalación: $INSTALL_PATH"
 
 # 1. Limpieza y preparación
 rm -rf $WORKING_DIR
@@ -60,6 +65,8 @@ xorriso -osirrox on -indev debian-base.iso -extract / $WORKING_DIR/iso_content
 # 4. Añadir archivo preseed
 echo "Añadiendo archivo preseed..."
 wget -O $WORKING_DIR/iso_content/preseed.cfg $PRESEED_URL
+# Personalizar la ruta de instalación en el preseed
+sed -i "s|/root/nexus-installer.sh --auto|/root/nexus-installer.sh --auto --path $INSTALL_PATH|" $WORKING_DIR/iso_content/preseed.cfg
 
 # 5. Modificar configuración de arranque (isolinux)
 echo "Configurando arranque automático..."
@@ -68,7 +75,7 @@ sed -i 's/default install/default nexus-install/' $WORKING_DIR/iso_content/isoli
 cat <<EOF >> $WORKING_DIR/iso_content/isolinux/isolinux.cfg
 
 label nexus-install
-	menu label ^Nexus Core Automated Install
+	menu label ^CUBERBOX Nexus Core Automated Install
 	kernel /install.amd/vmlinuz
 	append vga=788 initrd=/install.amd/initrd.gz auto=true priority=critical preseed/file=/cdrom/preseed.cfg --- quiet
 EOF

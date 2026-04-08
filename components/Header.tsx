@@ -72,7 +72,7 @@ const Header: React.FC<HeaderProps> = ({ user, currentTheme, onThemeToggle, onLo
               <ShieldCheck size={16} className="text-blue-500" />
               <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse shadow-[0_0_5px_rgba(37,99,235,0.8)]"></div>
            </div>
-           <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest whitespace-nowrap">FreeSwitch 1.10 (TITAN_CORE)</span>
+           <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest whitespace-nowrap">FreeSwitch 1.10 (CUBERBOX)</span>
         </div>
 
         <div className={`hidden xl:flex items-center space-x-3 px-4 py-2 border rounded-xl transition-all duration-500 ${

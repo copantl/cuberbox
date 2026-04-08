@@ -50,6 +50,7 @@ import Logo from './components/Logo';
 import { RecordingsManager } from './components/RecordingsManager';
 import { TelephonyConsole } from './components/TelephonyConsole';
 import { LiveChannelMonitor } from './components/LiveChannelMonitor';
+import FullManualExport from './components/FullManualExport';
 
 import { User, UserRole, ThemeType } from './types';
 import { MOCK_USER } from './constants';
@@ -59,7 +60,7 @@ import { AuthProvider, useAuth } from './AuthContext';
 const AppContent: React.FC = () => {
   const { isAuthenticated, user, login, logout, isInitialized } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [theme, setTheme] = useState<ThemeType>((localStorage.getItem('cuberbox-theme') as ThemeType) || 'midnight');
+  const [theme, setTheme] = useState<ThemeType>((localStorage.getItem('nexus-theme') as ThemeType) || 'midnight');
 
   useEffect(() => {
     document.body.className = `theme-${theme}`;
@@ -67,7 +68,7 @@ const AppContent: React.FC = () => {
 
   const handleThemeChange = (newTheme: ThemeType) => {
     setTheme(newTheme);
-    localStorage.setItem('cuberbox-theme', newTheme);
+    localStorage.setItem('nexus-theme', newTheme);
   };
 
   if (!isInitialized) {
@@ -75,7 +76,7 @@ const AppContent: React.FC = () => {
       <div className="h-screen bg-[#050505] flex items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
           <Logo className="w-16 h-16 animate-pulse" />
-          <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.5em] animate-pulse">Initializing Nexus Core</span>
+          <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.5em] animate-pulse">Initializing CUBERBOX Nexus Core</span>
         </div>
       </div>
     );
@@ -166,6 +167,7 @@ const AppContent: React.FC = () => {
                     <Route path="/requirements" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={1} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER, UserRole.SOCIAL_MEDIA_MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR]}><RequirementsSpec /></AccessControl>} />
                     <Route path="/manual" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={1} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER, UserRole.SOCIAL_MEDIA_MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR]}><UserManual /></AccessControl>} />
                     <Route path="/manuals-viewer" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={1} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER, UserRole.SOCIAL_MEDIA_MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR]}><ManualsViewer /></AccessControl>} />
+                    <Route path="/manual-export" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={1} userRole={user?.role} allowedRoles={[UserRole.ADMIN, UserRole.MANAGER, UserRole.SOCIAL_MEDIA_MANAGER, UserRole.AGENT, UserRole.MONITOR_GTR]}><FullManualExport /></AccessControl>} />
                     <Route path="/instructions" element={<AccessControl userLevel={user?.userLevel || 1} minLevel={9} userRole={user?.role} allowedRoles={[UserRole.ADMIN]}><Instructions /></AccessControl>} />
                     
                     <Route path="*" element={<Navigate to="/" />} />

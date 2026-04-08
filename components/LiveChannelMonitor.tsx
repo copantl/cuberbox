@@ -324,7 +324,7 @@ export const LiveChannelMonitor: React.FC = () => {
                     <span className="text-[10px] font-black uppercase tracking-widest text-white">
                       {activeSpy.mode === 'barge' ? 'Intervención Activa' : activeSpy.mode === 'whisper' ? 'Susurro al Agente' : 'Escucha Activa'}
                     </span>
-                    <span className="text-[8px] font-bold text-white/60 uppercase tracking-tighter">Nexus Protocol Secured</span>
+                    <span className="text-[8px] font-bold text-white/60 uppercase tracking-tighter">CUBERBOX Nexus Protocol Secured</span>
                   </div>
                 </motion.div>
               )}
@@ -497,7 +497,7 @@ export const LiveChannelMonitor: React.FC = () => {
               </div>
               <div className="bg-white/5 px-10 py-5 border-t border-border-main">
                 <p className="text-[9px] text-text-secondary text-center uppercase tracking-[0.3em] font-black">
-                  Nexus Security Protocol v4.7.9 - Authority Level 9
+                  CUBERBOX Nexus Security Protocol v4.7.9 - Authority Level 9
                 </p>
               </div>
             </motion.div>

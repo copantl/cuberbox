@@ -1,6 +1,9 @@
 # 02. Requisitos del Sistema
+## CUBERBOX NEXUS CORE v4.7.9 - AUTHORITY NODE
 
-Antes de iniciar la instalación de Nexus Core, asegúrese de que su servidor cumpla con los siguientes requisitos mínimos y recomendados.
+![System Requirements](https://images.unsplash.com/photo-1558494949-ef010cbdcc48?q=80&w=2074&auto=format&fit=crop)
+
+Antes de iniciar la instalación de CUBERBOX Nexus Core, asegúrese de que su servidor cumpla con los siguientes requisitos mínimos y recomendados.
 
 ## Hardware Recomendado
 
@@ -13,12 +16,12 @@ Antes de iniciar la instalación de Nexus Core, asegúrese de que su servidor cu
 
 ## Sistema Operativo
 
-Nexus Core está optimizado exclusivamente para:
+CUBERBOX Nexus Core está optimizado exclusivamente para:
 - **Debian 12 (Bookworm)**: Instalación limpia (netinst recomendada).
 
 ## Requisitos de Red y Firewall
 
-Nexus Core requiere que los siguientes puertos estén abiertos para su correcto funcionamiento:
+CUBERBOX Nexus Core requiere que los siguientes puertos estén abiertos para su correcto funcionamiento:
 
 - **80/443 (TCP)**: Interfaz Web (HTTP/HTTPS).
 - **5060/5061 (TCP/UDP)**: Señalización SIP (SIP/SIPS).
@@ -32,3 +35,5 @@ Para habilitar todas las funcionalidades, necesitará:
 - **SignalWire PAT**: Token de acceso personal para el motor de telefonía.
 - **Gemini API Key**: Para transcripción y análisis de IA.
 - **Meta App ID/Secret**: Para integración con WhatsApp y Facebook.
+
+© 2026 CUBERBOX Nexus Core. Todos los derechos reservados.

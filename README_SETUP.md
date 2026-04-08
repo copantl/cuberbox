@@ -1,6 +1,6 @@
-# 🚀 Cuberbox Pro - Nexus Cluster Orchestrator
+# 🚀 CUBERBOX Nexus Core - Nexus Cluster Orchestrator
 
-Este instalador avanzado permite desplegar **Cuberbox Pro** tanto en un solo servidor como en una arquitectura distribuida (Clúster).
+Este instalador avanzado permite desplegar **CUBERBOX Nexus Core** tanto en un solo servidor como en una arquitectura distribuida (Clúster).
 
 ## 🛠 Modos de Instalación
 
@@ -16,7 +16,7 @@ Actúa como el cerebro del despliegue.
 ### 3. Node Agent
 Este modo se debe ejecutar directamente en los servidores que formarán parte del clúster. Permite instalar únicamente el componente necesario:
 - **Database Node**: Configura PostgreSQL.
-- **Web Node**: Configura la aplicación Nexus.
+- **Web Node**: Configura la aplicación CUBERBOX Nexus.
 - **Media Node**: Configura FreeSwitch.
 
 ### 4. Auditoría de Conectividad
@@ -33,7 +33,7 @@ El instalador ahora incluye una opción para cargar datos iniciales de producci�
 - Acceso SSH entre nodos (recomendado llaves SSH).
 - Puertos abiertos:
   - **5432**: PostgreSQL
-  - **3000**: Nexus Web/API
+  - **3000**: CUBERBOX Nexus Web/API
   - **8021**: FreeSwitch ESL
 
 ## 🚀 Ejecución
@@ -50,4 +50,4 @@ chmod +x setup.sh
 - `cluster_setup.log`: Registro detallado de todas las operaciones.
 
 ---
-**Nexus Intelligence Center v4.7.9** - *Transformando la comunicación omnicanal.*
+**CUBERBOX Nexus Intelligence Center v4.7.9** - *Transformando la comunicación omnicanal.*

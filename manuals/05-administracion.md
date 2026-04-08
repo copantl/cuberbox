@@ -1,6 +1,9 @@
 # 05. Guía de Administración
+## CUBERBOX NEXUS CORE v4.7.9 - AUTHORITY NODE
 
-Nexus Core proporciona una interfaz intuitiva para gestionar todos los aspectos de su centro de contacto.
+![Administration Dashboard](https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop)
+
+CUBERBOX Nexus Core proporciona una interfaz intuitiva para gestionar todos los aspectos de su centro de contacto.
 
 ## Gestión de Usuarios y Agentes
 
@@ -31,3 +34,5 @@ Nexus Core proporciona una interfaz intuitiva para gestionar todos los aspectos 
 1. **AI Studio**: Configure modelos de IA para automatizar conversaciones.
 2. **Diseño IVR**: Cree flujos de respuesta de voz interactiva (IVR) con capacidades de reconocimiento de voz.
 3. **Sonic Vault**: Gestione su biblioteca de audios y locuciones.
+
+© 2026 CUBERBOX Nexus Core. Todos los derechos reservados.

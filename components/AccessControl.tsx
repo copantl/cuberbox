@@ -58,7 +58,7 @@ const AccessControl: React.FC<AccessControlProps> = ({ userLevel, minLevel, allo
 
           <div className="pt-10 border-t border-slate-800 flex items-center justify-center space-x-4 opacity-50 relative z-10">
             <Info size={16} className="text-blue-400" />
-            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Protocolo de Seguridad CUBERBOX Core v4.6</span>
+            <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Protocolo de Seguridad CUBERBOX Nexus Core v4.6</span>
           </div>
         </div>
       </div>

@@ -134,7 +134,7 @@ const HAConfigPage: React.FC = () => {
 
   const handleExportConfig = () => {
     const haproxyConfig = `
-# CUBERBOX PRO - GENERATED HAPROXY CONFIG v5.1.5
+# CUBERBOX NEXUS CORE - GENERATED HAPROXY CONFIG v5.1.5
 # Hash: ${Math.random().toString(36).substr(2, 32)}
 global
     log /dev/log local0
@@ -150,9 +150,9 @@ defaults
 
 frontend http-in
     bind *:80
-    default_backend cuberbox_nodes
+    default_backend nexus_nodes
 
-backend cuberbox_nodes
+backend nexus_nodes
     balance ${config.loadBalancerMode.toLowerCase().replace('_', '')}
     option httpchk GET /health
 ${nodes.map(n => `    server ${n.name.replace(/\s+/g, '_')} ${n.ip}:80 check weight ${n.weight} ${n.isPrimary ? 'primary' : ''}`).join('\n')}
@@ -173,7 +173,7 @@ vrrp_instance VI_1 {
     const element = document.createElement("a");
     const file = new Blob([haproxyConfig], {type: 'text/plain'});
     element.href = URL.createObjectURL(file);
-    element.download = "cuberbox_ha_stack.cfg";
+    element.download = "nexus_ha_stack.cfg";
     document.body.appendChild(element);
     element.click();
     toast('Configuración .cfg exportada.', 'success');
@@ -289,7 +289,7 @@ vrrp_instance VI_1 {
               <div className="flex-1 relative z-10">
                  <h4 className="text-xl font-black text-white uppercase tracking-tight mb-2">Protocolo VRRP Core</h4>
                  <p className="text-xs text-slate-400 font-medium uppercase leading-relaxed tracking-wider max-w-2xl">
-                    CUBERBOX Pro utiliza <span className="text-blue-400 font-black">VRRP</span> para gestionar la Virtual IP compartida. El clúster está configurado para failover atómico en <span className="text-emerald-400 font-black">Nivel 2 y 3</span>.
+                    CUBERBOX Nexus Core utiliza <span className="text-blue-400 font-black">VRRP</span> para gestionar la Virtual IP compartida. El clúster está configurado para failover atómico en <span className="text-emerald-400 font-black">Nivel 2 y 3</span>.
                  </p>
                  <div className="flex space-x-12 mt-10">
                     <div className="space-y-1">

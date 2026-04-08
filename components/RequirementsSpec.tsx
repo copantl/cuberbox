@@ -25,7 +25,7 @@ const RequirementsSpec: React.FC = () => {
     {
       title: "1. Descripción General del Producto",
       icon: Globe,
-      content: "Cuberbox Pro es un motor de medios avanzado y una plataforma de Contact Center omnicanal diseñada para operaciones de alta densidad. Integra telefonía IP (SIP), mensajería instantánea (WhatsApp), correo electrónico y herramientas de inteligencia artificial en una única interfaz unificada."
+      content: "CUBERBOX Nexus Core es un motor de medios avanzado y una plataforma de Contact Center omnicanal diseñada para operaciones de alta densidad. Integra telefonía IP (SIP), mensajería instantánea (WhatsApp), correo electrónico y herramientas de inteligencia artificial en una única interfaz unificada."
     },
     {
       title: "2. Requerimientos Funcionales",
@@ -143,8 +143,8 @@ const RequirementsSpec: React.FC = () => {
   ];
 
   const generateTextContent = () => {
-    let text = "CUBERBOX PRO - ESPECIFICACIÓN DE REQUERIMIENTOS\n";
-    text += "==============================================\n\n";
+    let text = "CUBERBOX Nexus Core - ESPECIFICACIÓN DE REQUERIMIENTOS\n";
+    text += "====================================================\n\n";
     
     sections.forEach(section => {
       text += `${section.title}\n`;
@@ -179,7 +179,7 @@ const RequirementsSpec: React.FC = () => {
     const element = document.createElement("a");
     const file = new Blob([generateTextContent()], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
-    element.download = "Requerimientos_Cuberbox_Pro.txt";
+    element.download = "Requerimientos_CUBERBOX_Nexus_Core.txt";
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
@@ -196,7 +196,7 @@ const RequirementsSpec: React.FC = () => {
           <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-500 to-amber-400 bg-clip-text text-transparent print:text-slate-900 print:bg-none">
             Especificación de Requerimientos
           </h1>
-          <p className="text-slate-400 mt-2 print:text-slate-600">Documentación técnica completa del sistema Cuberbox Pro</p>
+          <p className="text-slate-400 mt-2 print:text-slate-600">Documentación técnica completa del sistema CUBERBOX Nexus Core</p>
         </div>
         <div className="flex items-center gap-3 print:hidden">
           <button 
@@ -217,7 +217,7 @@ const RequirementsSpec: React.FC = () => {
           </button>
         </div>
         <div className="hidden print:block text-slate-400 text-xs">
-          Generado por Cuberbox Pro System
+          Generado por CUBERBOX Nexus Core System
         </div>
       </div>
 

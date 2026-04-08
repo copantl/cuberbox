@@ -114,7 +114,7 @@ const QualityAssurance: React.FC = () => {
       Devuelve un JSON con: fcr (boolean), csat (1-5), quality (0-100), compliance (0-100), 
       sentiment (STRING), summary (STRING), feedback (STRING).
       TRANSCRIPT:
-      AGENT: Gracias por llamar a CUBERBOX, le atiende Maria. ¿En qué puedo ayudarle?
+      AGENT: Gracias por llamar a CUBERBOX Nexus Core, le atiende Maria. ¿En qué puedo ayudarle?
       CLIENT: Hola, mi factura llegó con un cargo extra que no reconozco.
       AGENT: Lamento el inconveniente. Revisando su cuenta... veo que es un ajuste de prorrateo. Ya lo he corregido y su próximo pago será el normal.
       CLIENT: Oh, perfecto. Muchas gracias por la rapidez.

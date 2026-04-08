@@ -87,7 +87,7 @@ const UsersManagement: React.FC<{ currentUser?: User }> = ({ currentUser = MOCK_
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(users, null, 2));
     const downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "cuberbox_users_backup.json");
+    downloadAnchorNode.setAttribute("download", "nexus_users_backup.json");
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
@@ -117,7 +117,7 @@ const UsersManagement: React.FC<{ currentUser?: User }> = ({ currentUser = MOCK_
           throw new Error("Formato inválido");
         }
       } catch (err) {
-        toast('Error: El archivo no cumple el esquema CUBERBOX.', 'error');
+        toast('Error: El archivo no cumple el esquema NEXUS.', 'error');
       } finally {
         setIsPorting(false);
       }

@@ -285,7 +285,7 @@ const SMTPServerManagement: React.FC = () => {
                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div className="space-y-2">
                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Default "From" Name</label>
-                         <input type="text" value={editingServer.fromName} onChange={e => setEditingServer({...editingServer, fromName: e.target.value})} className="w-full bg-slate-950 border-2 border-slate-800 rounded-[28px] px-8 py-5 text-sm text-white font-bold outline-none focus:border-amber-500 shadow-inner" placeholder="CUBERBOX Systems" />
+                         <input type="text" value={editingServer.fromName} onChange={e => setEditingServer({...editingServer, fromName: e.target.value})} className="w-full bg-slate-950 border-2 border-slate-800 rounded-[28px] px-8 py-5 text-sm text-white font-bold outline-none focus:border-amber-500 shadow-inner" placeholder="CUBERBOX Nexus Core Systems" />
                       </div>
                       <div className="space-y-2">
                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Default "From" Email</label>
@@ -301,7 +301,7 @@ const SMTPServerManagement: React.FC = () => {
                    <div className="flex-1">
                       <h5 className="text-sm font-black text-white uppercase tracking-widest mb-1">Nota de Seguridad</h5>
                       <p className="text-[10px] text-slate-500 font-bold leading-relaxed uppercase tracking-wider">
-                         CUBERBOX Pro encripta todas las credenciales SMTP en reposo utilizando AES-256. Asegúrate de que el firewall del servidor permita tráfico saliente en el puerto {editingServer.port || 'configurado'}.
+                         NEXUS Core encripta todas las credenciales SMTP en reposo utilizando AES-256. Asegúrate de que el firewall del servidor permita tráfico saliente en el puerto {editingServer.port || 'configurado'}.
                       </p>
                    </div>
                 </div>

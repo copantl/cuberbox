@@ -17,9 +17,9 @@ const FreeswitchCLI: React.FC = () => {
 
   const mockEvents = [
     { level: 'DEBUG', message: 'sofia.c:2344 Incoming INVITE from carrier_twilio_prim' },
-    { level: 'LUA', message: 'cuberbox_router.lua:12 [TELEMETRY] Dispatching CUSTOM event: cuberbox::telemetry' },
+    { level: 'LUA', message: 'nexus_router.lua:12 [TELEMETRY] Dispatching CUSTOM event: nexus::telemetry' },
     { level: 'NOTICE', message: 'switch_xml.c:642 Config Reloaded: Trunks and DIDs synchronized with PostgreSQL' },
-    { level: 'INFO', message: 'mod_dialplan_xml.c:332 [CUBERBOX TRACE] Mapping DID +13055550122 -> Camp: Real Estate' },
+    { level: 'INFO', message: 'mod_dialplan_xml.c:332 [NEXUS TRACE] Mapping DID +13055550122 -> Camp: Real Estate' },
     { level: 'NOTICE', message: 'switch_channel.c:1112 New Channel bridge/1001-agent [CONNECTED]' },
     { level: 'DEBUG', message: 'switch_core_state_machine.c:455 EXEC conference(conf_1001@default)' },
     { level: 'CRIT', message: 'mod_sofia.c:1102 [SIP_FAIL] Lost connection to Twilio Gateway 54.172.60.0' },
@@ -32,7 +32,7 @@ const FreeswitchCLI: React.FC = () => {
       '================================================================================',
       'external      profile   sip:mod_sofia@10.0.0.10:5060        RUNNING (0)',
       'internal      profile   sip:mod_sofia@10.0.0.10:5061        RUNNING (0)',
-      'twilio        gateway   sip:cuberbox@twilio.com             REGED',
+      'twilio        gateway   sip:nexus@twilio.com             REGED',
       '================================================================================',
       '3 profiles 1 gateway'
     ],
@@ -42,7 +42,7 @@ const FreeswitchCLI: React.FC = () => {
       '7482-af23-11ed-9482-0123456789ab    inbound    2024-11-21 14:05:22         ACTIVE       conf_1001',
       '1 total calls'
     ],
-    'version': ['FreeSWITCH Version 1.10.12-release-27~64bit (Nexus Core v4.7.9)'],
+    'version': ['FreeSWITCH Version 1.10.12-release-27~64bit (CUBERBOX Nexus Core v4.7.9)'],
     'status': [
       'UP 12 days, 8 hours, 14 minutes, 22 seconds',
       'FreeSWITCH (Version 1.10.12) is ready',

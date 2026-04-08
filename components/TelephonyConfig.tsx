@@ -37,7 +37,7 @@ const TelephonyConfig: React.FC = () => {
     setIsSyncing(true);
     await new Promise(r => setTimeout(r, 2000));
     setIsSyncing(false);
-    toast('Profiles de Sofia y XML Dialplan recargados.', 'success', 'Nexus Core Sync');
+    toast('Profiles de Sofia y XML Dialplan recargados.', 'success', 'CUBERBOX Nexus Core Sync');
   };
 
   const handleOpenTrunkModal = (trunk?: SIPTrunk) => {
@@ -119,7 +119,7 @@ const TelephonyConfig: React.FC = () => {
 
       <div className="flex space-x-2 overflow-x-auto scrollbar-hide pb-2">
         {[
-          { id: 'FS', icon: Server, label: 'Nexus Node' },
+          { id: 'FS', icon: Server, label: 'CUBERBOX Nexus Node' },
           { id: 'TRUNKS', icon: Globe, label: 'Sofia Gateways' },
           { id: 'DIDS', icon: Hash, label: 'Carrier DIDs' },
           { id: 'EXTENSIONS', icon: Smartphone, label: 'WebRTC Verto' },
@@ -277,7 +277,7 @@ const TelephonyConfig: React.FC = () => {
                        <Server size={48} />
                     </div>
                     <div>
-                       <h2 className="text-3xl font-black text-white uppercase tracking-tighter">Nodo Maestro Nexus</h2>
+                       <h2 className="text-3xl font-black text-white uppercase tracking-tighter">Nodo Maestro CUBERBOX Nexus</h2>
                        <p className="text-sm text-slate-500 font-medium">Build: 1.10.12 LTS v4.7.9 Legacy Support</p>
                     </div>
                  </div>

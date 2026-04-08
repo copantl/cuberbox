@@ -73,8 +73,8 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         <div className="text-center mb-12">
           <div className="flex flex-col items-center">
             <Logo className="w-20 h-20 mb-6" />
-            <h1 className="text-4xl font-black tracking-tighter text-text-primary uppercase">cuberbox</h1>
-            <p className="text-text-secondary font-black uppercase tracking-[0.5em] text-[10px] mt-2 opacity-80">Nexus Core Infrastructure</p>
+            <h1 className="text-4xl font-black tracking-tighter text-text-primary uppercase">CUBERBOX</h1>
+            <p className="text-text-secondary font-black uppercase tracking-[0.5em] text-[10px] mt-2 opacity-80">CUBERBOX Nexus Core Infrastructure</p>
           </div>
         </div>
 
@@ -162,11 +162,11 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         </div>
 
         <div className="mt-12 text-center space-y-6">
-           <p className="text-[9px] text-text-secondary font-black uppercase tracking-[0.5em]">NEXUS_CORE INFRASTRUCTURE v4.7.9</p>
+           <p className="text-[9px] text-text-secondary font-black uppercase tracking-[0.5em]">CUBERBOX NEXUS CORE INFRASTRUCTURE v4.7.9</p>
            <div className="p-6 rounded-3xl bg-white/[0.02] border border-border-main">
              <p className="text-[9px] text-text-secondary font-bold uppercase tracking-widest leading-relaxed opacity-60">
                Protected by international intellectual property laws. <br/>
-               © 2024 NEXUS_CORE. Unauthorized reproduction prohibited. <br/>
+               © 2026 CUBERBOX Nexus Core. Unauthorized reproduction prohibited. <br/>
                <span className="text-text-secondary mt-2 block">Lead Architect: Galel López</span>
              </p>
            </div>

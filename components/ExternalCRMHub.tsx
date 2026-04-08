@@ -85,7 +85,7 @@ const ExternalCRMHub: React.FC = () => {
                     <div className="space-y-4">
                        <h3 className="text-4xl font-black text-white uppercase tracking-tighter">Sesión {activePartner.name}</h3>
                        <p className="text-slate-500 text-sm max-w-lg mx-auto font-medium leading-relaxed">
-                          La integración nativa de CUBERBOX está enviando telemetría SIP a esta instancia. <br/>
+                          La integración nativa de CUBERBOX Nexus Core está enviando telemetría SIP a esta instancia. <br/>
                           <span className="text-emerald-500 font-bold uppercase tracking-widest mt-2 block">Capa WebRTC Puente: Conectada</span>
                        </p>
                     </div>

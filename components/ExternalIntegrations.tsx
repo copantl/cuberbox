@@ -188,11 +188,11 @@ const ExternalIntegrations: React.FC = () => {
                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div className="space-y-4">
                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-2">Consumer Key (Client ID)</label>
-                         <input type="text" value="3MVG99Ox_Xf3SGN123984_cbx_live_pk..." readOnly className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-6 py-4 text-xs text-blue-400 font-mono outline-none" />
+                         <input type="text" value="3MVG99Ox_Xf3SGN123984_nexus_live_pk..." readOnly className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-6 py-4 text-xs text-blue-400 font-mono outline-none" />
                       </div>
                       <div className="space-y-4">
                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-2">Instance URL</label>
-                         <input type="text" value="https://cuberbox-pro.my.salesforce.com" readOnly className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-6 py-4 text-xs text-slate-400 font-mono outline-none" />
+                         <input type="text" value="https://nexus-core.my.salesforce.com" readOnly className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-6 py-4 text-xs text-slate-400 font-mono outline-none" />
                       </div>
                    </div>
 
@@ -275,7 +275,7 @@ const ExternalIntegrations: React.FC = () => {
                       </h4>
                       <p className="text-xs text-slate-500 font-medium uppercase tracking-widest">Para gateways de SMS locales o personalizados via HTTP API.</p>
                       <div className="bg-slate-950 border border-slate-800 rounded-3xl p-6 font-mono text-xs text-blue-400 break-all shadow-inner">
-                         https://my-sms-gateway.local/api/send?user=cuber&pass=********&to=<span className="text-emerald-400">{"{{phone}}"}</span>&msg=<span className="text-emerald-400">{"{{message}}"}</span>
+                         https://my-sms-gateway.local/api/send?user=nexus&pass=********&to=<span className="text-emerald-400">{"{{phone}}"}</span>&msg=<span className="text-emerald-400">{"{{message}}"}</span>
                       </div>
                    </div>
                 </div>
@@ -386,7 +386,7 @@ const ExternalIntegrations: React.FC = () => {
       </settings>
       <gateways>
         <gateway name="carrier_main">
-          <param name="username" value="cuberbox_sip"/>
+          <param name="username" value="nexus_sip"/>
           <param name="password" value="********"/>
           <param name="proxy" value="sip.carrier.net"/>
           <param name="register" value="true"/>

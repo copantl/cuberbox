@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Nexus Core - Systemd Service Installer
-# This script creates the necessary systemd unit files for Nexus Core.
+# CUBERBOX Nexus Core - Systemd Service Installer
+# This script creates the necessary systemd unit files for CUBERBOX Nexus Core.
 
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root (use sudo)" 
@@ -11,7 +11,7 @@ fi
 echo "Creating nexus-web.service..."
 cat <<EOF > /etc/systemd/system/nexus-web.service
 [Unit]
-Description=Nexus Core Web Interface
+Description=CUBERBOX Nexus Core Web Interface
 After=network.target
 
 [Service]
@@ -28,7 +28,7 @@ EOF
 echo "Creating nexus-core.service (Connector)..."
 cat <<EOF > /etc/systemd/system/nexus-core.service
 [Unit]
-Description=Nexus Core Connector
+Description=CUBERBOX Nexus Core Connector
 After=network.target freeswitch.service
 
 [Service]

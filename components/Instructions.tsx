@@ -48,7 +48,7 @@ const Instructions: React.FC = () => {
       <div className="text-center mb-20 space-y-4">
         <div className="inline-flex items-center space-x-3 bg-blue-500/10 border border-blue-500/20 px-6 py-2.5 rounded-full mb-6">
           <Zap size={18} className="text-blue-500 animate-pulse" />
-          <span className="text-[11px] font-black text-blue-400 uppercase tracking-[0.4em]">Nexus Release v4.7.9</span>
+          <span className="text-[11px] font-black text-blue-400 uppercase tracking-[0.4em]">CUBERBOX Release v4.7.9</span>
         </div>
         <h1 className="text-6xl font-black text-white tracking-tighter uppercase leading-none">Despliegue FreeSwitch</h1>
         <p className="text-slate-400 text-lg max-w-3xl mx-auto font-medium mt-4 uppercase tracking-widest opacity-60">
@@ -100,7 +100,7 @@ const Instructions: React.FC = () => {
                       Añada estas líneas a su archivo .env local para habilitar la comunicación real:
                     </p>
                     <code className="text-emerald-400 text-[11px] font-mono block bg-black/40 p-4 rounded-xl">
-                      WHATSAPP_VERIFY_TOKEN=cuberbox_token_2024<br/>
+                      WHATSAPP_VERIFY_TOKEN=nexus_token_2026<br/>
                       WHATSAPP_ACCESS_TOKEN=tu_token_de_meta<br/>
                       WHATSAPP_PHONE_NUMBER_ID=tu_id_de_telefono
                     </code>
@@ -130,7 +130,7 @@ const Instructions: React.FC = () => {
                   <MessageSquare size={32} className="mr-4 text-pink-400" /> Activación Omnicanal (TikTok)
                </h2>
                <p className="text-slate-400 text-lg mb-10 leading-relaxed max-w-2xl font-medium">
-                  Integre TikTok Business para recibir y responder mensajes de sus seguidores directamente desde Cuberbox.
+                  Integre TikTok Business para recibir y responder mensajes de sus seguidores directamente desde CUBERBOX Nexus Core.
                </p>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
                   <div className="p-8 bg-slate-900/50 border border-slate-800 rounded-[32px]">
@@ -148,7 +148,7 @@ const Instructions: React.FC = () => {
                       Añada estas líneas a su archivo .env local para habilitar TikTok:
                     </p>
                     <code className="text-emerald-400 text-[11px] font-mono block bg-black/40 p-4 rounded-xl">
-                      TIKTOK_VERIFY_TOKEN=cuberbox_tiktok_token_2024<br/>
+                      TIKTOK_VERIFY_TOKEN=nexus_tiktok_token_2026<br/>
                       TIKTOK_ACCESS_TOKEN=tu_token_de_tiktok<br/>
                       TIKTOK_CLIENT_KEY=tu_client_key
                     </code>
@@ -180,7 +180,7 @@ const Instructions: React.FC = () => {
                       Añada estas líneas para habilitar Facebook e Instagram:
                     </p>
                     <code className="text-emerald-400 text-[11px] font-mono block bg-black/40 p-4 rounded-xl">
-                      META_VERIFY_TOKEN=cuberbox_meta_token_2024<br/>
+                      META_VERIFY_TOKEN=nexus_meta_token_2026<br/>
                       FACEBOOK_PAGE_ACCESS_TOKEN=tu_token_de_pagina<br/>
                       FACEBOOK_PAGE_ID=tu_id_de_pagina
                     </code>
@@ -202,8 +202,8 @@ const Instructions: React.FC = () => {
                       Asegúrese de que el Realm y el Client ID coincidan con los definidos en su servidor Keycloak:
                     </p>
                     <ul className="text-[11px] text-slate-400 font-bold space-y-2 uppercase tracking-widest">
-                      <li>• Realm: <span className="text-indigo-400">cuberbox</span></li>
-                      <li>• Client ID: <span className="text-indigo-400">cuberbox-pro</span></li>
+                      <li>• Realm: <span className="text-indigo-400">nexus</span></li>
+                      <li>• Client ID: <span className="text-indigo-400">nexus-core</span></li>
                       <li>• Access Type: <span className="text-indigo-400">confidential</span></li>
                     </ul>
                   </div>
@@ -214,8 +214,8 @@ const Instructions: React.FC = () => {
                     </p>
                     <code className="text-emerald-400 text-[11px] font-mono block bg-black/40 p-4 rounded-xl">
                       VITE_KEYCLOAK_URL=https://tu-keycloak.com<br/>
-                      VITE_KEYCLOAK_REALM=cuberbox<br/>
-                      VITE_KEYCLOAK_CLIENT_ID=cuberbox-pro<br/>
+                      VITE_KEYCLOAK_REALM=nexus<br/>
+                      VITE_KEYCLOAK_CLIENT_ID=nexus-core<br/>
                       KEYCLOAK_CLIENT_SECRET=tu_secret
                     </code>
                   </div>
@@ -226,13 +226,13 @@ const Instructions: React.FC = () => {
         {activeTab === 'ONE_LINER' && (
           <div className="glass p-12 rounded-[64px] border border-blue-500/20 bg-blue-600/5 mb-16 relative overflow-hidden">
              <h2 className="text-3xl font-black text-white uppercase tracking-tight flex items-center mb-8">
-                <ShieldCheck size={32} className="mr-4 text-emerald-400" /> Inyección Nexus-ESL
+                <ShieldCheck size={32} className="mr-4 text-emerald-400" /> Inyección CUBERBOX-ESL
              </h2>
              <p className="text-slate-400 text-lg mb-10 leading-relaxed max-w-2xl font-medium">
-                Este script configura los repositorios de SignalWire, instala el motor FreeSwitch 1.10 y aprovisiona el puerto 8021 para el conector CUBERBOX Pro.
+                Este script configura los repositorios de SignalWire, instala el motor FreeSwitch 1.10 y aprovisiona el puerto 8021 para el conector CUBERBOX Nexus Core.
              </p>
              <CodeBlock 
-                title="Super-Script Nexus (Recomendado)"
+                title="Super-Script CUBERBOX (Recomendado)"
                 icon={TerminalSquare}
                 code={`wget -O install.sh ${typeof window !== 'undefined' ? window.location.origin : ''}/setup/install.sh && chmod +x install.sh && sudo ./install.sh`}
              />
@@ -292,8 +292,8 @@ const Instructions: React.FC = () => {
                       <p className="text-[10px] font-black text-blue-500 uppercase mb-3 tracking-widest">Paso 4: Base de Datos Segura</p>
                       <p className="text-xs text-slate-500 mb-4 font-bold uppercase tracking-wider">Creamos el espacio donde se guardará toda la información de sus clientes y llamadas.</p>
                       <code className="text-emerald-400 text-[11px] font-mono block leading-relaxed bg-black/40 p-4 rounded-xl">
-                        sudo -u postgres psql -c "CREATE USER cuberbox_admin WITH PASSWORD 'TitanPass2024!';"<br/>
-                        sudo -u postgres psql -c "CREATE DATABASE cuberbox_db OWNER cuberbox_admin;"
+                        sudo -u postgres psql -c "CREATE USER nexus_admin WITH PASSWORD 'TitanPass2026!';"<br/>
+                        sudo -u postgres psql -c "CREATE DATABASE nexus_db OWNER nexus_admin;"
                       </code>
                    </div>
                    <div className="p-8 bg-slate-950 rounded-3xl border border-slate-800">
@@ -301,7 +301,7 @@ const Instructions: React.FC = () => {
                       <p className="text-xs text-slate-500 mb-4 font-bold uppercase tracking-wider">Generamos certificados para que las llamadas desde el navegador sean privadas y seguras.</p>
                       <code className="text-emerald-400 text-[11px] font-mono block leading-relaxed bg-black/40 p-4 rounded-xl">
                         mkdir -p /etc/freeswitch/tls<br/>
-                        openssl req -x509 -nodes -days 3650 -newkey rsa:4096 -keyout /etc/freeswitch/tls/wss.key -out /etc/freeswitch/tls/wss.crt -subj "/C=US/ST=Tech/L=Cloud/O=Cuberbox/CN=sip.tu-dominio.com"<br/>
+                        openssl req -x509 -nodes -days 3650 -newkey rsa:4096 -keyout /etc/freeswitch/tls/wss.key -out /etc/freeswitch/tls/wss.crt -subj "/C=US/ST=Tech/L=Cloud/O=CUBERBOXNexusCore/CN=sip.tu-dominio.com"<br/>
                         cat /etc/freeswitch/tls/wss.crt /etc/freeswitch/tls/wss.key &gt; /etc/freeswitch/tls/wss.pem<br/>
                         chown -R freeswitch:freeswitch /etc/freeswitch/tls
                       </code>
@@ -338,13 +338,13 @@ const Instructions: React.FC = () => {
                         apt-get install -y nodejs golang-go<br/>
                         <br/>
                         # Clonar y Construir<br/>
-                        git clone https://github.com/copantl/cuberbox-pro.git /opt/cuberbox<br/>
-                        cd /opt/cuberbox/backend && go build -o /usr/local/bin/cuberbox-connector main.go<br/>
-                        cd /opt/cuberbox && npm install && npm run build<br/>
+                        git clone https://github.com/copantl/nexus-core.git /opt/nexus-core<br/>
+                        cd /opt/nexus-core/backend && go build -o /usr/local/bin/nexus-connector main.go<br/>
+                        cd /opt/nexus-core && npm install && npm run build<br/>
                         <br/>
                         # Configurar Servicios Systemd<br/>
-                        chmod +x /opt/cuberbox/setup-service.sh<br/>
-                        sudo /opt/cuberbox/setup-service.sh
+                        chmod +x /opt/nexus-core/setup-service.sh<br/>
+                        sudo /opt/nexus-core/setup-service.sh
                       </code>
                    </div>
                    <div className="p-8 bg-slate-950 rounded-3xl border border-slate-800">
@@ -352,7 +352,7 @@ const Instructions: React.FC = () => {
                       <p className="text-xs text-slate-500 mb-4 font-bold uppercase tracking-wider">Si tiene múltiples servidores FreeSwitch, regístrelos en la base de datos para habilitar el clúster.</p>
                       <code className="text-emerald-400 text-[11px] font-mono block leading-relaxed bg-black/40 p-4 rounded-xl">
                         # Acceder a PostgreSQL<br/>
-                        sudo -u postgres psql -d cuberbox_db<br/>
+                        sudo -u postgres psql -d nexus_db<br/>
                         <br/>
                         # Registrar un nodo remoto<br/>
                         INSERT INTO telephony_nodes (name, ip, port, password, role) <br/>
@@ -370,9 +370,9 @@ const Instructions: React.FC = () => {
                 <CheckCircle2 size={64} />
               </div>
               <div className="space-y-4">
-                <h2 className="text-5xl font-black text-white uppercase tracking-tighter leading-none">Nexus Clúster Activo</h2>
+                <h2 className="text-5xl font-black text-white uppercase tracking-tighter leading-none">CUBERBOX Clúster Activo</h2>
                 <p className="text-slate-400 text-lg font-medium uppercase tracking-widest opacity-60">
-                  FreeSwitch 1.10 LTS está ahora gobernando el Media Plane de tu red v4.7.9.
+                  FreeSwitch 1.10 LTS está ahora gobernando el Media Plane de tu red CUBERBOX Nexus Core v4.7.9.
                 </p>
               </div>
               <button 

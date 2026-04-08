@@ -229,7 +229,7 @@ const Dashboard: React.FC = () => {
 
   const handleLaunchAudit = async () => {
     setIsAuditing(true);
-    toast('Iniciando auditoría forense de desvíos temporales...', 'info', 'Nexus Audit Engine');
+    toast('Iniciando auditoría forense de desvíos temporales...', 'info', 'CUBERBOX Nexus Audit Engine');
     
     // Simulación de escaneo profundo de logs y CDRs
     await new Promise(r => setTimeout(r, 3500));
@@ -251,7 +251,7 @@ const Dashboard: React.FC = () => {
           </div>
           <div>
             <h2 className="text-3xl font-black text-text-primary tracking-tighter uppercase flex items-center">
-              Nexus Intelligence Center
+              CUBERBOX Intelligence Center
             </h2>
             <div className="flex items-center space-x-3 mt-1">
               <span className="text-text-secondary text-[9px] font-bold uppercase tracking-[0.2em]">Master Control</span>

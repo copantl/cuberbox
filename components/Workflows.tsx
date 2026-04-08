@@ -46,7 +46,7 @@ const Workflows: React.FC = () => {
       description: "Flujo del dato desde la ingesta en PostgreSQL hasta la tipificación final.",
       configPath: "/lists",
       accent: "blue",
-      fullLogic: "Este flujo describe cómo Nexus Pro gestiona los prospectos. El dato inicia en el 'Data Warehouse', es filtrado por la capa de cumplimiento (DNC) y se inyecta en el Hopper de memoria RAM para garantizar que no haya latencia al momento de que un agente quede libre. Una vez contactado, la IA audita la respuesta y actualiza el CRM externo.",
+      fullLogic: "Este flujo describe cómo CUBERBOX Nexus Core gestiona los prospectos. El dato inicia en el 'Data Warehouse', es filtrado por la capa de cumplimiento (DNC) y se inyecta en el Hopper de memoria RAM para garantizar que no haya latencia al momento de que un agente quede libre. Una vez contactado, la IA audita la respuesta y actualiza el CRM externo.",
       steps: [
         { icon: Database, label: "Data Warehouse", desc: "Almacenamiento persistente de leads.", path: "/lists", technicalDetail: "PostgreSQL 16 optimizado con índices B-Tree sobre el campo phone_number.", status: 'HEALTHY' },
         { icon: Shield, label: "DNC Scrubbing", desc: "Filtrado automático de números bloqueados.", path: "/dnc", technicalDetail: "Validación contra listas negras federales y locales mediante un sub-proceso de limpieza de alta velocidad.", status: 'HEALTHY' },
@@ -72,7 +72,7 @@ const Workflows: React.FC = () => {
       description: "Análisis automático de calidad mediante modelos Gemini 3 Flash.",
       configPath: "/ai-studio",
       accent: "purple",
-      fullLogic: "Nexus Pro no requiere que supervisores humanos escuchen cada llamada. Al finalizar una grabación, se dispara un evento que envía el audio al motor Gemini. Este extrae la intención del cliente, califica la empatía del agente y actualiza el Dashboard de Inteligencia con métricas objetivas de negocio.",
+      fullLogic: "CUBERBOX Nexus Core no requiere que supervisores humanos escuchen cada llamada. Al finalizar una grabación, se dispara un evento que envía el audio al motor Gemini. Este extrae la intención del cliente, califica la empatía del agente y actualiza el Dashboard de Inteligencia con métricas objetivas de negocio.",
       steps: [
         { icon: Bot, label: "Inference Engine", desc: "Gemini procesando audio/texto.", path: "/ai-studio", technicalDetail: "Uso de Multimodal Context para analizar entonación y palabras clave simultáneamente.", status: 'HEALTHY' },
         { icon: MessageSquare, label: "Sentiment Scoring", desc: "Detección de emociones del cliente.", path: "/qa", technicalDetail: "Clasificación semántica en escalas de -1.0 a +1.0.", status: 'HEALTHY' },
@@ -124,7 +124,7 @@ const Workflows: React.FC = () => {
         <div>
           <h2 className="text-4xl font-black text-white tracking-tighter uppercase flex items-center">
             <WorkflowIcon className="mr-5 text-blue-500" size={42} />
-            Nexus Architecture Blueprints
+            CUBERBOX Nexus Architecture Blueprints
           </h2>
           <p className="text-slate-400 text-sm font-medium mt-1 uppercase tracking-widest">Mapa estratégico de procesos e interacciones v4.7.9.</p>
         </div>
@@ -202,7 +202,7 @@ const Workflows: React.FC = () => {
                  <div className="mt-16 pt-10 border-t border-slate-800 flex justify-between items-center opacity-50">
                     <div className="flex items-center space-x-4">
                        <div className="p-2 bg-blue-600/10 rounded-lg"><Monitor size={16} className="text-blue-500" /></div>
-                       <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Esquema verificado por Nexus Core Architect</span>
+                       <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Esquema verificado por CUBERBOX Nexus Core Architect</span>
                     </div>
                     <div className="flex items-center space-x-2">
                        <ShieldCheck size={14} className="text-emerald-500" />

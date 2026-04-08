@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # =============================================================================
-# NEXUS CORE - INFRASTRUCTURE ORCHESTRATOR V4.7.9
+# CUBERBOX NEXUS CORE - INFRASTRUCTURE ORCHESTRATOR V4.7.9
 # Soporte: Debian 12 (Bookworm) / Debian 13 (Trixie)
 # Componentes: FreeSwitch 1.10, PostgreSQL 16, Go 1.22, HAProxy, Keepalived
 # =============================================================================
 
 set -e
 
-# --- Estética de Terminal Nexus ---
+# --- Estética de Terminal CUBERBOX Nexus ---
 BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 GREEN='\033[0;32m'
@@ -24,7 +24,7 @@ echo "  / ____/ / / / __ ) ____/ __ \/ __ )/ __ \ |/ /"
 echo " / /   / / / / __  / __/ / /_/ / __  / / / /   / "
 echo "/ /___/ /_/ / /_/ / /___/ _, _/ /_/ / /_/ /   |  "
 echo "\____/\____/_____/_____/_/ |_/_____/\____/_/|_|  "
-echo -e "          NEXUS INFRASTRUCTURE SETUP v4.7.9${NC}\n"
+echo -e "          CUBERBOX NEXUS INFRASTRUCTURE SETUP v4.7.9${NC}\n"
 
 # 1. Verificación de Privilegios
 if [[ $EUID -ne 0 ]]; then
@@ -33,7 +33,7 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 # 2. Captura de Datos Interactiva
-echo -e "${CYAN}[CONFIG] Configuración del Nodo Nexus${NC}"
+echo -e "${CYAN}[CONFIG] Configuración del Nodo CUBERBOX Nexus${NC}"
 read -p "Dominio/FQDN para SSL (ej: sip.empresa.com): " CBX_DOMAIN
 read -p "Token SignalWire (PAT): " SW_TOKEN
 read -p "IP Virtual (VIP) para el Clúster HA: " HA_VIP
@@ -129,13 +129,13 @@ EOF
 sudo -u postgres psql -c "CREATE USER nexus_admin WITH PASSWORD '$DB_PASS';" || true
 sudo -u postgres psql -c "CREATE DATABASE nexus_db OWNER nexus_admin;" || true
 
-# 6. Generación de Capa SSL (Nexus Shield)
+# 6. Generación de Capa SSL (CUBERBOX Nexus Shield)
 echo -e "${BLUE}[4/7] Generando certificados SSL para WebRTC/WSS...${NC}"
 mkdir -p /etc/freeswitch/tls
 openssl req -x509 -nodes -days 3650 -newkey rsa:4096 \
     -keyout /etc/freeswitch/tls/wss.key \
     -out /etc/freeswitch/tls/wss.crt \
-    -subj "/C=US/ST=Tech/L=Cloud/O=Nexus/CN=$CBX_DOMAIN"
+    -subj "/C=US/ST=Tech/L=Cloud/O=CUBERBOXNexus/CN=$CBX_DOMAIN"
 
 cat /etc/freeswitch/tls/wss.crt /etc/freeswitch/tls/wss.key > /etc/freeswitch/tls/wss.pem
 chown -R freeswitch:freeswitch /etc/freeswitch/tls
@@ -162,7 +162,7 @@ vrrp_instance VI_1 {
 }
 EOF
 
-# 8. Compilación del Backend Go (Nexus Connector)
+# 8. Compilación del Backend Go (CUBERBOX Nexus Connector)
 echo -e "${BLUE}[6/7] Preparando Backend Go de Control...${NC}"
 mkdir -p /opt/nexus/bin
 
@@ -175,7 +175,7 @@ else
     cat <<EOF > /opt/nexus/main.go
 package main
 import "fmt"
-func main() { fmt.Println("Nexus Core Go Backend v4.7.9 - Operational") }
+func main() { fmt.Println("CUBERBOX Nexus Core Go Backend v4.7.9 - Operational") }
 EOF
     cd /opt/nexus && go build -o /usr/local/bin/nexus-connector main.go
 fi
@@ -198,7 +198,7 @@ systemctl restart keepalived
 systemctl restart haproxy
 
 echo -e "\n${BOLD}${GREEN}===================================================="
-echo "   NEXUS CORE v4.7.9 INSTALADO CORRECTAMENTE"
+echo "   CUBERBOX NEXUS CORE v4.7.9 INSTALADO CORRECTAMENTE"
 echo "===================================================="
 echo -e "${NC}"
 echo -e "Virtual IP (VIP): ${BOLD}$HA_VIP${NC}"

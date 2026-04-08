@@ -69,8 +69,8 @@ const Logo: React.FC<LogoProps> = ({ className = "w-12 h-12", showText = false }
       </div>
       {showText && (
         <div className="flex flex-col">
-          <span className="text-2xl font-black tracking-tighter text-white uppercase leading-none">cuberbox</span>
-          <span className="text-[8px] font-black text-blue-500 uppercase tracking-[0.4em] mt-1">pro engine</span>
+          <span className="text-2xl font-black tracking-tighter text-white uppercase leading-none">CUBERBOX</span>
+          <span className="text-[8px] font-black text-blue-500 uppercase tracking-[0.4em] mt-1">CUBERBOX Nexus Core</span>
         </div>
       )}
     </div>

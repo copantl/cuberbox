@@ -1,10 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { Book, FileText, Settings, AlertCircle, ChevronLeft, ChevronRight, Menu, Zap, Sliders, Users } from 'lucide-react';
+import { Book, FileText, Settings, AlertCircle, ChevronLeft, ChevronRight, Menu, Zap, Sliders, Users, DownloadCloud } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const MANUALS = [
-  { id: 'introduccion', title: '01. Introducción', file: '/manuals/01-introduccion.md', icon: Book, description: 'Visión general de Nexus Core.' },
+  { id: 'introduccion', title: '01. Introducción', file: '/manuals/01-introduccion.md', icon: Book, description: 'Visión general de CUBERBOX Nexus Core.' },
   { id: 'requisitos', title: '02. Requisitos', file: '/manuals/02-requisitos.md', icon: Settings, description: 'Hardware, SO y red.' },
   { id: 'instalacion', title: '03. Instalación', file: '/manuals/03-instalacion.md', icon: Zap, description: 'Guía paso a paso (ISO/Script).' },
   { id: 'configuracion', title: '04. Configuración', file: '/manuals/04-configuracion.md', icon: Sliders, description: 'Ajustes post-instalación.' },
@@ -40,7 +41,7 @@ const ManualsViewer: React.FC = () => {
     <div className="h-full flex flex-col space-y-6 animate-in fade-in duration-700">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-          <h1 className="text-4xl font-black text-white tracking-tighter uppercase leading-none">Documentación Nexus</h1>
+          <h1 className="text-4xl font-black text-white tracking-tighter uppercase leading-none">Documentación CUBERBOX Nexus</h1>
           <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Guía completa de despliegue y operación</p>
         </div>
         <button 
@@ -88,9 +89,16 @@ const ManualsViewer: React.FC = () => {
               <h4 className="text-[10px] font-black text-white uppercase tracking-widest">Recursos ISO</h4>
             </div>
             <p className="text-[10px] text-slate-500 font-bold leading-relaxed">
-              Use el archivo preseed para automatizar la instalación de Debian 12 con Nexus Core.
+              Use el archivo preseed para automatizar la instalación de Debian 12 con CUBERBOX Nexus Core.
             </p>
             <div className="grid grid-cols-1 gap-2">
+              <Link 
+                to="/manual-export" 
+                className="flex items-center justify-center space-x-2 w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-[9px] font-black uppercase tracking-widest transition-all shadow-lg shadow-emerald-600/20 mb-2"
+              >
+                <DownloadCloud size={14} />
+                <span>Manual Maestro (PDF)</span>
+              </Link>
               <a 
                 href="/iso/preseed.cfg" 
                 download 
@@ -122,7 +130,24 @@ const ManualsViewer: React.FC = () => {
             ) : (
               <article className="prose prose-invert prose-slate max-w-none prose-headings:uppercase prose-headings:tracking-tighter prose-headings:font-black prose-p:text-slate-400 prose-p:leading-relaxed prose-strong:text-white prose-code:text-blue-400 prose-pre:bg-slate-900/50 prose-pre:border prose-pre:border-slate-800 prose-pre:rounded-3xl">
                 <div className="markdown-body">
-                  <ReactMarkdown>{content}</ReactMarkdown>
+                  <ReactMarkdown
+                    components={{
+                      img: ({ node, ...props }) => (
+                        <div className="my-8 group relative overflow-hidden rounded-[32px] border-4 border-white/5 shadow-2xl transition-all duration-500 hover:scale-[1.02] hover:border-blue-500/30">
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10 flex items-end p-6">
+                            <span className="text-[10px] font-black text-white uppercase tracking-[0.3em] drop-shadow-lg">CUBERBOX Nexus Core Visual Reference</span>
+                          </div>
+                          <img 
+                            {...props} 
+                            className="w-full h-auto object-cover aspect-video" 
+                            referrerPolicy="no-referrer"
+                          />
+                        </div>
+                      )
+                    }}
+                  >
+                    {content}
+                  </ReactMarkdown>
                 </div>
               </article>
             )}

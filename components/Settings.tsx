@@ -357,7 +357,7 @@ const Settings: React.FC<SettingsProps> = ({ user, currentTheme, onThemeChange }
                    </div>
                    <div>
                       <h3 className="text-2xl font-black text-white uppercase tracking-tight">SSO Gateway (Keycloak / OIDC)</h3>
-                      <p className="text-sm text-slate-400 mt-1 max-w-md">Integra CUBERBOX con tu proveedor de identidad corporativo.</p>
+                      <p className="text-sm text-slate-400 mt-1 max-w-md">Integra CUBERBOX Nexus Core con tu proveedor de identidad corporativo.</p>
                    </div>
                 </div>
                 <button 
@@ -379,7 +379,7 @@ const Settings: React.FC<SettingsProps> = ({ user, currentTheme, onThemeChange }
                        </div>
                        <div>
                           <h3 className="text-2xl font-black text-white uppercase tracking-tight">CUBERBOX API Gateway</h3>
-                          <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">Endpoints Globales & Webhooks</p>
+                           <p className="text-sm text-slate-500 font-bold uppercase tracking-widest">Endpoints Globales & Webhooks (CUBERBOX Nexus Core)</p>
                        </div>
                     </div>
                     <button className="bg-blue-600 text-white px-8 py-3.5 rounded-[18px] font-black text-[11px] uppercase tracking-widest active:scale-95 shadow-xl">Generar Nueva API Key</button>

@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # =============================================================================
-# CUBERBOX PRO - COMPILED FREESWITCH SYNC TOOL V1.0
+# CUBERBOX NEXUS CORE PRO - COMPILED FREESWITCH SYNC TOOL V1.0
 # Este script sincroniza una instalación de FreeSwitch compilada manualmente
-# con la configuración de la aplicación Cuberbox.
+# con la configuración de la aplicación CUBERBOX Nexus Core.
 # =============================================================================
 
 BLUE='\033[0;34m'
@@ -12,7 +12,7 @@ RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-echo -e "${BLUE}=== Cuberbox Compiled FreeSwitch Sync ===${NC}"
+echo -e "${BLUE}=== CUBERBOX Nexus Core Compiled FreeSwitch Sync ===${NC}"
 
 # 1. Buscar la ruta de instalación de FreeSwitch
 FS_PATHS=("/usr/local/freeswitch" "/opt/freeswitch" "/usr/freeswitch")

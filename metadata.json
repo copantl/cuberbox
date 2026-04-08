@@ -4,6 +4,6 @@
     "microphone",
     "geolocation"
   ],
-  "name": "Nexus Core v4.7.9 | Adaptive Media Engine",
-  "description": "Plataforma de Contact Center omnicanal de alta densidad con soporte nativo para Clúster FreeSwitch 1.10, PostgreSQL 16 y alta disponibilidad."
+  "name": "CUBERBOX Nexus Core v4.7.9 | Adaptive Media Engine",
+  "description": "Plataforma de Contact Center omnicanal de alta densidad de CUBERBOX con soporte nativo para Clúster FreeSwitch 1.10, PostgreSQL 16 y alta disponibilidad."
 }

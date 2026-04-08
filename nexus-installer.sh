@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ==============================================================================
-# NEXUS CORE - UNIFIED INSTALLER & ORCHESTRATOR v4.7.9
+# CUBERBOX NEXUS CORE - UNIFIED INSTALLER & ORCHESTRATOR v4.7.9
 # Debian-style TUI Installer (whiptail/dialog based)
 # ==============================================================================
 
@@ -140,7 +140,7 @@ EOF"
     run_step 84 "Configurando Base de Datos" "sudo -u postgres psql -c \"CREATE USER nexus_admin WITH PASSWORD '$DB_PASS';\" && sudo -u postgres psql -c \"CREATE DATABASE nexus_db OWNER nexus_admin;\""
     
     # SSL Config
-    run_step 86 "Generando certificados SSL" "mkdir -p /etc/freeswitch/tls && openssl req -x509 -nodes -days 3650 -newkey rsa:4096 -keyout /etc/freeswitch/tls/wss.key -out /etc/freeswitch/tls/wss.crt -subj \"/C=US/ST=Tech/L=Cloud/O=Nexus/CN=$CBX_DOMAIN\" && cat /etc/freeswitch/tls/wss.crt /etc/freeswitch/tls/wss.key > /etc/freeswitch/tls/wss.pem && chown -R freeswitch:freeswitch /etc/freeswitch/tls"
+    run_step 86 "Generando certificados SSL" "mkdir -p /etc/freeswitch/tls && openssl req -x509 -nodes -days 3650 -newkey rsa:4096 -keyout /etc/freeswitch/tls/wss.key -out /etc/freeswitch/tls/wss.crt -subj \"/C=US/ST=Tech/L=Cloud/O=CUBERBOX Nexus Core/CN=$CBX_DOMAIN\" && cat /etc/freeswitch/tls/wss.crt /etc/freeswitch/tls/wss.key > /etc/freeswitch/tls/wss.pem && chown -R freeswitch:freeswitch /etc/freeswitch/tls"
 }
 
 configure_ha() {
@@ -166,13 +166,13 @@ EOF"
 }
 
 compile_backend() {
-    update_progress 94 "Compilando Nexus Connector..."
-    run_step 95 "Construyendo binario Go" "mkdir -p /opt/nexus/bin && (if [ -d \"/opt/nexus/backend\" ]; then cd /opt/nexus/backend && go build -o /usr/local/bin/nexus-connector main.go; else cat <<EOF > /opt/nexus/main.go
+    update_progress 94 "Compilando CUBERBOX Nexus Connector..."
+    run_step 95 "Construyendo binario Go" "mkdir -p $INSTALL_DIR/bin && (if [ -d \"$INSTALL_DIR/backend\" ]; then cd $INSTALL_DIR/backend && go build -o /usr/local/bin/nexus-connector main.go; else cat <<EOF > $INSTALL_DIR/main.go
 package main
 import \"fmt\"
-func main() { fmt.Println(\"Nexus Core Go Backend v4.7.9 - Operational\") }
+func main() { fmt.Println(\"CUBERBOX Nexus Core Go Backend v4.7.9 - Operational\") }
 EOF
-cd /opt/nexus && go build -o /usr/local/bin/nexus-connector main.go; fi) && chmod +x /usr/local/bin/nexus-connector"
+cd $INSTALL_DIR && go build -o /usr/local/bin/nexus-connector main.go; fi) && chmod +x /usr/local/bin/nexus-connector"
 }
 
 install_systemd_services() {
@@ -181,15 +181,16 @@ install_systemd_services() {
     # Web Service
     run_step 98 "Creando nexus-web.service" "cat <<EOF > /etc/systemd/system/nexus-web.service
 [Unit]
-Description=Nexus Core Web Interface
+Description=CUBERBOX Nexus Core Web Interface
 After=network.target
 
 [Service]
 Type=simple
-WorkingDirectory=/opt/nexus
+WorkingDirectory=$INSTALL_DIR
 ExecStart=\$(which npm) run dev -- --host 0.0.0.0
 Restart=always
 Environment=NODE_ENV=production
+Environment=RECORDINGS_PATH=$INSTALL_DIR/recordings
 
 [Install]
 WantedBy=multi-user.target
@@ -198,12 +199,12 @@ EOF"
     # Connector Service
     run_step 99 "Creando nexus-core.service" "cat <<EOF > /etc/systemd/system/nexus-core.service
 [Unit]
-Description=Nexus Core Connector
+Description=CUBERBOX Nexus Core Connector
 After=network.target freeswitch.service
 
 [Service]
 Type=simple
-WorkingDirectory=/opt/nexus
+WorkingDirectory=$INSTALL_DIR
 ExecStart=/usr/local/bin/nexus-connector
 Restart=always
 
@@ -221,8 +222,42 @@ finalize() {
 }
 
 # --- Main Installer Logic ---
+AUTO_MODE=false
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --auto) AUTO_MODE=true ;;
+        --domain) CBX_DOMAIN="$2"; shift ;;
+        --token) SW_TOKEN="$2"; shift ;;
+        --db-pass) DB_PASS="$2"; shift ;;
+        --type) INSTALL_TYPE="$2"; shift ;;
+        --vip) HA_VIP="$2"; shift ;;
+        --role) NODE_ROLE="$2"; shift ;;
+        --path) INSTALL_DIR="$2"; shift ;;
+    esac
+    shift
+done
+
+if [ "$AUTO_MODE" = true ]; then
+    log "Running in AUTO mode"
+    INSTALL_TYPE=${INSTALL_TYPE:-"STANDALONE"}
+    CBX_DOMAIN=${CBX_DOMAIN:-"cuberbox-nexus.local"}
+    SW_TOKEN=${SW_TOKEN:-"none"}
+    DB_PASS=${DB_PASS:-"NexusPass2026!"}
+    INSTALL_DIR=${INSTALL_DIR:-"/opt/nexus"}
+    
+    case "$INSTALL_TYPE" in
+        "STANDALONE") run_standalone ;;
+        "CLUSTER") run_cluster ;;
+    esac
+    exit 0
+fi
 
 run_standalone() {
+    # Ask for install path if not set (TUI mode)
+    if [ -z "$INSTALL_DIR" ]; then
+        INSTALL_DIR=$(whiptail --title "Ruta de Instalación" --inputbox "Ingrese la ruta donde se instalará CUBERBOX Nexus Core:" 10 60 "/opt/nexus" 3>&1 1>&2 2>&3)
+        if [ $? -ne 0 ]; then exit 0; fi
+    fi
     preflight_checks
     install_base_tools
     setup_repositories
@@ -237,6 +272,11 @@ run_standalone() {
 }
 
 run_cluster() {
+    # Ask for install path if not set (TUI mode)
+    if [ -z "$INSTALL_DIR" ]; then
+        INSTALL_DIR=$(whiptail --title "Ruta de Instalación" --inputbox "Ingrese la ruta donde se instalará CUBERBOX Nexus Core:" 10 60 "/opt/nexus" 3>&1 1>&2 2>&3)
+        if [ $? -ne 0 ]; then exit 0; fi
+    fi
     preflight_checks
     install_base_tools
     setup_repositories
@@ -252,6 +292,11 @@ run_cluster() {
 }
 
 run_components() {
+    # Ask for install path if not set (TUI mode)
+    if [ -z "$INSTALL_DIR" ]; then
+        INSTALL_DIR=$(whiptail --title "Ruta de Instalación" --inputbox "Ingrese la ruta donde se instalará CUBERBOX Nexus Core:" 10 60 "/opt/nexus" 3>&1 1>&2 2>&3)
+        if [ $? -ne 0 ]; then exit 0; fi
+    fi
     preflight_checks
     install_base_tools
     
@@ -271,7 +316,7 @@ run_components() {
 # --- TUI Flow ---
 
 # Welcome Screen
-whiptail --title "Nexus Core Installer" --msgbox "Bienvenido al instalador avanzado de Nexus Core v4.7.9.\n\nEste asistente le guiará a través del proceso de instalación y configuración de su infraestructura Nexus Core." 12 60
+whiptail --title "CUBERBOX Nexus Core Installer" --msgbox "Bienvenido al instalador avanzado de CUBERBOX Nexus Core v4.7.9.\n\nEste asistente le guiará a través del proceso de instalación y configuración de su infraestructura CUBERBOX Nexus Core." 12 60
 
 # Installation Type Menu
 INSTALL_TYPE=$(whiptail --title "Tipo de Instalación" --menu "Seleccione el modo de instalación deseado:" 15 60 3 \
@@ -377,7 +422,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Success Screen
-whiptail --title "Éxito" --msgbox "La instalación de Nexus Core v4.7.9 ha finalizado correctamente.\n\nServicios activos:\n- FreeSwitch\n- PostgreSQL 16\n- Nexus Connector\n- Web Interface (Puerto 3000)" 15 60
+whiptail --title "Éxito" --msgbox "La instalación de CUBERBOX Nexus Core v4.7.9 ha finalizado correctamente.\n\nServicios activos:\n- FreeSwitch\n- PostgreSQL 16\n- CUBERBOX Nexus Connector\n- Web Interface (Puerto 3000)" 15 60
 
 # Log Viewer
 if whiptail --title "Ver Log" --yesno "¿Desea revisar el log de instalación detallado?" 8 60; then

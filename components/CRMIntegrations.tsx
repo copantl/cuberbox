@@ -44,7 +44,7 @@ const CRMIntegrations: React.FC = () => {
             <CloudSync className="mr-3 text-blue-400" size={28} />
             Ecosistema CRM
           </h2>
-          <p className="text-slate-400 text-sm">Integra CUBERBOX con tus sistemas de negocio para flujos de datos bidireccionales.</p>
+          <p className="text-slate-400 text-sm">Integra CUBERBOX Nexus Core con tus sistemas de negocio para flujos de datos bidireccionales.</p>
         </div>
         <button className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-blue-500/20">
           <Plus size={18} />
@@ -182,7 +182,7 @@ const CRMIntegrations: React.FC = () => {
                   <div className="space-y-2 max-h-[250px] overflow-y-auto pr-2 scrollbar-hide">
                     {Object.entries(selectedIntegration.fieldMapping).map(([vici, crm], idx) => (
                       <div key={idx} className="flex items-center space-x-3 p-3 bg-slate-900/50 border border-slate-800 rounded-2xl group">
-                         <div className="flex-1 bg-slate-950 px-4 py-2 rounded-xl text-xs font-mono text-blue-400 border border-slate-800">CUBERBOX: <span className="text-white">{vici}</span></div>
+                         <div className="flex-1 bg-slate-950 px-4 py-2 rounded-xl text-xs font-mono text-blue-400 border border-slate-800">CUBERBOX Nexus Core: <span className="text-white">{vici}</span></div>
                          <RefreshCw size={14} className="text-slate-600 group-hover:text-blue-500 transition-colors" />
                          <input 
                            type="text" 
@@ -223,7 +223,7 @@ const CRMIntegrations: React.FC = () => {
             </div>
             <div>
                <h3 className="text-xl font-black text-white">Configuración del Bridge Global</h3>
-               <p className="text-sm text-slate-400 max-w-2xl mt-2">El motor CUBERBOX procesa eventos de telefonía en tiempo real. Activa el "Screen Pop" para que tus agentes vean la ficha del cliente en Odoo o iDempiere automáticamente al sonar la llamada.</p>
+               <p className="text-sm text-slate-400 max-w-2xl mt-2">El motor CUBERBOX Nexus Core procesa eventos de telefonía en tiempo real. Activa el "Screen Pop" para que tus agentes vean la ficha del cliente en Odoo o iDempiere automáticamente al sonar la llamada.</p>
                <button className="mt-4 px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold transition-all border border-slate-700">Explorar Documentación SDK</button>
             </div>
          </div>

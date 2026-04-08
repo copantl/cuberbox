@@ -232,7 +232,7 @@ const WhatsAppModule: React.FC = () => {
       
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
-        contents: `Eres un agente experto de CUBERBOX en el canal ${activeConv.channel}. 
+        contents: `Eres un experto de CUBERBOX Nexus Core en el canal ${activeConv.channel}. 
         Historial:\n${historyText}\n
         Genera la siguiente respuesta profesional, corta y persuasiva.`,
       });
@@ -324,7 +324,7 @@ const WhatsAppModule: React.FC = () => {
            </div>
            <div>
               <h2 className="text-3xl font-black text-white uppercase tracking-tighter">Omnicanal Intelligence Hub</h2>
-              <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mt-1">Sincronización Neuronal Multi-Agente</p>
+              <p className="text-[10px] text-slate-500 font-black uppercase tracking-[0.3em] mt-1">Sincronización Neuronal CUBERBOX Multi-Agente</p>
            </div>
         </div>
 
@@ -519,7 +519,7 @@ const WhatsAppModule: React.FC = () => {
                            </div>
                            <div className="flex items-center space-x-3 mb-4">
                               <Sparkles size={16} className="text-blue-400" />
-                              <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em]">Resumen de Hilo (Nexus AI)</span>
+                              <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.2em]">Resumen de Hilo (CUBERBOX AI)</span>
                            </div>
                            <p className="text-sm text-slate-300 font-medium leading-relaxed italic relative z-10">
                               "{activeConv.summary}"

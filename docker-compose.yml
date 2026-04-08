@@ -4,9 +4,9 @@ services:
   db:
     image: postgres:16
     environment:
-      POSTGRES_USER: cuberbox_admin
-      POSTGRES_PASSWORD: TitanPass2024!
-      POSTGRES_DB: cuberbox_db
+      POSTGRES_USER: nexus_admin
+      POSTGRES_PASSWORD: TitanPass2026!
+      POSTGRES_DB: nexus_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -41,9 +41,9 @@ services:
     environment:
       - NODE_ENV=production
       - DB_HOST=db
-      - DB_USER=cuberbox_admin
-      - DB_PASS=TitanPass2024!
-      - DB_NAME=cuberbox_db
+      - DB_USER=nexus_admin
+      - DB_PASS=TitanPass2026!
+      - DB_NAME=nexus_db
     depends_on:
       - db
       - connector
