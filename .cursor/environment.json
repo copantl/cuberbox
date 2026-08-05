@@ -1,0 +1,17 @@
+{
+  "name": "CUBERBOX Nexus Core",
+  "install": "npm install",
+  "terminals": [
+    {
+      "name": "dev",
+      "command": "MOCK_ESL=true npm run dev",
+      "description": "Vite + Express dev server on port 3000. Runs with MOCK_ESL so telephony/FreeSwitch features return simulated data, PostgreSQL falls back to in-memory mode, and Keycloak auth is bypassed, so the full app works with no external services."
+    }
+  ],
+  "ports": [
+    {
+      "name": "web",
+      "port": 3000
+    }
+  ]
+}
